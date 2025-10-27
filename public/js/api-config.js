@@ -1,14 +1,11 @@
 // API Configuration
+// This ensures both admin and frontend call the same localhost:5001 API
 window.API_CONFIG = {
-    // Auto-detect API base URL
+    // Always use localhost:5001 for API calls (same as admin)
+    // Even when frontend is deployed on https://hungpnh.dev
     getBaseUrl: function() {
-        // If running on localhost, use localhost:5001
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            return 'http://localhost:5001';
-        }
-        
-        // If running on server, use same hostname with port 5001
-        return window.location.protocol + '//' + window.location.hostname + ':5001';
+        // Always use localhost:5001 regardless of current domain
+        return 'http://localhost:5001';
     },
     
     // Get full API URL
