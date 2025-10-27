@@ -5,23 +5,32 @@
     #menu-access li.inactive {
     display: none;
     }
+    
+    .music-btn {
+        cursor: pointer;
+        display: inline-block;
+    }
+    
+    .music-btn:hover {
+        opacity: 0.8;
+    }
  </style>
 
 
  <div id="menu-access" class="">
-    <div class="btn-menu-open" style="display: none;">
+    <div class="btn-menu-open">
        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
           <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5">
           </path>
        </svg>
     </div>
-    <div class="btn-menu-close" style="display: block;">
+    <div class="btn-menu-close">
        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
           <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z">
           </path>
        </svg>
     </div>
-    <ul class="p-0 m-0 list-menu-icon" style="opacity: 1;">
+    <ul class="p-0 m-0 list-menu-icon">
        <li class="text-center shake">
           <a href="#rsvp" class="text-white">
           <span class="content-button tooltipBtn">
@@ -73,3 +82,63 @@
 
     <!-- Audio -->
     <audio src="./index_files/audio/wedding-music.mp3" controls="controls" style="display: none;"></audio>
+
+<script>
+// Menu functionality
+$(document).ready(function() {
+    console.log('Menu script loaded');
+    
+    // Open menu button
+    $('.btn-menu-open').click(function() {
+        console.log('Open menu clicked');
+        $('.list-menu-icon').show();
+        $('.btn-menu-open').hide();
+        $('.btn-menu-close').show();
+    });
+    
+    // Close menu button
+    $('.btn-menu-close').click(function() {
+        console.log('Close menu clicked');
+        $('.list-menu-icon').hide();
+        $('.btn-menu-close').hide();
+        $('.btn-menu-open').show();
+    });
+});
+
+// Music functionality
+let isPlaying = false;
+
+function toggleMusic() {
+    const audio = document.getElementById('backgroundAudio');
+    const muteIcon = document.getElementById('playerVolumeOff');
+    const playIcon = document.getElementById('playerVolumeOn');
+    
+    console.log('Toggle music clicked, current state:', isPlaying);
+    
+    if (isPlaying) {
+        // Stop music
+        audio.pause();
+        audio.currentTime = 0;
+        muteIcon.style.display = 'block';
+        playIcon.style.display = 'none';
+        isPlaying = false;
+        console.log('Music stopped');
+    } else {
+        // Play music
+        audio.play().then(() => {
+            muteIcon.style.display = 'none';
+            playIcon.style.display = 'block';
+            isPlaying = true;
+            console.log('Music started');
+        }).catch(error => {
+            console.error('Error playing music:', error);
+        });
+    }
+}
+
+// Add click handlers to music buttons
+$(document).ready(function() {
+    $('#playerVolumeOff').click(toggleMusic);
+    $('#playerVolumeOn').click(toggleMusic);
+});
+</script>
