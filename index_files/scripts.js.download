@@ -819,22 +819,26 @@ var Neela;
             /*------------------------------------------
     = MENU ACCESSBILITY
     -------------------------------------------*/
-    console.log('MENU SCRIPT LOADED!');
-    $('.btn-menu-open').click(function() {
-        console.log('Open button clicked');
-        $('ul.list-menu-icon').css('opacity','1');
-        $('ul.list-menu-icon').css('pointer-events','');
-        $('.btn-menu-close').show();
-        $('.btn-menu-open').hide();
-    })
-    $(document).on('click', '.btn-menu-close', function() {
-        console.log('CLOSE BUTTON CLICKED!');
-        $('ul.list-menu-icon').css('opacity','0');
-        $('ul.list-menu-icon').css('pointer-events','none');
-        $('.btn-menu-open').show();
-        $('.btn-menu-close').hide();
-        console.log('Menu closed - showing open button');
-    })
+    $(document).ready(function() {
+        console.log('MENU SCRIPT LOADED!');
+        
+        $('.btn-menu-open').click(function() {
+            console.log('Open button clicked');
+            $('ul.list-menu-icon').css('opacity','1');
+            $('ul.list-menu-icon').css('pointer-events','');
+            $('.btn-menu-close').show();
+            $('.btn-menu-open').hide();
+        });
+        
+        $('.btn-menu-close').click(function() {
+            console.log('CLOSE BUTTON CLICKED!');
+            $('ul.list-menu-icon').css('opacity','0');
+            $('ul.list-menu-icon').css('pointer-events','none');
+            $('.btn-menu-open').show();
+            $('.btn-menu-close').hide();
+            console.log('Menu closed - showing open button');
+        });
+    });
     // Initialize menu state - show close button and menu items
     setTimeout(() => {
         console.log('Initializing menu state');
