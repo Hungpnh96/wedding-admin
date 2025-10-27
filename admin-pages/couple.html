@@ -1,0 +1,438 @@
+<div class="tab-content-wrapper">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="section-card">
+                <div class="section-header">
+                    <h5><i class="fas fa-male me-2"></i>Thông tin chú rể</h5>
+                </div>
+                <div class="section-body">
+                    <div class="form-group">
+                        <label class="form-label">Tên chú rể</label>
+                        <input type="text" class="form-control" id="groomNameDetail" placeholder="Nhập tên chú rể">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mô tả về chú rể</label>
+                        <textarea class="form-control" id="groomDescription" rows="4" placeholder="Nhập mô tả về chú rể"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cha chú rể</label>
+                        <input type="text" class="form-control" id="groomFather" placeholder="Nhập tên cha chú rể">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mẹ chú rể</label>
+                        <input type="text" class="form-control" id="groomMother" placeholder="Nhập tên mẹ chú rể">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="section-card">
+                <div class="section-header">
+                    <h5><i class="fas fa-female me-2"></i>Thông tin cô dâu</h5>
+                </div>
+                <div class="section-body">
+                    <div class="form-group">
+                        <label class="form-label">Tên cô dâu</label>
+                        <input type="text" class="form-control" id="brideNameDetail" placeholder="Nhập tên cô dâu">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mô tả về cô dâu</label>
+                        <textarea class="form-control" id="brideDescription" rows="4" placeholder="Nhập mô tả về cô dâu"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cha cô dâu</label>
+                        <input type="text" class="form-control" id="brideFather" placeholder="Nhập tên cha cô dâu">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mẹ cô dâu</label>
+                        <input type="text" class="form-control" id="brideMother" placeholder="Nhập tên mẹ cô dâu">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Couple Detail Images Management -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="section-card">
+                <div class="section-header">
+                    <h5><i class="fas fa-image me-2"></i>Ảnh chi tiết The Groom</h5>
+                </div>
+                <div class="section-body">
+                    <div class="form-group">
+                        <label class="form-label">Ảnh chính The Groom</label>
+                        <div class="image-upload-area" data-upload-type="groom" onclick="selectCoupleImage('groom')">
+                            <div class="upload-placeholder">
+                                <i class="fas fa-user fa-3x mb-3"></i>
+                                <p>Nhấn để tải ảnh The Groom</p>
+                            </div>
+                            <img id="groom-image-preview" class="uploaded-image" style="display: none; width: 100%; height: auto; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; box-shadow: inset 0 0 0 15px #fff;">
+                        </div>
+                        <small class="form-text text-muted">Ảnh này sẽ hiển thị trong phần "The Groom" trên website</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="section-card">
+                <div class="section-header">
+                    <h5><i class="fas fa-image me-2"></i>Ảnh chi tiết The Bride</h5>
+                </div>
+                <div class="section-body">
+                    <div class="form-group">
+                        <label class="form-label">Ảnh chính The Bride</label>
+                        <div class="image-upload-area" data-upload-type="bride" onclick="selectCoupleImage('bride')">
+                            <div class="upload-placeholder">
+                                <i class="fas fa-user fa-3x mb-3"></i>
+                                <p>Nhấn để tải ảnh The Bride</p>
+                            </div>
+                            <img id="bride-image-preview" class="uploaded-image" style="display: none; width: 100%; height: auto; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; box-shadow: inset 0 0 0 15px #fff;">
+                        </div>
+                        <small class="form-text text-muted">Ảnh này sẽ hiển thị trong phần "The Bride" trên website</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Save Button -->
+    <div class="mt-4">
+        <button class="btn btn-custom" onclick="saveCoupleData()">
+            <i class="fas fa-save me-2"></i>Lưu thay đổi
+        </button>
+        <button class="btn btn-warning ms-2" onclick="testCoupleData()">
+            <i class="fas fa-bug me-2"></i>Test Data
+        </button>
+    </div>
+</div>
+
+<script>// Couple Tab JavaScript
+function initializeCouple() {
+    console.log("Initializing couple tab");
+    
+    // Load couple data
+    loadCoupleData();
+    
+    // Setup event listeners
+    setupCoupleEventListeners();
+}
+
+function loadCoupleData() {
+    if (window.siteData && window.siteData.couple) {
+        const couple = window.siteData.couple;
+        
+        // Update form fields
+        setFieldValue("groomNameDetail", couple.groomName);
+        setFieldValue("brideNameDetail", couple.brideName);
+        setFieldValue("groomDescription", couple.groomDescription);
+        setFieldValue("brideDescription", couple.brideDescription);
+        
+        // Update parent information
+        if (window.siteData.additional?.parents) {
+            const parents = window.siteData.additional.parents;
+            setFieldValue("groomFather", parents.groom?.father);
+            setFieldValue("groomMother", parents.groom?.mother);
+            setFieldValue("brideFather", parents.bride?.father);
+            setFieldValue("brideMother", parents.bride?.mother);
+        }
+        
+        // Update images
+        updateCoupleImages();
+    }
+}
+
+function setupCoupleEventListeners() {
+    // Form field listeners
+    const coupleFields = ["groomNameDetail", "brideNameDetail", "groomDescription", "brideDescription", 
+                         "groomFather", "groomMother", "brideFather", "brideMother"];
+    
+    coupleFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener("input", function() {
+                updateSiteDataFromCoupleForm();
+            });
+        }
+    });
+}
+
+function updateSiteDataFromCoupleForm() {
+    if (!window.siteData) window.siteData = {};
+    if (!window.siteData.couple) window.siteData.couple = {};
+    if (!window.siteData.additional) window.siteData.additional = {};
+    if (!window.siteData.additional.parents) window.siteData.additional.parents = {};
+    if (!window.siteData.additional.parents.groom) window.siteData.additional.parents.groom = {};
+    if (!window.siteData.additional.parents.bride) window.siteData.additional.parents.bride = {};
+    
+    // Update couple data
+    window.siteData.couple.groomName = document.getElementById("groomNameDetail")?.value || "";
+    window.siteData.couple.brideName = document.getElementById("brideNameDetail")?.value || "";
+    window.siteData.couple.groomDescription = document.getElementById("groomDescription")?.value || "";
+    window.siteData.couple.brideDescription = document.getElementById("brideDescription")?.value || "";
+    
+    // Update parent data
+    window.siteData.additional.parents.groom.father = document.getElementById("groomFather")?.value || "";
+    window.siteData.additional.parents.groom.mother = document.getElementById("groomMother")?.value || "";
+    window.siteData.additional.parents.bride.father = document.getElementById("brideFather")?.value || "";
+    window.siteData.additional.parents.bride.mother = document.getElementById("brideMother")?.value || "";
+    
+    // Update last modified
+    if (!window.siteData.admin) window.siteData.admin = {};
+    window.siteData.admin.lastUpdate = new Date().toISOString();
+}
+
+function updateCoupleImages() {
+    // Update groom image
+    if (window.siteData.couple?.img1) {
+        const src = window.siteData.couple.img1.dataUrl || window.siteData.couple.img1.src;
+        if (src) updateImagePreview("groom-image-preview", src);
+    }
+    
+    // Update bride image
+    if (window.siteData.couple?.img2) {
+        const src = window.siteData.couple.img2.dataUrl || window.siteData.couple.img2.src;
+        if (src) updateImagePreview("bride-image-preview", src);
+    }
+}
+
+function updateImagePreview(previewId, src) {
+    const preview = document.getElementById(previewId);
+    if (preview && src) {
+        preview.src = src;
+        preview.style.display = "block";
+        const placeholder = preview.parentElement.querySelector(".upload-placeholder");
+        if (placeholder) placeholder.style.display = "none";
+    }
+}
+
+function setFieldValue(fieldId, value) {
+    const field = document.getElementById(fieldId);
+    if (field && value !== undefined) {
+        field.value = value;
+    }
+}
+
+// Export functions for global access
+window.initializeCouple = initializeCouple;
+</script>
+
+<script>
+// Couple Tab JavaScript - Embedded directly
+console.log('🚀 Couple tab script loaded');
+
+// Couple-specific variables
+let coupleData = {};
+
+// Initialize couple tab
+function initializeCouple() {
+    console.log('🚀 Initializing couple tab');
+    
+    // Load data first
+    loadCoupleDataFromAPI().then(() => {
+        // Fill form fields
+        fillCoupleFormFields();
+        
+        // Setup event listeners
+        setupCoupleEventListeners();
+    });
+}
+
+// Load data from API
+async function loadCoupleDataFromAPI() {
+    console.log('🔄 Loading couple data from API...');
+    
+    try {
+        const response = await fetch('http://localhost:5001/api/data');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('📊 API Response:', result);
+        
+        if (result.success && result.data) {
+            coupleData = result.data;
+            console.log('✅ Couple data loaded:', coupleData);
+        } else {
+            throw new Error('API response invalid');
+        }
+    } catch (error) {
+        console.error('❌ Error loading couple data:', error);
+        // Create default data
+        coupleData = {
+            couple: {
+                groom: {
+                    name: 'Chú rể',
+                    description: 'Mô tả về chú rể'
+                },
+                bride: {
+                    name: 'Cô dâu',
+                    description: 'Mô tả về cô dâu'
+                },
+                parents: {
+                    groom: {
+                        father: 'Cha chú rể',
+                        mother: 'Mẹ chú rể'
+                    },
+                    bride: {
+                        father: 'Cha cô dâu',
+                        mother: 'Mẹ cô dâu'
+                    }
+                },
+                groomImage: './images/default-groom.jpg',
+                brideImage: './images/default-bride.jpg',
+                visible: true
+            }
+        };
+        console.log('⚠️ Using default couple data');
+    }
+}
+
+// Fill form fields with loaded data
+function fillCoupleFormFields() {
+    console.log('🔄 Filling couple form fields...');
+    console.log('📊 Couple data:', coupleData);
+    
+    if (coupleData.couple) {
+        console.log('📊 Couple section data:', coupleData.couple);
+        
+        // Fill groom fields
+        if (coupleData.couple.groom) {
+            setCoupleFieldValue('groomNameDetail', coupleData.couple.groom.name);
+            setCoupleFieldValue('groomDescription', coupleData.couple.groom.description);
+        }
+        
+        // Fill bride fields
+        if (coupleData.couple.bride) {
+            setCoupleFieldValue('brideNameDetail', coupleData.couple.bride.name);
+            setCoupleFieldValue('brideDescription', coupleData.couple.bride.description);
+        }
+        
+        // Fill parent fields
+        if (coupleData.couple.parents) {
+            if (coupleData.couple.parents.groom) {
+                setCoupleFieldValue('groomFather', coupleData.couple.parents.groom.father);
+                setCoupleFieldValue('groomMother', coupleData.couple.parents.groom.mother);
+            }
+            if (coupleData.couple.parents.bride) {
+                setCoupleFieldValue('brideFather', coupleData.couple.parents.bride.father);
+                setCoupleFieldValue('brideMother', coupleData.couple.parents.bride.mother);
+            }
+        }
+        
+        // Update images
+        updateCoupleImages();
+    }
+    
+    console.log('✅ Couple form fields filled');
+}
+
+// Set field value helper
+function setCoupleFieldValue(fieldId, value) {
+    const field = document.getElementById(fieldId);
+    if (field && value !== undefined && value !== null) {
+        field.value = value;
+        console.log(`✅ Couple: Set field ${fieldId} = ${value}`);
+    } else {
+        console.log(`❌ Couple: Field ${fieldId} not found or value invalid (value: ${value})`);
+        if (field) {
+            console.log(`🔍 Field exists but value is: ${value} (type: ${typeof value})`);
+        } else {
+            console.log(`🔍 Field ${fieldId} not found in DOM`);
+        }
+    }
+}
+
+// Update couple images
+function updateCoupleImages() {
+    console.log('🖼️ Updating couple images...');
+    
+    // Update groom image
+    if (coupleData.couple?.groomImage) {
+        const preview = document.getElementById('groom-image-preview');
+        if (preview) {
+            preview.src = coupleData.couple.groomImage + '?t=' + Date.now();
+            preview.style.display = 'block';
+            
+            // Hide placeholder
+            const placeholder = preview.parentElement.querySelector('.upload-placeholder');
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+            console.log('✅ Groom image updated');
+        }
+    }
+    
+    // Update bride image
+    if (coupleData.couple?.brideImage) {
+        const preview = document.getElementById('bride-image-preview');
+        if (preview) {
+            preview.src = coupleData.couple.brideImage + '?t=' + Date.now();
+            preview.style.display = 'block';
+            
+            // Hide placeholder
+            const placeholder = preview.parentElement.querySelector('.upload-placeholder');
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+            console.log('✅ Bride image updated');
+        }
+    }
+}
+
+// Setup event listeners
+function setupCoupleEventListeners() {
+    console.log('🔄 Setting up couple event listeners...');
+    
+    const coupleFields = ['groomNameDetail', 'groomDescription', 'brideNameDetail', 'brideDescription', 'groomFather', 'groomMother', 'brideFather', 'brideMother'];
+    
+    coupleFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', function() {
+                updateCoupleDataFromForm();
+            });
+            console.log(`✅ Event listener added for ${fieldId}`);
+        } else {
+            console.log(`❌ Field ${fieldId} not found for event listener`);
+        }
+    });
+}
+
+// Update couple data from form
+function updateCoupleDataFromForm() {
+    console.log('🔄 Updating couple data from form...');
+    
+    // Ensure coupleData structure exists
+    if (!coupleData) coupleData = {};
+    if (!coupleData.couple) coupleData.couple = {};
+    if (!coupleData.couple.groom) coupleData.couple.groom = {};
+    if (!coupleData.couple.bride) coupleData.couple.bride = {};
+    if (!coupleData.couple.parents) coupleData.couple.parents = {};
+    if (!coupleData.couple.parents.groom) coupleData.couple.parents.groom = {};
+    if (!coupleData.couple.parents.bride) coupleData.couple.parents.bride = {};
+    
+    // Update groom data
+    coupleData.couple.groom.name = document.getElementById('groomNameDetail')?.value || '';
+    coupleData.couple.groom.description = document.getElementById('groomDescription')?.value || '';
+    
+    // Update bride data
+    coupleData.couple.bride.name = document.getElementById('brideNameDetail')?.value || '';
+    coupleData.couple.bride.description = document.getElementById('brideDescription')?.value || '';
+    
+    // Update parent data
+    coupleData.couple.parents.groom.father = document.getElementById('groomFather')?.value || '';
+    coupleData.couple.parents.groom.mother = document.getElementById('groomMother')?.value || '';
+    coupleData.couple.parents.bride.father = document.getElementById('brideFather')?.value || '';
+    coupleData.couple.parents.bride.mother = document.getElementById('brideMother')?.value || '';
+    
+    console.log('✅ Couple data updated from form:', coupleData);
+}
+
+// Export functions for global access
+window.initializeCouple = initializeCouple;
+window.loadCoupleData = loadCoupleDataFromAPI;
+
+console.log('✅ Couple tab functions exported');
+</script>

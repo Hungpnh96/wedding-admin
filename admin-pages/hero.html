@@ -1,0 +1,110 @@
+<div class="tab-content-wrapper">
+    <!-- Basic Info Section -->
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-star me-2"></i>Thông tin cơ bản</h5>
+        </div>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Tên chú rể</label>
+                        <input type="text" class="form-control" id="groomName" placeholder="Nhập tên chú rể">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tên cô dâu</label>
+                        <input type="text" class="form-control" id="brideName" placeholder="Nhập tên cô dâu">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ngày cưới</label>
+                        <input type="date" class="form-control" id="weddingDate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Giờ cưới</label>
+                        <input type="time" class="form-control" id="weddingTime" placeholder="HH:MM">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Địa điểm</label>
+                        <input type="text" class="form-control" id="weddingLocation" placeholder="Nhập địa điểm tổ chức">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tiêu đề website</label>
+                        <input type="text" class="form-control" id="mainTitle" placeholder="Nhập tiêu đề chính">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mô tả ngắn</label>
+                        <textarea class="form-control" id="description" rows="3" placeholder="Nhập mô tả ngắn về website"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Màu chủ đạo</label>
+                        <input type="color" class="form-control" id="primaryColor" value="#9f5958">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3">
+                <button class="btn btn-custom" onclick="saveHeroData()">
+                    <i class="fas fa-save me-2"></i>Lưu thay đổi
+                </button>
+                <button class="btn btn-warning ms-2" onclick="testHeroData()">
+                    <i class="fas fa-bug me-2"></i>Test Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner Images Management -->
+    <div class="section-card">
+        <div class="section-header d-flex justify-content-between align-items-center">
+            <h5><i class="fas fa-images me-2"></i>Quản lý ảnh banner</h5>
+            <div class="btn-group">
+                <button class="btn btn-outline-secondary btn-sm" onclick="reloadBannerData()" title="Tải lại dữ liệu từ server">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="btn btn-outline-danger btn-sm" onclick="clearBannerSlides()" title="Xóa tất cả ảnh banner">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="btn btn-custom btn-sm" onclick="selectHeroBannerImage()">
+                    <i class="fas fa-plus me-2"></i>Thêm ảnh banner
+                </button>
+            </div>
+        </div>
+        <div class="section-body">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Hướng dẫn:</strong> Click vào nút "Thêm ảnh banner" để thêm banner mới. Click vào ảnh để thay đổi ảnh banner hiện có.
+            </div>
+
+
+            <!-- Banner Slides List -->
+            <div id="bannerSlidesList" class="row g-3">
+                <!-- Banner slides will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner Preview -->
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-eye me-2"></i>Xem trước banner</h5>
+        </div>
+        <div class="section-body">
+            <div class="banner-preview-container">
+                <div id="bannerPreview" class="banner-preview">
+                    <!-- Banner preview will be loaded here -->
+                </div>
+            </div>
+            <div class="mt-3">
+                <button class="btn btn-outline-primary btn-sm" onclick="refreshPreview()">
+                    <i class="fas fa-sync me-2"></i>Làm mới xem trước
+                </button>
+                <button class="btn btn-outline-success btn-sm ms-2" onclick="editBannerSlide()">
+                    <i class="fas fa-edit me-2"></i>Chỉnh sửa banner
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hero Tab JavaScript is now in admin/js/hero-tab.js -->

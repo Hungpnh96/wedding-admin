@@ -1,0 +1,141 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+.dockerignore
+
+# Documentation
+README.md
+*.md
+DOCKER.md
+QUICK-START.md
+STORY-MANAGEMENT*.md
+
+# Backup files
+*.bak
+*.backup
+*.db
+*.json
+
+# Temporary files
+*.tmp
+*.temp
+
+# Shell scripts
+*.sh
+*.bat
+Makefile
+
+# Large directories that shouldn't be in container
+node_modules/
+npm-debug.log*
+
+# Development files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory
+coverage/
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+.npm
+.node_repl_history
+
+# Output files
+*.tgz
+.yarn-integrity
+
+# Cache directories
+.cache
+.parcel-cache
+.next
+.nuxt
+.vuepress/dist
+.serverless
+.fusebox/
+.dynamodb/
+
+# Large image directories (exclude from build context)
+index_files/
+images/
+public/images/gallery/
+public/images/story/
+public/images/banner/
+public/uploads/
+
+# Large backup files
+data/backups/
+*.db
+*.json
+
+# Development server files
+dev-server.py
+start-sqlite-server.py
+
+# Test files
+test-*.html
+index_*.html
+admin_*.html
+

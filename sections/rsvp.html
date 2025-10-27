@@ -1,0 +1,514 @@
+<style>
+   .rsvp-reply-edit {
+   display: none;
+   }
+   .rsvp-edit-reply {
+   cursor: pointer;
+   }
+ /* CSS cho spinner đẹp */
+.spinner {
+   width: 64px;
+   height: 64px;
+   border: 8px solid #f3f3f3; /* Màu viền ngoài */
+   border-top: 8px solid #3498db; /* Màu quay */
+   border-radius: 50%;
+   animation: spin 1s linear infinite; /* Hiệu ứng quay */
+   margin: 0 auto;
+}
+
+@keyframes spin {
+   0% { transform: rotate(0deg); }
+   100% { transform: rotate(360deg); }
+}
+/* Tùy chỉnh overlay */
+#loading-overlay {
+   display: none;
+   opacity: 0;
+   transition: opacity 0.3s ease;
+}
+#loading-overlay.show {
+   display: flex;
+   opacity: 1;
+}
+</style>
+<section id="rsvp" class="section-bg-color extra-padding-section editable-parent scroll-to  ">
+   <div class="children" style="display: block">
+      <div class="container">
+         <div class="row">
+            <div class="col-lg-10 offset-lg-1 col-xl-8 offset-xl-2  col-xxl-6 offset-xxl-3">
+               <div class="form-wrapper flowers neela-style">
+                  <span class="h-lines"></span><span class="v-lines"></span><span class="h-lines"></span><span class="v-lines"></span>
+                  <h1 class="section-title">Sổ Lưu Bút</h1>
+                  <form id="wish-form" class="form validate-rsvp-form row" method="post" novalidate="novalidate">
+                     <input type="text" name="slug" hidden="" value="hung-tram-07012025-2034">
+                     <div>
+                        <input type="text" name="name" placeholder="Tên của bạn*" class="form-control" aria-required="true" aria-invalid="true" id="guest-name">
+                     </div>
+               <div >
+                  <select class="form-control" id="guest-from" >
+                    <option value="0">Người thân của ...*</option>
+                    <option value="1">Cô dâu</option>
+                    <option value="2">Chú rễ</option>
+                  </select>
+                  <div class="help-block with-errors"></div>
+               </div> 
+                     <div>
+                        <div class="textarea-emoji-picker">
+                           <div class="vitualTextarea">
+                              <textarea id="content" rows="3" class="form-control" name="content" placeholder="Nhập lời chúc của bạn*" aria-required="true"></textarea>
+                              <div class="textAreaIcons">
+                                 <span class="show-autocomplete tooltip-custom" data-toggle="tooltip" data-placement="top" title="" data-bs-original-title="Lời chúc gợi ý" style="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-lightbulb" viewBox="0 0 16 16">
+                                       <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a2 2 0 0 0-.453-.618A5.98 5.98 0 0 1 2 6m6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1">
+                                       </path>
+                                    </svg>
+                                 </span>
+                                 <span class="hide-autocomplete tooltip-custom" style="display: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-lightbulb-off" viewBox="0 0 16 16">
+                                       <path fill-rule="evenodd" d="M2.23 4.35A6 6 0 0 0 2 6c0 1.691.7 3.22 1.826 4.31.203.196.359.4.453.619l.762 1.769A.5.5 0 0 0 5.5 13a.5.5 0 0 0 0 1 .5.5 0 0 0 0 1l.224.447a1 1 0 0 0 .894.553h2.764a1 1 0 0 0 .894-.553L10.5 15a.5.5 0 0 0 0-1 .5.5 0 0 0 0-1 .5.5 0 0 0 .288-.091L9.878 12H5.83l-.632-1.467a3 3 0 0 0-.676-.941 4.98 4.98 0 0 1-1.455-4.405zm1.588-2.653.708.707a5 5 0 0 1 7.07 7.07l.707.707a6 6 0 0 0-8.484-8.484zm-2.172-.051a.5.5 0 0 1 .708 0l12 12a.5.5 0 0 1-.708.708l-12-12a.5.5 0 0 1 0-.708">
+                                       </path>
+                                    </svg>
+                                 </span>
+                                
+                                 <div class="wishes-autocomplete-content" style="display: none;">
+                                    <input type="text" id="searchWishSuggestions" onkeyup="searchWishSuggestionsFunction()" placeholder="Tìm kiếm...">
+                                    <ul id="wishSuggestions">
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chúc mừng hạnh phúc! Chúc hai bạn trăm năm hạnh phúc!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chúc mừng ngày trọng đại tới hai bạn. Hạnh phúc bền lâu và trọn vẹn nhé!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chúc mừng hạnh phúc hai bạn. Chúc hai bạn bên nhau đầu bạc răng long, sớm có thiên thần nhỏ nhé!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chúc hai bạn ngày vui hạnh phúc. Hãy yêu thương nhau thật nhiều và sống thật hạnh phúc nha!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chúc hai bạn sớm có con đàn cháu đống, cửa nhà lúc nào cũng đầm ấm, yên vui nhé!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Thật vui vì cuối cùng ngày này cũng tới với bạn. Tôi thành tâm chúc hai bạn thật nhiều hạnh phúc và sống đời vui vẻ cùng nhau mãi mãi!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Một chương mới đã mở ra với hai bạn rồi. Tôi mong cuộc sống mới của cả hai sẽ tràn ngập hy vọng, hạnh phúc và niềm vui!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chúc đôi trai tài gái sắc hạnh phúc trọn vẹn, luôn yêu thương nhau thật nhiều!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chia vui cùng bạn trong ngày trọng đại này. Cầu mong cuộc sống sau này của 2 vợ chồng thật thuận hòa, may mắn, làm ăn phát tài nha.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Tôi mong tình yêu của hai bạn thật bền chặt, gắn bó để xây dựng tổ ấm yên bình, hạnh phúc!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Hai bạn của tôi chắc chắn sẽ có được nhiều hạnh phúc. Mong hai bạn có sức khỏe dồi dào, làm ăn phát đạt và sớm có cháu cho ông bà bồng bế nhé!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Gửi lời chúc mừng chân thành nhất tới bạn của tôi. Chúc hai bạn một cuộc sống thật tuyệt vời, hòa thuận, gắn bó son sắt, thủy chung, hạnh phúc lâu dài.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Nơi nào có yêu thương nơi đó chắc chắn hạnh phúc. Hai bạn đã tìm được nơi đủ đầy yêu thương rồi, hãy cùng nắm tay nhau đi hết cuộc đời nhé!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Khởi đầu một cuộc sống mới, nguyện ước cho bạn của tôi những ngày tháng hạnh phúc phía trước để cùng xây dựng tổ ấm với người bạn đời. Happy ending!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Mình tin rằng đây sẽ là khởi đầu cho những điều tốt đẹp sắp tới trong cuộc sống của hai bạn. Hãy yêu thương và cùng nhau vượt qua mọi khó khăn trong cuộc sống nhé.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Hôn nhân đánh dấu sự kết thúc một câu chuyện tình yêu và bắt đầu một trận đấu vật. Chúc bạn những điều tốt đẹp nhất.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Tôi sẽ nói cho bạn bí mật của một cuộc hôn nhân hạnh phúc. Đó vẫn là … một bí mật cho tất cả! Chúc bạn tất cả những điều tốt đẹp nhất của thời gian phía trước.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Hôn nhân thật đẹp. Cuối cùng bạn đã tìm thấy một người mà bạn bị làm phiền suốt cuộc đời.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Hai trở thành một: Một giường, một điều khiển từ xa, một phòng tắm! Xin chúc mừng đám cưới hai bạn.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chúc đôi trai tài gái sắc nhà mình hạnh phúc vẹn tròn, cung hỷ cung hỷ!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chúc mừng anh trai của em đã có người rước nhé. Em mong anh chị có cuộc sống vui vẻ, hạnh phúc phía trước, làm ăn phát tài phát lộc.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Anh chị là một cặp trời sinh, chắc chắn sau này sẽ rất hạnh phúc. Em chúc anh chị sức khỏe dồi dào, làm ăn phát đạt và sớm có thiên thần nhỏ cho vui cửa vui nhà.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Hôm nay là ngày vui của anh chị và cũng là ngày em rất hạnh phúc. Chúc anh chị mãi yêu thương nhau như bây giờ và đạt được mọi ước nguyện trong cuộc sống.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chúc anh/chị/em trăm năm hạnh phúc, thuận vợ thuận chồng.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Hôm nay chú rể đẹp trai, cô dâu xinh gái. Chúc mừng ngày thành hôn hai bạn tôi!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Chúc mừng đôi bạn trẻ nhé! Mãi yêu thương nhau đến đầu bạc răng long bạn nha!</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Thay mặt team (tên nhóm) chúc hai bạn ngày ngày ân ái, bên nhau trọn đời.</a></li>
+                                       <li><a class="showContent" onclick="selectWishSuggestion(this)">Happy wedding! Chúc hai bạn có cuộc sống mới ngập tràn tiếng cười và niềm vui, sớm có thiên thần nhỏ bồng bé!</a></li>
+                                    </ul>
+                                 </div>
+                              </div>
+                           </div>
+                           <label id="content-error" class="error" for="content" style="visibility: hidden;">Vui lòng nhập
+                           lời chúc.</label>
+                           <div class="emoji-picker" style="display: none;">
+                              <emoji-picker style="max-width: 100%;max-height: 350px;" class="light">
+                                 <template shadowrootmode="open">
+                                    <style>:host{--emoji-size:1.375rem;--emoji-padding:0.5rem;--category-emoji-size:var(--emoji-size);--category-emoji-padding:var(--emoji-padding);--indicator-height:3px;--input-border-radius:0.5rem;--input-border-size:1px;--input-font-size:1rem;--input-line-height:1.5;--input-padding:0.25rem;--num-columns:8;--outline-size:2px;--border-size:1px;--skintone-border-radius:1rem;--category-font-size:1rem;display:flex;width:min-content;height:400px}:host,:host(.light){--background:#fff;--border-color:#e0e0e0;--indicator-color:#385ac1;--input-border-color:#999;--input-font-color:#111;--input-placeholder-color:#999;--outline-color:#999;--category-font-color:#111;--button-active-background:#e6e6e6;--button-hover-background:#d9d9d9}:host(.dark){--background:#222;--border-color:#444;--indicator-color:#5373ec;--input-border-color:#ccc;--input-font-color:#efefef;--input-placeholder-color:#ccc;--outline-color:#fff;--category-font-color:#efefef;--button-active-background:#555555;--button-hover-background:#484848}@media (prefers-color-scheme:dark){:host{--background:#222;--border-color:#444;--indicator-color:#5373ec;--input-border-color:#ccc;--input-font-color:#efefef;--input-placeholder-color:#ccc;--outline-color:#fff;--category-font-color:#efefef;--button-active-background:#555555;--button-hover-background:#484848}}:host([hidden]){display:none}button{margin:0;padding:0;border:0;background:0 0;box-shadow:none;-webkit-tap-highlight-color:transparent}button::-moz-focus-inner{border:0}input{padding:0;margin:0;line-height:1.15;font-family:inherit}input[type=search]{-webkit-appearance:none}:focus{outline:var(--outline-color) solid var(--outline-size);outline-offset:calc(-1*var(--outline-size))}:host([data-js-focus-visible]) :focus:not([data-focus-visible-added]){outline:0}:focus:not(:focus-visible){outline:0}.hide-focus{outline:0}*{box-sizing:border-box}.picker{contain:content;display:flex;flex-direction:column;background:var(--background);border:var(--border-size) solid var(--border-color);width:100%;height:100%;overflow:hidden;--total-emoji-size:calc(var(--emoji-size) + (2 * var(--emoji-padding)));--total-category-emoji-size:calc(var(--category-emoji-size) + (2 * var(--category-emoji-padding)))}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}.hidden{opacity:0;pointer-events:none}.abs-pos{position:absolute;left:0;top:0}.gone{display:none!important}.skintone-button-wrapper,.skintone-list{background:var(--background);z-index:3}.skintone-button-wrapper.expanded{z-index:1}.skintone-list{position:absolute;inset-inline-end:0;top:0;z-index:2;overflow:visible;border-bottom:var(--border-size) solid var(--border-color);border-radius:0 0 var(--skintone-border-radius) var(--skintone-border-radius);will-change:transform;transition:transform .2s ease-in-out;transform-origin:center 0}@media (prefers-reduced-motion:reduce){.skintone-list{transition-duration:.001s}}@supports not (inset-inline-end:0){.skintone-list{right:0}}.skintone-list.no-animate{transition:none}.tabpanel{overflow-y:auto;-webkit-overflow-scrolling:touch;will-change:transform;min-height:0;flex:1;contain:content}.emoji-menu{display:grid;grid-template-columns:repeat(var(--num-columns),var(--total-emoji-size));justify-content:space-around;align-items:flex-start;width:100%}.category{padding:var(--emoji-padding);font-size:var(--category-font-size);color:var(--category-font-color)}.custom-emoji,.emoji,button.emoji{height:var(--total-emoji-size);width:var(--total-emoji-size)}.emoji,button.emoji{font-size:var(--emoji-size);display:flex;align-items:center;justify-content:center;border-radius:100%;line-height:1;overflow:hidden;font-family:var(--font-family);cursor:pointer}@media (hover:hover)and (pointer:fine){.emoji:hover,button.emoji:hover{background:var(--button-hover-background)}}.emoji.active,.emoji:active,button.emoji.active,button.emoji:active{background:var(--button-active-background)}.custom-emoji{padding:var(--emoji-padding);object-fit:contain;pointer-events:none;background-repeat:no-repeat;background-position:center center;background-size:var(--emoji-size) var(--emoji-size)}.nav,.nav-button{align-items:center}.nav{display:grid;justify-content:space-between;contain:content}.nav-button{display:flex;justify-content:center}.nav-emoji{font-size:var(--category-emoji-size);width:var(--total-category-emoji-size);height:var(--total-category-emoji-size)}.indicator-wrapper{display:flex;border-bottom:1px solid var(--border-color)}.indicator{width:calc(100%/var(--num-groups));height:var(--indicator-height);opacity:var(--indicator-opacity);background-color:var(--indicator-color);will-change:transform,opacity;transition:opacity .1s linear,transform .25s ease-in-out}@media (prefers-reduced-motion:reduce){.indicator{will-change:opacity;transition:opacity .1s linear}}.pad-top,input.search{background:var(--background);width:100%}.pad-top{height:var(--emoji-padding);z-index:3}.search-row{display:flex;align-items:center;position:relative;padding-inline-start:var(--emoji-padding);padding-bottom:var(--emoji-padding)}.search-wrapper{flex:1;min-width:0}input.search{padding:var(--input-padding);border-radius:var(--input-border-radius);border:var(--input-border-size) solid var(--input-border-color);color:var(--input-font-color);font-size:var(--input-font-size);line-height:var(--input-line-height)}input.search::placeholder{color:var(--input-placeholder-color)}.favorites{display:flex;flex-direction:row;border-top:var(--border-size) solid var(--border-color);contain:content}.message{padding:var(--emoji-padding)}</style>
+                                    <section class="picker" aria-label="Emoji picker" style="
+                                       --font-family: &quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Twemoji Mozilla&quot;,&quot;Noto Color Emoji&quot;,&quot;EmojiOne Color&quot;,&quot;Android Emoji&quot;,sans-serif;
+                                       --num-groups: 9; 
+                                       --indicator-opacity: 1; 
+                                       --num-skintones: 6;">
+                                       <div class="pad-top"></div>
+                                       <div class="search-row">
+                                          <div class="search-wrapper"><input id="search" class="search" type="search" role="combobox" enterkeyhint="search" placeholder="Search" autocapitalize="none" autocomplete="off" spellcheck="true" aria-expanded="false" aria-controls="search-results" aria-owns="search-results" aria-describedby="search-description" aria-autocomplete="list" aria-activedescendant=""><label class="sr-only" for="search">Search</label><span id="search-description" class="sr-only">When search results are available, press up or down to select and enter to choose.</span></div>
+                                          <div class="skintone-button-wrapper "><button id="skintone-button" class="emoji " aria-label="Choose a skin tone (currently Default)" title="Choose a skin tone (currently Default)" aria-describedby="skintone-description" aria-haspopup="listbox" aria-expanded="false" aria-controls="skintone-list">🖐️</button></div>
+                                          <span id="skintone-description" class="sr-only">When expanded, press up or down to select and enter to choose.</span>
+                                          <div id="skintone-list" class="skintone-list hidden no-animate" role="listbox" aria-label="Skin tones" aria-activedescendant="skintone-0" aria-hidden="true" style="transform: translateY(calc(-1 * var(--num-skintones) * var(--total-emoji-size)));">
+                                             <div id="skintone-0" class="emoji hide-focus active" aria-selected="true" role="option" title="Default" tabindex="-1" aria-label="Default">🖐️</div>
+                                             <div id="skintone-1" class="emoji hide-focus " aria-selected="false" role="option" title="Light" tabindex="-1" aria-label="Light">🖐🏻</div>
+                                             <div id="skintone-2" class="emoji hide-focus " aria-selected="false" role="option" title="Medium-Light" tabindex="-1" aria-label="Medium-Light">🖐🏼</div>
+                                             <div id="skintone-3" class="emoji hide-focus " aria-selected="false" role="option" title="Medium" tabindex="-1" aria-label="Medium">🖐🏽</div>
+                                             <div id="skintone-4" class="emoji hide-focus " aria-selected="false" role="option" title="Medium-Dark" tabindex="-1" aria-label="Medium-Dark">🖐🏾</div>
+                                             <div id="skintone-5" class="emoji hide-focus " aria-selected="false" role="option" title="Dark" tabindex="-1" aria-label="Dark">🖐🏿</div>
+                                          </div>
+                                       </div>
+                                       <div class="nav" role="tablist" aria-label="Categories" style="grid-template-columns: repeat(9, 1fr);">
+                                          <button role="tab" class="nav-button" aria-controls="tab-0" aria-label="Smileys and emoticons" aria-selected="true" title="Smileys and emoticons">
+                                             <div class="nav-emoji emoji">😀</div>
+                                          </button>
+                                          <button role="tab" class="nav-button" aria-controls="tab-1" aria-label="People and body" aria-selected="false" title="People and body">
+                                             <div class="nav-emoji emoji">👋</div>
+                                          </button>
+                                          <button role="tab" class="nav-button" aria-controls="tab-3" aria-label="Animals and nature" aria-selected="false" title="Animals and nature">
+                                             <div class="nav-emoji emoji">🐱</div>
+                                          </button>
+                                          <button role="tab" class="nav-button" aria-controls="tab-4" aria-label="Food and drink" aria-selected="false" title="Food and drink">
+                                             <div class="nav-emoji emoji">🍎</div>
+                                          </button>
+                                          <button role="tab" class="nav-button" aria-controls="tab-5" aria-label="Travel and places" aria-selected="false" title="Travel and places">
+                                             <div class="nav-emoji emoji">🏠️</div>
+                                          </button>
+                                          <button role="tab" class="nav-button" aria-controls="tab-6" aria-label="Activities" aria-selected="false" title="Activities">
+                                             <div class="nav-emoji emoji">⚽</div>
+                                          </button>
+                                          <button role="tab" class="nav-button" aria-controls="tab-7" aria-label="Objects" aria-selected="false" title="Objects">
+                                             <div class="nav-emoji emoji">📝</div>
+                                          </button>
+                                          <button role="tab" class="nav-button" aria-controls="tab-8" aria-label="Symbols" aria-selected="false" title="Symbols">
+                                             <div class="nav-emoji emoji">⛔️</div>
+                                          </button>
+                                          <button role="tab" class="nav-button" aria-controls="tab-9" aria-label="Flags" aria-selected="false" title="Flags">
+                                             <div class="nav-emoji emoji">🏁</div>
+                                          </button>
+                                       </div>
+                                       <div class="indicator-wrapper">
+                                          <div class="indicator" style="transform: translateX(0%);"></div>
+                                       </div>
+                                       <div class="message gone" role="alert" aria-live="polite">undefined</div>
+                                       <div class="tabpanel " role="tabpanel" aria-label="Smileys and emoticons" id="tab-0" tabindex="0">
+                                          <div>
+                                             <div id="menu-label-0" class="category gone" aria-hidden="true">Smileys and emoticons</div>
+                                             <div class="emoji-menu" role="menu" aria-labelledby="menu-label-0" id=""><button role="menuitem" aria-selected="" aria-label="😀, grinning, grinning_face" title="grinning, grinning_face" class="emoji " id="emo-😀">😀</button><button role="menuitem" aria-selected="" aria-label="😃, grinning_face_with_big_eyes, smiley" title="grinning_face_with_big_eyes, smiley" class="emoji " id="emo-😃">😃</button><button role="menuitem" aria-selected="" aria-label="😄, grinning_face_with_closed_eyes, smile" title="grinning_face_with_closed_eyes, smile" class="emoji " id="emo-😄">😄</button><button role="menuitem" aria-selected="" aria-label="😁, beaming_face, grin" title="beaming_face, grin" class="emoji " id="emo-😁">😁</button><button role="menuitem" aria-selected="" aria-label="😆, laughing, lol, satisfied, squinting_face" title="laughing, lol, satisfied, squinting_face" class="emoji " id="emo-😆">😆</button><button role="menuitem" aria-selected="" aria-label="😅, grinning_face_with_sweat, sweat_smile" title="grinning_face_with_sweat, sweat_smile" class="emoji " id="emo-😅">😅</button><button role="menuitem" aria-selected="" aria-label="🤣, rofl" title="rofl" class="emoji " id="emo-🤣">🤣</button><button role="menuitem" aria-selected="" aria-label="😂, joy, lmao, tears_of_joy" title="joy, lmao, tears_of_joy" class="emoji " id="emo-😂">😂</button><button role="menuitem" aria-selected="" aria-label="🙂, slightly_smiling_face" title="slightly_smiling_face" class="emoji " id="emo-🙂">🙂</button><button role="menuitem" aria-selected="" aria-label="🙃, upside_down_face" title="upside_down_face" class="emoji " id="emo-🙃">🙃</button><button role="menuitem" aria-selected="" aria-label="🫠, melt, melting_face" title="melt, melting_face" class="emoji " id="emo-🫠">🫠</button><button role="menuitem" aria-selected="" aria-label="😉, wink, winking_face" title="wink, winking_face" class="emoji " id="emo-😉">😉</button><button role="menuitem" aria-selected="" aria-label="😊, blush, smiling_face_with_closed_eyes" title="blush, smiling_face_with_closed_eyes" class="emoji " id="emo-😊">😊</button><button role="menuitem" aria-selected="" aria-label="😇, halo, innocent" title="halo, innocent" class="emoji " id="emo-😇">😇</button><button role="menuitem" aria-selected="" aria-label="🥰, smiling_face_with_3_hearts" title="smiling_face_with_3_hearts" class="emoji " id="emo-🥰">🥰</button><button role="menuitem" aria-selected="" aria-label="😍, heart_eyes, smiling_face_with_heart_eyes" title="heart_eyes, smiling_face_with_heart_eyes" class="emoji " id="emo-😍">😍</button><button role="menuitem" aria-selected="" aria-label="🤩, star_struck" title="star_struck" class="emoji " id="emo-🤩">🤩</button><button role="menuitem" aria-selected="" aria-label="😘, blowing_a_kiss, kissing_heart" title="blowing_a_kiss, kissing_heart" class="emoji " id="emo-😘">😘</button><button role="menuitem" aria-selected="" aria-label="😗, kissing, kissing_face" title="kissing, kissing_face" class="emoji " id="emo-😗">😗</button><button role="menuitem" aria-selected="" aria-label="😚, kissing_closed_eyes, kissing_face_with_closed_eyes" title="kissing_closed_eyes, kissing_face_with_closed_eyes" class="emoji " id="emo-😚">😚</button><button role="menuitem" aria-selected="" aria-label="😙, kissing_face_with_smiling_eyes, kissing_smiling_eyes" title="kissing_face_with_smiling_eyes, kissing_smiling_eyes" class="emoji " id="emo-😙">😙</button><button role="menuitem" aria-selected="" aria-label="🥲, smiling_face_with_tear" title="smiling_face_with_tear" class="emoji " id="emo-🥲">🥲</button><button role="menuitem" aria-selected="" aria-label="😋, savoring_food, yum" title="savoring_food, yum" class="emoji " id="emo-😋">😋</button><button role="menuitem" aria-selected="" aria-label="😛, face_with_tongue, stuck_out_tongue" title="face_with_tongue, stuck_out_tongue" class="emoji " id="emo-😛">😛</button><button role="menuitem" aria-selected="" aria-label="😜, stuck_out_tongue_winking_eye" title="stuck_out_tongue_winking_eye" class="emoji " id="emo-😜">😜</button><button role="menuitem" aria-selected="" aria-label="🤪, zany, zany_face" title="zany, zany_face" class="emoji " id="emo-🤪">🤪</button><button role="menuitem" aria-selected="" aria-label="😝, stuck_out_tongue_closed_eyes" title="stuck_out_tongue_closed_eyes" class="emoji " id="emo-😝">😝</button><button role="menuitem" aria-selected="" aria-label="🤑, money_mouth_face" title="money_mouth_face" class="emoji " id="emo-🤑">🤑</button><button role="menuitem" aria-selected="" aria-label="🤗, hug, hugging, hugging_face" title="hug, hugging, hugging_face" class="emoji " id="emo-🤗">🤗</button><button role="menuitem" aria-selected="" aria-label="🤭, face_with_hand_over_mouth, hand_over_mouth" title="face_with_hand_over_mouth, hand_over_mouth" class="emoji " id="emo-🤭">🤭</button><button role="menuitem" aria-selected="" aria-label="🫢, face_with_open_eyes_hand_over_mouth, gasp" title="face_with_open_eyes_hand_over_mouth, gasp" class="emoji " id="emo-🫢">🫢</button><button role="menuitem" aria-selected="" aria-label="🫣, face_with_peeking_eye, peek" title="face_with_peeking_eye, peek" class="emoji " id="emo-🫣">🫣</button><button role="menuitem" aria-selected="" aria-label="🤫, shush, shushing_face" title="shush, shushing_face" class="emoji " id="emo-🤫">🤫</button><button role="menuitem" aria-selected="" aria-label="🤔, thinking, thinking_face, wtf" title="thinking, thinking_face, wtf" class="emoji " id="emo-🤔">🤔</button><button role="menuitem" aria-selected="" aria-label="🫡, salute, saluting_face" title="salute, saluting_face" class="emoji " id="emo-🫡">🫡</button><button role="menuitem" aria-selected="" aria-label="🤐, zipper_mouth, zipper_mouth_face" title="zipper_mouth, zipper_mouth_face" class="emoji " id="emo-🤐">🤐</button><button role="menuitem" aria-selected="" aria-label="🤨, face_with_raised_eyebrow, raised_eyebrow" title="face_with_raised_eyebrow, raised_eyebrow" class="emoji " id="emo-🤨">🤨</button><button role="menuitem" aria-selected="" aria-label="😐️, neutral, neutral_face" title="neutral, neutral_face" class="emoji " id="emo-😐️">😐️</button><button role="menuitem" aria-selected="" aria-label="😑, expressionless, expressionless_face" title="expressionless, expressionless_face" class="emoji " id="emo-😑">😑</button><button role="menuitem" aria-selected="" aria-label="😶, no_mouth" title="no_mouth" class="emoji " id="emo-😶">😶</button><button role="menuitem" aria-selected="" aria-label="🫥, dotted_line_face" title="dotted_line_face" class="emoji " id="emo-🫥">🫥</button><button role="menuitem" aria-selected="" aria-label="😏, smirk, smirking, smirking_face" title="smirk, smirking, smirking_face" class="emoji " id="emo-😏">😏</button><button role="menuitem" aria-selected="" aria-label="😒, unamused, unamused_face" title="unamused, unamused_face" class="emoji " id="emo-😒">😒</button><button role="menuitem" aria-selected="" aria-label="🙄, rolling_eyes" title="rolling_eyes" class="emoji " id="emo-🙄">🙄</button><button role="menuitem" aria-selected="" aria-label="😬, grimacing, grimacing_face" title="grimacing, grimacing_face" class="emoji " id="emo-😬">😬</button><button role="menuitem" aria-selected="" aria-label="🤥, lying, lying_face" title="lying, lying_face" class="emoji " id="emo-🤥">🤥</button><button role="menuitem" aria-selected="" aria-label="😌, relieved, relieved_face" title="relieved, relieved_face" class="emoji " id="emo-😌">😌</button><button role="menuitem" aria-selected="" aria-label="😔, pensive, pensive_face" title="pensive, pensive_face" class="emoji " id="emo-😔">😔</button><button role="menuitem" aria-selected="" aria-label="😪, sleepy, sleepy_face" title="sleepy, sleepy_face" class="emoji " id="emo-😪">😪</button><button role="menuitem" aria-selected="" aria-label="🤤, drooling, drooling_face" title="drooling, drooling_face" class="emoji " id="emo-🤤">🤤</button><button role="menuitem" aria-selected="" aria-label="😴, sleeping, sleeping_face" title="sleeping, sleeping_face" class="emoji " id="emo-😴">😴</button><button role="menuitem" aria-selected="" aria-label="😷, mask, medical_mask" title="mask, medical_mask" class="emoji " id="emo-😷">😷</button><button role="menuitem" aria-selected="" aria-label="🤒, face_with_thermometer" title="face_with_thermometer" class="emoji " id="emo-🤒">🤒</button><button role="menuitem" aria-selected="" aria-label="🤕, face_with_head_bandage" title="face_with_head_bandage" class="emoji " id="emo-🤕">🤕</button><button role="menuitem" aria-selected="" aria-label="🤢, nauseated, nauseated_face" title="nauseated, nauseated_face" class="emoji " id="emo-🤢">🤢</button><button role="menuitem" aria-selected="" aria-label="🤮, face_vomiting, vomiting" title="face_vomiting, vomiting" class="emoji " id="emo-🤮">🤮</button><button role="menuitem" aria-selected="" aria-label="🤧, sneezing, sneezing_face" title="sneezing, sneezing_face" class="emoji " id="emo-🤧">🤧</button><button role="menuitem" aria-selected="" aria-label="🥵, hot, hot_face" title="hot, hot_face" class="emoji " id="emo-🥵">🥵</button><button role="menuitem" aria-selected="" aria-label="🥶, cold, cold_face" title="cold, cold_face" class="emoji " id="emo-🥶">🥶</button><button role="menuitem" aria-selected="" aria-label="🥴, woozy, woozy_face" title="woozy, woozy_face" class="emoji " id="emo-🥴">🥴</button><button role="menuitem" aria-selected="" aria-label="😵, dizzy_face, knocked_out" title="dizzy_face, knocked_out" class="emoji " id="emo-😵">😵</button><button role="menuitem" aria-selected="" aria-label="🤯, exploding_head" title="exploding_head" class="emoji " id="emo-🤯">🤯</button><button role="menuitem" aria-selected="" aria-label="🤠, cowboy, cowboy_face" title="cowboy, cowboy_face" class="emoji " id="emo-🤠">🤠</button><button role="menuitem" aria-selected="" aria-label="🥳, hooray, partying, partying_face" title="hooray, partying, partying_face" class="emoji " id="emo-🥳">🥳</button><button role="menuitem" aria-selected="" aria-label="🥸, disguised, disguised_face" title="disguised, disguised_face" class="emoji " id="emo-🥸">🥸</button><button role="menuitem" aria-selected="" aria-label="😎, smiling_face_with_sunglasses, sunglasses_cool, too_cool" title="smiling_face_with_sunglasses, sunglasses_cool, too_cool" class="emoji " id="emo-😎">😎</button><button role="menuitem" aria-selected="" aria-label="🤓, nerd, nerd_face" title="nerd, nerd_face" class="emoji " id="emo-🤓">🤓</button><button role="menuitem" aria-selected="" aria-label="🧐, face_with_monocle" title="face_with_monocle" class="emoji " id="emo-🧐">🧐</button><button role="menuitem" aria-selected="" aria-label="😕, confused, confused_face" title="confused, confused_face" class="emoji " id="emo-😕">😕</button><button role="menuitem" aria-selected="" aria-label="🫤, face_with_diagonal_mouth" title="face_with_diagonal_mouth" class="emoji " id="emo-🫤">🫤</button><button role="menuitem" aria-selected="" aria-label="😟, worried, worried_face" title="worried, worried_face" class="emoji " id="emo-😟">😟</button><button role="menuitem" aria-selected="" aria-label="🙁, slightly_frowning_face" title="slightly_frowning_face" class="emoji " id="emo-🙁">🙁</button><button role="menuitem" aria-selected="" aria-label="☹️, white_frowning_face" title="white_frowning_face" class="emoji " id="emo-☹️">☹️</button><button role="menuitem" aria-selected="" aria-label="😮, face_with_open_mouth, open_mouth" title="face_with_open_mouth, open_mouth" class="emoji " id="emo-😮">😮</button><button role="menuitem" aria-selected="" aria-label="😯, hushed, hushed_face" title="hushed, hushed_face" class="emoji " id="emo-😯">😯</button><button role="menuitem" aria-selected="" aria-label="😲, astonished, astonished_face" title="astonished, astonished_face" class="emoji " id="emo-😲">😲</button><button role="menuitem" aria-selected="" aria-label="😳, flushed, flushed_face" title="flushed, flushed_face" class="emoji " id="emo-😳">😳</button><button role="menuitem" aria-selected="" aria-label="🥺, pleading, pleading_face" title="pleading, pleading_face" class="emoji " id="emo-🥺">🥺</button><button role="menuitem" aria-selected="" aria-label="🥹, face_holding_back_tears, watery_eyes" title="face_holding_back_tears, watery_eyes" class="emoji " id="emo-🥹">🥹</button><button role="menuitem" aria-selected="" aria-label="😦, frowning, frowning_face" title="frowning, frowning_face" class="emoji " id="emo-😦">😦</button><button role="menuitem" aria-selected="" aria-label="😧, anguished, anguished_face" title="anguished, anguished_face" class="emoji " id="emo-😧">😧</button><button role="menuitem" aria-selected="" aria-label="😨, fearful, fearful_face" title="fearful, fearful_face" class="emoji " id="emo-😨">😨</button><button role="menuitem" aria-selected="" aria-label="😰, anxious, anxious_face, cold_sweat" title="anxious, anxious_face, cold_sweat" class="emoji " id="emo-😰">😰</button><button role="menuitem" aria-selected="" aria-label="😥, disappointed_relieved, sad_relieved_face" title="disappointed_relieved, sad_relieved_face" class="emoji " id="emo-😥">😥</button><button role="menuitem" aria-selected="" aria-label="😢, cry, crying_face" title="cry, crying_face" class="emoji " id="emo-😢">😢</button><button role="menuitem" aria-selected="" aria-label="😭, loudly_crying_face, sob" title="loudly_crying_face, sob" class="emoji " id="emo-😭">😭</button><button role="menuitem" aria-selected="" aria-label="😱, scream, screaming_in_fear" title="scream, screaming_in_fear" class="emoji " id="emo-😱">😱</button><button role="menuitem" aria-selected="" aria-label="😖, confounded, confounded_face" title="confounded, confounded_face" class="emoji " id="emo-😖">😖</button><button role="menuitem" aria-selected="" aria-label="😣, persevere, persevering_face" title="persevere, persevering_face" class="emoji " id="emo-😣">😣</button><button role="menuitem" aria-selected="" aria-label="😞, disappointed, disappointed_face" title="disappointed, disappointed_face" class="emoji " id="emo-😞">😞</button><button role="menuitem" aria-selected="" aria-label="😓, downcast_face, sweat" title="downcast_face, sweat" class="emoji " id="emo-😓">😓</button><button role="menuitem" aria-selected="" aria-label="😩, weary, weary_face" title="weary, weary_face" class="emoji " id="emo-😩">😩</button><button role="menuitem" aria-selected="" aria-label="😫, tired, tired_face" title="tired, tired_face" class="emoji " id="emo-😫">😫</button><button role="menuitem" aria-selected="" aria-label="🥱, yawn, yawning, yawning_face" title="yawn, yawning, yawning_face" class="emoji " id="emo-🥱">🥱</button><button role="menuitem" aria-selected="" aria-label="😤, nose_steam, triumph" title="nose_steam, triumph" class="emoji " id="emo-😤">😤</button><button role="menuitem" aria-selected="" aria-label="😡, pout, pouting_face, rage" title="pout, pouting_face, rage" class="emoji " id="emo-😡">😡</button><button role="menuitem" aria-selected="" aria-label="😠, angry, angry_face" title="angry, angry_face" class="emoji " id="emo-😠">😠</button><button role="menuitem" aria-selected="" aria-label="🤬, censored, face_with_symbols_on_mouth" title="censored, face_with_symbols_on_mouth" class="emoji " id="emo-🤬">🤬</button><button role="menuitem" aria-selected="" aria-label="😈, smiling_imp" title="smiling_imp" class="emoji " id="emo-😈">😈</button><button role="menuitem" aria-selected="" aria-label="👿, angry_imp, imp" title="angry_imp, imp" class="emoji " id="emo-👿">👿</button><button role="menuitem" aria-selected="" aria-label="💀, skull" title="skull" class="emoji " id="emo-💀">💀</button><button role="menuitem" aria-selected="" aria-label="☠️, skull_and_crossbones" title="skull_and_crossbones" class="emoji " id="emo-☠️">☠️</button><button role="menuitem" aria-selected="" aria-label="💩, poop, shit" title="poop, shit" class="emoji " id="emo-💩">💩</button><button role="menuitem" aria-selected="" aria-label="🤡, clown, clown_face" title="clown, clown_face" class="emoji " id="emo-🤡">🤡</button><button role="menuitem" aria-selected="" aria-label="👹, japanese_ogre, ogre" title="japanese_ogre, ogre" class="emoji " id="emo-👹">👹</button><button role="menuitem" aria-selected="" aria-label="👺, goblin, japanese_goblin" title="goblin, japanese_goblin" class="emoji " id="emo-👺">👺</button><button role="menuitem" aria-selected="" aria-label="👻, ghost" title="ghost" class="emoji " id="emo-👻">👻</button><button role="menuitem" aria-selected="" aria-label="👽️, alien" title="alien" class="emoji " id="emo-👽️">👽️</button><button role="menuitem" aria-selected="" aria-label="👾, alien_monster, space_invader" title="alien_monster, space_invader" class="emoji " id="emo-👾">👾</button><button role="menuitem" aria-selected="" aria-label="🤖, robot, robot_face" title="robot, robot_face" class="emoji " id="emo-🤖">🤖</button><button role="menuitem" aria-selected="" aria-label="😺, grinning_cat, smiley_cat" title="grinning_cat, smiley_cat" class="emoji " id="emo-😺">😺</button><button role="menuitem" aria-selected="" aria-label="😸, grinning_cat_with_closed_eyes, smile_cat" title="grinning_cat_with_closed_eyes, smile_cat" class="emoji " id="emo-😸">😸</button><button role="menuitem" aria-selected="" aria-label="😹, joy_cat, tears_of_joy_cat" title="joy_cat, tears_of_joy_cat" class="emoji " id="emo-😹">😹</button><button role="menuitem" aria-selected="" aria-label="😻, heart_eyes_cat, smiling_cat_with_heart_eyes" title="heart_eyes_cat, smiling_cat_with_heart_eyes" class="emoji " id="emo-😻">😻</button><button role="menuitem" aria-selected="" aria-label="😼, smirk_cat, wry_smile_cat" title="smirk_cat, wry_smile_cat" class="emoji " id="emo-😼">😼</button><button role="menuitem" aria-selected="" aria-label="😽, kissing_cat" title="kissing_cat" class="emoji " id="emo-😽">😽</button><button role="menuitem" aria-selected="" aria-label="🙀, scream_cat, weary_cat" title="scream_cat, weary_cat" class="emoji " id="emo-🙀">🙀</button><button role="menuitem" aria-selected="" aria-label="😿, crying_cat" title="crying_cat" class="emoji " id="emo-😿">😿</button><button role="menuitem" aria-selected="" aria-label="😾, pouting_cat" title="pouting_cat" class="emoji " id="emo-😾">😾</button><button role="menuitem" aria-selected="" aria-label="🙈, see_no_evil" title="see_no_evil" class="emoji " id="emo-🙈">🙈</button><button role="menuitem" aria-selected="" aria-label="🙉, hear_no_evil" title="hear_no_evil" class="emoji " id="emo-🙉">🙉</button><button role="menuitem" aria-selected="" aria-label="🙊, speak_no_evil" title="speak_no_evil" class="emoji " id="emo-🙊">🙊</button><button role="menuitem" aria-selected="" aria-label="💋, kiss" title="kiss" class="emoji " id="emo-💋">💋</button><button role="menuitem" aria-selected="" aria-label="💌, love_letter" title="love_letter" class="emoji " id="emo-💌">💌</button><button role="menuitem" aria-selected="" aria-label="💘, cupid, heart_with_arrow" title="cupid, heart_with_arrow" class="emoji " id="emo-💘">💘</button><button role="menuitem" aria-selected="" aria-label="💝, gift_heart, heart_with_ribbon" title="gift_heart, heart_with_ribbon" class="emoji " id="emo-💝">💝</button><button role="menuitem" aria-selected="" aria-label="💖, sparkling_heart" title="sparkling_heart" class="emoji " id="emo-💖">💖</button><button role="menuitem" aria-selected="" aria-label="💗, growing_heart, heartpulse" title="growing_heart, heartpulse" class="emoji " id="emo-💗">💗</button><button role="menuitem" aria-selected="" aria-label="💓, beating_heart, heartbeat" title="beating_heart, heartbeat" class="emoji " id="emo-💓">💓</button><button role="menuitem" aria-selected="" aria-label="💞, revolving_hearts" title="revolving_hearts" class="emoji " id="emo-💞">💞</button><button role="menuitem" aria-selected="" aria-label="💕, two_hearts" title="two_hearts" class="emoji " id="emo-💕">💕</button><button role="menuitem" aria-selected="" aria-label="💟, heart_decoration" title="heart_decoration" class="emoji " id="emo-💟">💟</button><button role="menuitem" aria-selected="" aria-label="❣️, heart_exclamation" title="heart_exclamation" class="emoji " id="emo-❣️">❣️</button><button role="menuitem" aria-selected="" aria-label="💔, broken_heart" title="broken_heart" class="emoji " id="emo-💔">💔</button><button role="menuitem" aria-selected="" aria-label="❤️, heart, red_heart" title="heart, red_heart" class="emoji " id="emo-❤️">❤️</button><button role="menuitem" aria-selected="" aria-label="🧡, orange_heart" title="orange_heart" class="emoji " id="emo-🧡">🧡</button><button role="menuitem" aria-selected="" aria-label="💛, yellow_heart" title="yellow_heart" class="emoji " id="emo-💛">💛</button><button role="menuitem" aria-selected="" aria-label="💚, green_heart" title="green_heart" class="emoji " id="emo-💚">💚</button><button role="menuitem" aria-selected="" aria-label="💙, blue_heart" title="blue_heart" class="emoji " id="emo-💙">💙</button><button role="menuitem" aria-selected="" aria-label="💜, purple_heart" title="purple_heart" class="emoji " id="emo-💜">💜</button><button role="menuitem" aria-selected="" aria-label="🤎, brown_heart" title="brown_heart" class="emoji " id="emo-🤎">🤎</button><button role="menuitem" aria-selected="" aria-label="🖤, black_heart" title="black_heart" class="emoji " id="emo-🖤">🖤</button><button role="menuitem" aria-selected="" aria-label="🤍, white_heart" title="white_heart" class="emoji " id="emo-🤍">🤍</button><button role="menuitem" aria-selected="" aria-label="💯, 100" title="100" class="emoji " id="emo-💯">💯</button><button role="menuitem" aria-selected="" aria-label="💢, anger" title="anger" class="emoji " id="emo-💢">💢</button><button role="menuitem" aria-selected="" aria-label="💥, boom, collision" title="boom, collision" class="emoji " id="emo-💥">💥</button><button role="menuitem" aria-selected="" aria-label="💫, dizzy" title="dizzy" class="emoji " id="emo-💫">💫</button><button role="menuitem" aria-selected="" aria-label="💦, sweat_drops" title="sweat_drops" class="emoji " id="emo-💦">💦</button><button role="menuitem" aria-selected="" aria-label="💨, dash, dashing_away" title="dash, dashing_away" class="emoji " id="emo-💨">💨</button><button role="menuitem" aria-selected="" aria-label="🕳️, hole" title="hole" class="emoji " id="emo-🕳️">🕳️</button><button role="menuitem" aria-selected="" aria-label="💣️, bomb" title="bomb" class="emoji " id="emo-💣️">💣️</button><button role="menuitem" aria-selected="" aria-label="💬, speech_balloon" title="speech_balloon" class="emoji " id="emo-💬">💬</button><button role="menuitem" aria-selected="" aria-label="🗨️, left_speech_bubble" title="left_speech_bubble" class="emoji " id="emo-🗨️">🗨️</button><button role="menuitem" aria-selected="" aria-label="🗯️, right_anger_bubble" title="right_anger_bubble" class="emoji " id="emo-🗯️">🗯️</button><button role="menuitem" aria-selected="" aria-label="💭, thought_balloon" title="thought_balloon" class="emoji " id="emo-💭">💭</button><button role="menuitem" aria-selected="" aria-label="💤, zzz" title="zzz" class="emoji " id="emo-💤">💤</button></div>
+                                          </div>
+                                       </div>
+                                       <div class="favorites emoji-menu " role="menu" aria-label="Favorites" style="padding-inline-end: 0px;"><button role="menuitem" aria-label="😊, blush, smiling_face_with_closed_eyes" title="blush, smiling_face_with_closed_eyes" class="emoji" id="fav-😊">😊</button><button role="menuitem" aria-label="😒, unamused, unamused_face" title="unamused, unamused_face" class="emoji" id="fav-😒">😒</button><button role="menuitem" aria-label="♥️, hearts" title="hearts" class="emoji" id="fav-♥️">♥️</button><button role="menuitem" aria-label="👍️, +1, thumbsup, yes" title="+1, thumbsup, yes" class="emoji" id="fav-👍️">👍️</button><button role="menuitem" aria-label="😍, heart_eyes, smiling_face_with_heart_eyes" title="heart_eyes, smiling_face_with_heart_eyes" class="emoji" id="fav-😍">😍</button><button role="menuitem" aria-label="😂, joy, lmao, tears_of_joy" title="joy, lmao, tears_of_joy" class="emoji" id="fav-😂">😂</button><button role="menuitem" aria-label="😭, loudly_crying_face, sob" title="loudly_crying_face, sob" class="emoji" id="fav-😭">😭</button><button role="menuitem" aria-label="😔, pensive, pensive_face" title="pensive, pensive_face" class="emoji" id="fav-😔">😔</button></div>
+                                       <button aria-hidden="true" tabindex="-1" class="abs-pos hidden emoji">😀</button>
+                                    </section>
+                                 </template>
+                              </emoji-picker>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="center">
+                        <button type="submit" class="btn-blessing btn btn-primary submit_form" style="width: 229px;"><span class="h-lines"></span><span class="v-lines"></span><span class="h-lines"></span><span class="v-lines"></span>Gửi
+                        lời chúc</button>
+                     </div>
+                  </form>
+                  <div class="wish-box" id="congratulation-list">
+                     <!-- Latest blessings will be loaded here -->
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+ <!-- Thêm vào body hoặc gần nút .btn-blessing -->
+<div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1000; backdrop-filter: blur(5px);">
+<div id="loading-spinner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+   <div class="spinner"></div>
+   <div style="color: white; margin-top: 20px; font-size: 18px; font-weight: 500;">Đang gửi tin nhắn...</div>
+</div>
+</div>
+</section>
+<script src="./index_files/sweetalert2@11"></script>
+<!-- HungPNH--Sendmess -->
+<script>
+   function initEvent() {
+       $('.deletable').off('click').on('click', function(e) {
+           e.preventDefault();
+   
+           var id = $(this).data('id');
+           Swal.fire({
+               title: "Xác nhận xóa lời chúc?",
+               text: "Hành động này không thể hoàn tác, bạn vẫn muốn tiếp tục?",
+               icon: "warning",
+               showCancelButton: true,
+               confirmButtonColor: "#FF8A8A",
+               cancelButtonColor: "#d3d3d3",
+               confirmButtonText: "Xóa",
+               cancelButtonText: "Hủy"
+           }).then((result) => {
+               if (result.isConfirmed) {
+                   $.ajax({
+                       headers: {
+                           "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                       },
+                       url: '/api/blessing/' + $(this).data('id'),
+                       method: 'DELETE',
+                       processData: false, // Ngăn jQuery tự động chuyển đổi dữ liệu
+                       contentType: false, // Ngăn jQuery thiết lập header Content-Type
+                       success: function(response) {
+                           // Swal.fire({
+                           //     title: "Đã xóa!",
+                           //     text: "Bạn đã xóa lời chúc thành công",
+                           //     icon: "success"
+                           // });
+                           // console.log('Phản hồi:', response);
+                           showSuccessPopup('Xóa lời chúc thành công');
+                           fetchBlessingData(); // Gọi hàm lấy dữ liệu nếu cần
+                       },
+                       error: function(xhr, status, error) {
+                           console.error('Lỗi:', error);
+                           showErrorPopup('Có lỗi lầm đâu đó rồi ;((');
+                       }
+                   });
+   
+   
+               }
+           });
+       });
+   
+       // $('.deletable').off('click').on('click', function(e) {
+       //     e.preventDefault();
+       //     $.ajax({
+       //         headers: {
+       //             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+       //         },
+       //         url: '/api/blessing/' + $(this).data('id'),
+       //         method: 'DELETE',
+       //         processData: false, // Ngăn jQuery tự động chuyển đổi dữ liệu
+       //         contentType: false, // Ngăn jQuery thiết lập header Content-Type
+       //         success: function(response) {
+       //             console.log('Phản hồi:', response);
+       //             showSuccessPopup('Xóa lời chúc thành công');
+       //             fetchBlessingData(); // Gọi hàm lấy dữ liệu nếu cần
+       //         },
+       //         error: function(xhr, status, error) {
+       //             console.error('Lỗi:', error);
+       //             showErrorPopup('Có lỗi lầm đâu đó rồi ;((');
+       //         }
+       //     });
+       // })
+   
+       $('.rsvp-reply, .rsvp-save-reply').off('click').on('click', function(e) {
+           e.preventDefault();
+           const $parentElement = $(this).parent();
+           const $textarea = $parentElement.find('textarea');
+           const content = $textarea.val().trim();
+           console.log('-->', $textarea, content);
+           if (!content) {
+               alert('Nội dung không được để trống!');
+               return;
+           }
+           // Make the AJAX request
+           $.ajax({
+               headers: {
+                   "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+               },
+               url: `/api/blessing/reply/${$parentElement.data('id')}`,
+               method: 'POST',
+               data: {
+                   content
+               },
+               // processData: false,
+               // contentType: false,
+               success: function(response) {
+                   console.log('Phản hồi:', response);
+                   showSuccessPopup('Phản hồi thành công!');
+                   fetchBlessingData(); // Uncomment if you need to fetch data again
+               },
+               error: function(xhr, status, error) {
+                   console.error('Lỗi:', error);
+                   showErrorPopup('Có lỗi lầm đâu đó rồi ;((');
+               }
+           });
+       });
+   
+       if (window.location.href.includes('/edit')) {
+           $('.rsvp-reply-content').off('click').on('click', function(e) {
+               $(this).css('display', 'none');
+               $(this).siblings('.rsvp-reply-edit').css('display', 'block');
+               $(this).parent().find('.rsvp-edit-reply').each(function() {
+                   $(this).removeClass('rsvp-edit-reply').addClass('rsvp-hidden');
+               })
+               $(this).parent().find('.rsvp-save-reply').each(function() {
+                   $(this).removeClass('rsvp-hidden');
+               });
+               initEvent();
+           });
+           $('.rsvp-edit-reply').off('click').on('click', function(e) {
+               $('.rsvp-edit-reply').siblings('.rsvp-reply-content').css('display', 'none');
+               $(this).siblings('.rsvp-reply-edit').css('display', 'block');
+               $(this).parent().find('.rsvp-edit-reply').each(function() {
+                   $(this).removeClass('rsvp-edit-reply').addClass('rsvp-hidden');
+               })
+               $(this).parent().find('.rsvp-save-reply').each(function() {
+                   $(this).removeClass('rsvp-hidden');
+               });
+               initEvent();
+           });
+       }
+   }
+   
+   function fetchBlessingData() {
+       // Load latest blessings from new API
+       $.ajax({
+           url: 'http://localhost:5001/api/blessing/latest',
+           method: 'GET',
+           success: function(response) {
+               if (response.success && response.data) {
+                   const data = response.data;
+                   
+                   // Sort by created_at descending (newest first)
+                   data.sort(function(a, b) {
+                       return new Date(b.created_at) - new Date(a.created_at);
+                   });
+                   
+                   let congratulateHtmlAll = '';
+                   
+                   data.forEach(function(item, index) {
+                       let congratulateHtml = `<div class="wish-box-item">`;
+                       congratulateHtml += `
+                               <strong>${item.name}</strong>
+                               <p>${item.content}</p>
+                           </div>`;
+                       congratulateHtmlAll += congratulateHtml;
+                   });
+                   
+                   // If no blessings, show default message
+                   if (congratulateHtmlAll === '') {
+                       congratulateHtmlAll = `
+                           <div class="wish-box-item">
+                               <strong>Chưa có lời chúc nào</strong>
+                               <p>Hãy là người đầu tiên gửi lời chúc đến cặp đôi nhé! 💕</p>
+                           </div>
+                       `;
+                   }
+                   
+                   $('#congratulation-list').html(congratulateHtmlAll);
+               } else {
+                   console.error('Không thể tải lời chúc:', response.message);
+                   $('#congratulation-list').html(`
+                       <div class="wish-box-item">
+                           <strong>Lỗi tải dữ liệu</strong>
+                           <p>Không thể tải lời chúc. Vui lòng thử lại sau.</p>
+                       </div>
+                   `);
+               }
+           },
+           error: function() {
+               console.error('Có lỗi xảy ra khi lấy dữ liệu từ API.');
+               $('#congratulation-list').html(`
+                   <div class="wish-box-item">
+                       <strong>Lỗi kết nối</strong>
+                       <p>Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.</p>
+                   </div>
+               `);
+           }
+       });
+   }
+   
+
+$('.btn-blessing').on('click', function(e) {
+
+   e.preventDefault();
+
+   var slug = $('input[name="slug"][hidden]').val();
+   var name = $('#guest-name').val().trim();
+   var from = $('#guest-from').val().trim();
+   var blessing = $('.vitualTextarea #content').val().trim();
+
+   if (!name) {
+      //showErrorPopup('Tên không được để trống!');
+      Swal.fire({
+          icon: 'error',
+          title: 'Thất bại!',
+          text: 'Tên không được để trống!' // Hiển thị message từ phản hồi
+      });
+      return;
+   }
+   if (from == "0") {
+      //showErrorPopup('Lời chúc không được để trống!');
+      Swal.fire({
+          icon: 'error',
+          title: 'Thất bại!',
+          text: 'Bạn là người thân của ???' // Hiển thị message từ phản hồi
+      });
+      return;
+   }else{
+      var stringFrom = from == "1" ? "Cô dâu": "Chú rể";
+   }
+   if (!blessing) {
+      //showErrorPopup('Lời chúc không được để trống!');
+      Swal.fire({
+          icon: 'error',
+          title: 'Thất bại!',
+          text: 'Lời chúc không được để trống!' // Hiển thị message từ phản hồi
+      });
+      return;
+   }
+   
+   var data = {
+      name: name,
+      from: stringFrom,
+      content: blessing
+   };
+   // Hiển thị loading
+   $('#loading-overlay').show();
+   $.ajax({
+      url: 'http://localhost:5001/api/blessing/send',
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(data),
+      success: function(response) {
+         console.log('Phản hồi:', response);
+         Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: 'Gửi lời chúc thành công!'
+         });
+         $('#guest-name').val('');
+         $('#guest-from').val('0');
+         $('.vitualTextarea #content').val('');
+         
+         // Reload blessings after successful send
+         fetchBlessingData();
+      },
+      error: function(xhr, status, error) {
+         console.error('Lỗi:', error);
+         Swal.fire({
+          icon: 'error',
+          title: 'Thất bại!',
+          text: 'Đã xảy ra lỗi hệ thống!'
+      });
+      },
+      complete: function() {
+         // Ẩn loading sau khi hoàn thành (thành công hoặc lỗi)
+         $('#loading-overlay').hide();
+      }
+   });
+});
+
+// Function to select wish suggestion
+function selectWishSuggestion(element) {
+   const content = element.textContent;
+   $('.vitualTextarea #content').val(content);
+   $('.wishes-autocomplete-content').hide();
+}
+
+// Function to search wish suggestions
+function searchWishSuggestionsFunction() {
+   const input = document.getElementById("searchWishSuggestions");
+   const filter = input.value.toUpperCase();
+   const ul = document.getElementById("wishSuggestions");
+   const li = ul.getElementsByTagName("li");
+
+   for (let i = 0; i < li.length; i++) {
+      const a = li[i].getElementsByTagName("a")[0];
+      const txtValue = a.textContent || a.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+         li[i].style.display = "";
+      } else {
+         li[i].style.display = "none";
+      }
+   }
+}
+
+// Show/hide suggestions
+$(document).ready(function() {
+   $('.show-autocomplete').click(function() {
+      $('.wishes-autocomplete-content').show();
+      $('.show-autocomplete').hide();
+      $('.hide-autocomplete').show();
+   });
+   
+   $('.hide-autocomplete').click(function() {
+      $('.wishes-autocomplete-content').hide();
+      $('.hide-autocomplete').hide();
+      $('.show-autocomplete').show();
+   });
+});
+
+ 
+   fetchBlessingData();
+</script>

@@ -1,0 +1,7 @@
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#f8f9fa"/>
+  <circle cx="200" cy="200" r="150" fill="#e9ecef" stroke="#dee2e6" stroke-width="2"/>
+  <circle cx="200" cy="160" r="60" fill="#dee2e6"/>
+  <rect x="140" y="220" width="120" height="80" rx="10" fill="#dee2e6"/>
+  <text x="200" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#6c757d">Chú rể</text>
+</svg>

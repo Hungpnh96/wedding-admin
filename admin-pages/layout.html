@@ -1,0 +1,224 @@
+<div class="tab-content-wrapper">
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-th-large me-2"></i>Bố cục trang chủ</h5>
+        </div>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Kiểu header</label>
+                        <select class="form-control" id="headerStyle">
+                            <option value="hero">Hero Banner</option>
+                            <option value="minimal">Minimal</option>
+                            <option value="classic">Classic</option>
+                            <option value="modern">Modern</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kiểu navigation</label>
+                        <select class="form-control" id="navStyle">
+                            <option value="top">Top Navigation</option>
+                            <option value="side">Side Navigation</option>
+                            <option value="floating">Floating</option>
+                            <option value="hidden">Hidden</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Kiểu footer</label>
+                        <select class="form-control" id="footerStyle">
+                            <option value="simple">Simple</option>
+                            <option value="detailed">Detailed</option>
+                            <option value="minimal">Minimal</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bố cục nội dung</label>
+                        <select class="form-control" id="contentLayout">
+                            <option value="single">Single Column</option>
+                            <option value="two-column">Two Column</option>
+                            <option value="grid">Grid</option>
+                            <option value="masonry">Masonry</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-cogs me-2"></i>Tùy chỉnh nâng cao</h5>
+        </div>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Khoảng cách giữa các phần</label>
+                        <input type="range" class="form-range" id="sectionSpacing" min="0" max="100" value="50">
+                        <small class="form-text text-muted">50px</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Độ bo góc</label>
+                        <input type="range" class="form-range" id="borderRadius" min="0" max="20" value="8">
+                        <small class="form-text text-muted">8px</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Độ đổ bóng</label>
+                        <input type="range" class="form-range" id="boxShadow" min="0" max="20" value="5">
+                        <small class="form-text text-muted">5px</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hiệu ứng chuyển động</label>
+                        <select class="form-control" id="animationStyle">
+                            <option value="none">Không có</option>
+                            <option value="fade">Fade</option>
+                            <option value="slide">Slide</option>
+                            <option value="zoom">Zoom</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-mobile-alt me-2"></i>Tối ưu mobile</h5>
+        </div>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="mobileOptimized" checked>
+                        <label class="form-check-label" for="mobileOptimized">
+                            Tối ưu cho mobile
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="touchFriendly" checked>
+                        <label class="form-check-label" for="touchFriendly">
+                            Thân thiện với cảm ứng
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="fastLoading" checked>
+                        <label class="form-check-label" for="fastLoading">
+                            Tải nhanh
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="seoOptimized" checked>
+                        <label class="form-check-label" for="seoOptimized">
+                            Tối ưu SEO
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>// Layout Tab JavaScript
+function initializeLayout() {
+    console.log("Initializing layout tab");
+    
+    // Load layout data
+    loadLayoutData();
+    
+    // Setup event listeners
+    setupLayoutEventListeners();
+}
+
+function loadLayoutData() {
+    if (window.siteData  window.siteData.layout) {
+        const layout = window.siteData.layout;
+        
+        // Update form fields
+        setFieldValue("headerStyle", layout.headerStyle);
+        setFieldValue("navStyle", layout.navStyle);
+        setFieldValue("footerStyle", layout.footerStyle);
+        setFieldValue("contentLayout", layout.contentLayout);
+        setFieldValue("sectionSpacing", layout.sectionSpacing);
+        setFieldValue("borderRadius", layout.borderRadius);
+        setFieldValue("boxShadow", layout.boxShadow);
+        setFieldValue("animationStyle", layout.animationStyle);
+        setFieldValue("mobileOptimized", layout.mobileOptimized);
+        setFieldValue("touchFriendly", layout.touchFriendly);
+        setFieldValue("fastLoading", layout.fastLoading);
+        setFieldValue("seoOptimized", layout.seoOptimized);
+    }
+}
+
+function setupLayoutEventListeners() {
+    // Form field listeners
+    const layoutFields = ["headerStyle", "navStyle", "footerStyle", "contentLayout", 
+                         "sectionSpacing", "borderRadius", "boxShadow", "animationStyle",
+                         "mobileOptimized", "touchFriendly", "fastLoading", "seoOptimized"];
+    
+    layoutFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener("input", function() {
+                updateSiteDataFromLayoutForm();
+            });
+        }
+    });
+    
+    // Range slider listeners
+    const rangeSliders = document.querySelectorAll(".form-range");
+    rangeSliders.forEach(slider => {
+        slider.addEventListener("input", function() {
+            const label = this.parentElement.querySelector("small");
+            if (label) {
+                label.textContent = this.value + "px";
+            }
+            updateSiteDataFromLayoutForm();
+        });
+    });
+}
+
+function updateSiteDataFromLayoutForm() {
+    if (!window.siteData) window.siteData = {};
+    if (!window.siteData.layout) window.siteData.layout = {};
+    
+    // Update layout data
+    window.siteData.layout.headerStyle = document.getElementById("headerStyle")?.value || "hero";
+    window.siteData.layout.navStyle = document.getElementById("navStyle")?.value || "top";
+    window.siteData.layout.footerStyle = document.getElementById("footerStyle")?.value || "simple";
+    window.siteData.layout.contentLayout = document.getElementById("contentLayout")?.value || "single";
+    window.siteData.layout.sectionSpacing = parseInt(document.getElementById("sectionSpacing")?.value) || 50;
+    window.siteData.layout.borderRadius = parseInt(document.getElementById("borderRadius")?.value) || 8;
+    window.siteData.layout.boxShadow = parseInt(document.getElementById("boxShadow")?.value) || 5;
+    window.siteData.layout.animationStyle = document.getElementById("animationStyle")?.value || "none";
+    window.siteData.layout.mobileOptimized = document.getElementById("mobileOptimized")?.checked || true;
+    window.siteData.layout.touchFriendly = document.getElementById("touchFriendly")?.checked || true;
+    window.siteData.layout.fastLoading = document.getElementById("fastLoading")?.checked || true;
+    window.siteData.layout.seoOptimized = document.getElementById("seoOptimized")?.checked || true;
+    
+    // Update last modified
+    if (!window.siteData.admin) window.siteData.admin = {};
+    window.siteData.admin.lastUpdate = new Date().toISOString();
+}
+
+function setFieldValue(fieldId, value) {
+    const field = document.getElementById(fieldId);
+    if (field  value !== undefined) {
+        if (field.type === "checkbox") {
+            field.checked = !!value;
+        } else {
+            field.value = value;
+        }
+    }
+}
+
+// Export functions for global access
+window.initializeLayout = initializeLayout;
+</script>

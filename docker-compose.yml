@@ -1,0 +1,62 @@
+services:
+  wedding-admin:
+    build: .
+    container_name: wedding-admin-app
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+    volumes:
+      # Mount data directory để persist database và uploads
+      - ./data:/app/data
+      - ./public/uploads:/app/public/uploads
+      - ./public/images:/app/public/images
+      - ./images:/app/images
+      - ./webfonts:/app/webfonts
+      # Mount admin files
+      - ./admin.html:/app/admin.html
+      - ./admin:/app/admin
+      - ./admin-pages:/app/admin-pages
+      # Mount index files
+      - ./index_files:/app/index_files
+      # Mount source code for development
+      - ./api:/app/api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - wedding-network
+
+  # Optional: Nginx reverse proxy cho production
+  nginx:
+    image: nginx:alpine
+    container_name: wedding-admin-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./public:/app/public:ro
+    depends_on:
+      - wedding-admin
+    restart: unless-stopped
+    networks:
+      - wedding-network
+    profiles:
+      - production
+
+networks:
+  wedding-network:
+    driver: bridge
+
+volumes:
+  wedding-data:
+    driver: local
+  wedding-uploads:
+    driver: local

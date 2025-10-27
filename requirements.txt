@@ -1,0 +1,26 @@
+# Core Flask dependencies
+Flask==3.0.0
+Flask-CORS==4.0.0
+Werkzeug==3.0.1
+
+# Image processing - sử dụng pre-compiled wheel
+Pillow>=10.0.0
+
+# Environment management
+python-dotenv==1.0.0
+
+# Production server
+gunicorn==21.2.0
+
+# System utilities
+psutil==5.9.0
+
+# HTTP requests for Telegram integration
+requests==2.31.0
+
+# Database (SQLite is built-in with Python)
+# No additional database dependencies needed
+
+# Development dependencies (optional)
+# pytest==7.4.3
+# pytest-cov==4.1.0

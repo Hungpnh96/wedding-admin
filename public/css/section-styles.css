@@ -1,0 +1,282 @@
+/* Section-specific Styles */
+
+/* Couple Section */
+#couple .editable {
+    cursor: pointer;
+}
+
+#couple .image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+#couple .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+#couple .image-wrapper:hover img {
+    transform: scale(1.05);
+}
+
+/* Story Section */
+@media (max-width: 991px) {
+    .story-timeline {
+        flex-direction: column;
+    }
+    
+    .story-item {
+        margin-bottom: 30px;
+    }
+}
+
+/* Invitation Section */
+#invitation .font-h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Gallery Section */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    max-width: 90%;
+    max-height: 90%;
+    position: relative;
+}
+
+.popup img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.popup-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Gift Registry Section */
+.font-style-h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* RSVP Section */
+.rsvp-reply-edit {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.rsvp-form-group {
+    margin-bottom: 15px;
+}
+
+.rsvp-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.rsvp-form-group input,
+.rsvp-form-group select,
+.rsvp-form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.rsvp-form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Donate Section */
+.neela-style {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.neela-style h3 {
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.neela-style p {
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+/* Crop Modal Styles */
+#crop-area {
+    width: 100%;
+    height: 300px;
+    background-color: #f0f0f0;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.crop-preview {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    position: relative;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* Custom Color Styles */
+#footer .copyright a:hover, 
+.widget-quick-links > ul li a:hover, 
+.contact-info li a:hover, 
+.widget-tags .tags a:hover, 
+.widget-latest-posts > ul h3 a:hover, 
+.widget-categories > ul li a:hover, 
+.comments .comment-list > li .comment .reply-btn:hover, 
+.comments .comment-list > li .comment-info .reply-btn:hover, 
+.blog-listing .item .blog-meta li a:hover, 
+.blog-listing .post-content .blog-meta li a:hover, 
+.blog-main .item .blog-meta li a:hover, 
+.blog-main .post-content .blog-meta li a:hover,
+h1, h2, h3, h4, h5, h6,
+.color,
+a,
+a:hover, a:focus,
+.cta,
+.btn,
+.btn:hover, .btn:focus, .btn:active,
+.btn-primary,
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active,
+.btn-primary.disabled, .btn-primary:disabled,
+.owl-carousel .owl-nav button.owl-next, 
+.owl-carousel .owl-nav button.owl-prev,
+.nav .open > a, .nav .open > a:hover, .nav .open > a:focus, 
+.nav > li > a:hover, .nav > li > a:focus, 
+.navbar-nav > li > a.active,
+.navbar-nav .dropdown-menu > li > a:hover,
+.navbar-nav .dropdown-menu > li > a:focus,
+.navbar-nav .dropdown-menu > li > a.active,
+.navbar-nav .dropdown-menu > li > a.active:hover,
+.navbar-nav .dropdown-menu > li > a.active:focus,
+.navbar-nav .dropdown-menu > li > a.active:active,
+.navbar-nav .dropdown-menu > li > a.active:visited,
+.navbar-nav .dropdown-menu > li > a.active:link,
+.navbar-nav .dropdown-menu > li > a.active:target,
+.navbar-nav .dropdown-menu > li > a.active:focus-within,
+.navbar-nav .dropdown-menu > li > a.active:focus-visible,
+.navbar-nav .dropdown-menu > li > a.active:focus,
+.navbar-nav .dropdown-menu > li > a.active:active,
+.navbar-nav .dropdown-menu > li > a.active:visited,
+.navbar-nav .dropdown-menu > li > a.active:link,
+.navbar-nav .dropdown-menu > li > a.active:target,
+.navbar-nav .dropdown-menu > li > a.active:focus-within,
+.navbar-nav .dropdown-menu > li > a.active:focus-visible {
+    color: #ff6b6b;
+}
+
+/* Header Styles */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Hide top menu */
+.navbar-nav {
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+    
+    #crop-area {
+        height: 200px;
+    }
+    
+    .neela-style {
+        padding: 15px;
+    }
+    
+    .neela-style h3 {
+        font-size: 1.25rem;
+    }
+}

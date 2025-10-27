@@ -1,0 +1,373 @@
+<!-- Hero/Banner Section -->
+<style>
+    /* Ẩn thanh menu trên cùng */
+    #header {
+       display: none !important;
+    }
+    
+    /* Điều chỉnh margin-top của hero section vì đã ẩn header */
+    #hero {
+       margin-top: 0 !important;
+       height: 90vh;
+       clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+    }
+    #hero {
+       min-height: 900px !important;
+    }
+ </style>
+ <style>
+    .ht-slideshow {
+    margin-top: -70px;
+    position: absolute;
+    z-index: -1;
+    /* Cha của các slide */
+    width: 100%;
+    height: 100%;
+    /* Chiều cao full viewport */
+    overflow: hidden;
+    /* Ẩn phần bị tràn ra ngoài */
+    }
+    .ht-slides {
+    position: relative;
+    /* Chỉ định vị trí tương đối */
+    width: 100%;
+    height: 100%;
+    }
+    .ht-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 1s ease, transform 10s ease-out;
+    opacity: 0;
+    z-index: 0;
+    }
+    .ht-slide.active {
+    transform: scale(1.1);
+    opacity: 1;
+    z-index: 1;
+    }
+    @media (min-width: 601px) {
+    .ht-slide {
+    background-size: contain;
+    }
+    .ht-slide::before,
+    .ht-slide::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100%;
+    /* Chiếm 50% chiều rộng */
+    height: 100%;
+    z-index: 1;
+    /* Đưa lớp phủ lên trên slide */
+    pointer-events: none;
+    /* Không cho phép tương tác với lớp phủ */
+    }
+    .ht-slide::before {
+    left: 0;
+    /* Lớp phủ bên trái */
+    background: linear-gradient(to left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 30%);
+    /* Mờ dần từ trong ra ngoài */
+    filter: blur(20px);
+    /* Điều chỉnh độ mờ */
+    }
+    .ht-slide::after {
+    right: 0;
+    /* Lớp phủ bên phải */
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 30%);
+    /* Mờ dần từ trong ra ngoài */
+    filter: blur(20px);
+    /* Điều chỉnh độ mờ */
+    }
+    }
+    
+    /* điều chỉnh màu */
+    section#hero::before, #story .bg-color-overlay::before, #invitation.bg-color-overlay::before {
+    background-color: #5B6654  !important;
+    }
+    .bg-color, .owl-carousel .owl-nav button.owl-next:hover, .owl-carousel .owl-nav button.owl-prev:hover, #nav-mobile-btn, .light #nav-mobile-btn:active, .light #nav-mobile-btn:hover, .timeline .date, .timeline .description, .menu-section, .menu-section::before, .menu-wrapper, .map-info-container .info-wrapper .location-info, .marker:hover, .map_pins_full, .bmaid-gmen-color .image .hover-info, #testimonials, .gallery-scroller li, .page-header, .blog-listing .item .date, .blog-listing .post-content .date, .blog-main .item .date, .blog-main .post-content .date, .pagination ul#previous li a:hover, .pagination ul#next li a:hover, .widget-search form button:hover, .widget-newsletter, .widget-newsletter form button:hover, .form-check-input:checked, .progress-wrapper .progress .progress-bar, .cryptos-box-view .cryptos-box-view-close, .cryptos-box-view .coin-address {
+        background-color: #8E9D84 !important;
+    }
+                #giftregistry .events-boxs {
+        background-color:#8E9D84 !important;
+    }
+
+    .invite .invite_info, .gallery-scroller li .hover-info, .gallery .item .hover-info {
+        background-color: #8E9D84 !important;
+    }
+
+    /*
+    .btn-menu-open, .btn-menu-close , #menu-access>ul>li{
+        background-color:#8E9D84 !important;
+    }
+    */
+
+    #rsvp.section-bg-color {
+        background: linear-gradient(#f9f9f9 50%, #8E9D84  90%) no-repeat !important;
+    }
+
+ </style>
+
+<section id="hero" class="editable-parent scroll-to hero-fullscreen">
+    <div class="ht-slideshow">
+        <div class="ht-slides" id="banner-slides">
+            <!-- Slides sẽ được tạo động từ API hoặc sử dụng ảnh mặc định -->
+        </div>
+    </div>
+    
+    
+    <div class="children" style="display: block">
+        <div class="hero-content-wrapper">
+            <div class="container" style="z-index: 2;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="hero-wrapper v-center">
+                            <h2 data-animation-direction="fade" data-animation-delay="600" class="animate-fade animation-fade">
+                                Save the Date
+                            </h2>
+                            <h1 class="hero-title light ">
+                                <span class="d-block d-sm-inline animate-from-right animation-from-right editable" data-animation-direction="from-right" data-animation-delay="300" id="welcome_male-name">Tên chú rể</span>
+                                <small class="d-block d-sm-inline animate-from-top animation-from-top" data-animation-direction="from-top" data-animation-delay="300">&amp;</small>
+                                <span class="d-block d-sm-inline animate-from-left animation-from-left editable" data-animation-direction="from-left" data-animation-delay="300" id="welcome_female-name">Tên cô dâu</span>
+                            </h1>
+                            <div class="hero-subtitle light animate-fade animation-fade" id="preview-datepickerss" data-animation-direction="fade" data-animation-delay="1000">
+                                03 tháng 05 năm 2025
+                            </div>
+                            <div data-animation-direction="fade" data-animation-delay="1000" class="animate-fade animation-fade">
+                                <a href="#rsvp" class="btn btn-light scrollto" style="width: 229px;"><span class="h-lines"></span><span class="v-lines"></span><span class="h-lines"></span><span class="v-lines"></span>Gửi Lời Chúc</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ <script>
+    // Initialize banner slides
+    let bannerInitialized = false;
+    
+    function initializeBannerSlides() {
+        if (bannerInitialized) {
+            console.log('🎬 Banner slides already initialized, skipping...');
+            return;
+        }
+        
+        console.log('🖼️ Initializing banner slides...');
+        console.log('🔍 window.siteData:', window.siteData);
+        console.log('🔍 window.siteData.hero:', window.siteData?.hero);
+        console.log('🔍 window.siteData.hero.slides:', window.siteData?.hero?.slides);
+        
+        const slidesContainer = document.getElementById('banner-slides');
+        if (!slidesContainer) {
+            console.log('❌ banner-slides container not found');
+            return;
+        }
+        
+        // Default banner images
+        const defaultSlides = [
+            './public/images/default/banner/default-banner-1.svg',
+            './public/images/default/banner/default-banner-2.svg'
+        ];
+        
+        // Check API data first
+        if (typeof window.siteData !== 'undefined' && window.siteData.hero && window.siteData.hero.slides && window.siteData.hero.slides.length > 0) {
+            console.log('📡 API data available, using API banner slides:', window.siteData.hero.slides.length);
+            createSlidesFromAPI(window.siteData.hero.slides);
+            bannerInitialized = true;
+            return;
+        }
+        
+        // Try to load siteData if not available
+        console.log('📡 No API data available, trying to load...');
+        
+        // Try direct API call first
+        fetch('/api/data')
+            .then(response => response.json())
+            .then(data => {
+                console.log('📡 Direct API call successful:', data);
+                if (data && data.data && data.data.hero && data.data.hero.slides && data.data.hero.slides.length > 0) {
+                    console.log('📡 Found API slides via direct call:', data.data.hero.slides.length);
+                    createSlidesFromAPI(data.data.hero.slides);
+                    bannerInitialized = true;
+                } else {
+                    console.log('🔄 No API slides found via direct call, using default slides');
+                    createDefaultSlides(defaultSlides);
+                    bannerInitialized = true;
+                }
+            })
+            .catch((error) => {
+                console.log('🔄 Direct API call failed:', error, 'trying loadSiteData...');
+                
+                if (typeof window.loadSiteData === 'function') {
+                    window.loadSiteData().then(() => {
+                        console.log('📡 loadSiteData completed, checking for slides...');
+                        if (typeof window.siteData !== 'undefined' && window.siteData.hero && window.siteData.hero.slides && window.siteData.hero.slides.length > 0) {
+                            console.log('📡 Found API slides after loadSiteData:', window.siteData.hero.slides.length);
+                            createSlidesFromAPI(window.siteData.hero.slides);
+                            bannerInitialized = true;
+                        } else {
+                            console.log('🔄 No API slides found after loadSiteData, using default slides');
+                            createDefaultSlides(defaultSlides);
+                            bannerInitialized = true;
+                        }
+                    }).catch((error) => {
+                        console.log('🔄 loadSiteData failed:', error, 'using default slides');
+                        createDefaultSlides(defaultSlides);
+                        bannerInitialized = true;
+                    });
+                } else {
+                    console.log('🔄 loadSiteData function not available, using default slides');
+                    createDefaultSlides(defaultSlides);
+                    bannerInitialized = true;
+                }
+            });
+    }
+    
+    function createSlidesFromAPI(apiSlides) {
+        console.log('🖼️ Creating slides from API:', apiSlides);
+        
+        const slidesContainer = document.getElementById('banner-slides');
+        if (!slidesContainer) {
+            console.log('❌ banner-slides container not found in createSlidesFromAPI');
+            return;
+        }
+        
+        slidesContainer.innerHTML = '';
+        
+        apiSlides.forEach((slide, index) => {
+            if (slide.visible !== false) {
+                console.log(`🖼️ Creating slide ${index}:`, slide.src);
+                
+                const slideDiv = document.createElement('div');
+                slideDiv.className = `ht-slide ht-slide-${index}`;
+                slideDiv.style.backgroundImage = `url('${slide.src}?t=${Date.now()}')`;
+                
+                if (index === 0) {
+                    slideDiv.classList.add('active');
+                }
+                
+                slidesContainer.appendChild(slideDiv);
+            }
+        });
+        
+        console.log(`✅ Created ${slidesContainer.children.length} slides`);
+        
+        // Start slideshow
+        startSlideshow();
+    }
+    
+    function createDefaultSlides(defaultSlides) {
+        const slidesContainer = document.getElementById('banner-slides');
+        slidesContainer.innerHTML = '';
+        
+        defaultSlides.forEach((slideSrc, index) => {
+            const slideDiv = document.createElement('div');
+            slideDiv.className = `ht-slide ht-slide-${index}`;
+            slideDiv.style.backgroundImage = `url('${slideSrc}')`;
+            
+            if (index === 0) {
+                slideDiv.classList.add('active');
+            }
+            
+            slidesContainer.appendChild(slideDiv);
+        });
+        
+        // Start slideshow
+        startSlideshow();
+    }
+    
+    function startSlideshow() {
+        const slides = document.querySelectorAll('.ht-slide');
+        if (slides.length <= 1) return;
+        
+        let currentSlide = 0;
+        
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 5000); // Change slide every 5 seconds
+    }
+    
+    // Initialize when DOM is ready
+    $(document).ready(function() {
+        console.log('📄 Banner DOM ready, initializing slides...');
+        console.log('🔍 Checking banner-slides container...');
+        
+        const container = document.getElementById('banner-slides');
+        if (container) {
+            console.log('✅ banner-slides container found:', container);
+        } else {
+            console.log('❌ banner-slides container NOT found!');
+        }
+        
+        // Initialize banner slides once
+        initializeBannerSlides();
+    });
+    
+    // Also try to initialize when window loads
+    window.addEventListener('load', function() {
+        console.log('🌐 Window loaded, checking banner slides...');
+        if (!bannerInitialized) {
+            console.log('🔄 Banner not initialized yet, trying again...');
+            initializeBannerSlides();
+        }
+    });
+    
+    // Force initialization after a delay
+    setTimeout(function() {
+        console.log('⏰ Force initialization after 5 seconds...');
+        if (!bannerInitialized) {
+            console.log('🔄 Banner still not initialized, forcing...');
+            bannerInitialized = false;
+            initializeBannerSlides();
+        }
+    }, 5000);
+    
+    // Other existing scripts
+    $('.user-wrap').on('click', function(event) {
+        if (!$(event.target).closest('#popup-forgot-pasword').length) {
+            $('#popup-forgot-pasword').toggleClass('show');
+        }
+    });
+    $(document).on('click', function(event) {
+        if (!$(event.target).closest('.user-wrap').length) {
+            $('#popup-forgot-pasword').removeClass('show');
+        }
+    });
+    
+    $('.change-pass').on('click', function() {
+        $('.account-action').hide();
+        $('.password-form').show();
+    });
+    
+    // Re-initialize when site data is updated
+    if (typeof window !== 'undefined') {
+        window.addEventListener('siteDataUpdated', function() {
+            console.log('📡 siteDataUpdated event received, re-initializing banner slides...');
+            bannerInitialized = false; // Reset flag to allow re-initialization
+            setTimeout(initializeBannerSlides, 100);
+        });
+        
+        // Also check periodically for data changes
+        let lastSlidesData = null;
+        setInterval(() => {
+            if (typeof window.siteData !== 'undefined' && window.siteData.hero && window.siteData.hero.slides) {
+                const currentSlidesData = JSON.stringify(window.siteData.hero.slides);
+                if (lastSlidesData !== null && lastSlidesData !== currentSlidesData) {
+                    console.log('📡 Slides data changed, re-initializing banner slides...');
+                    initializeBannerSlides();
+                }
+                lastSlidesData = currentSlidesData;
+            }
+        }, 2000);
+    }
+    
+    // Export function for manual refresh
+    window.refreshBannerSlides = initializeBannerSlides;
+ </script>

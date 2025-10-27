@@ -1,0 +1,572 @@
+<div class="tab-content-wrapper">
+    <div class="section-card">
+        <div class="section-header d-flex justify-content-between align-items-center">
+            <h5><i class="fas fa-images me-2"></i>Quản lý thư viện ảnh</h5>
+            <div>
+                <button class="btn btn-info btn-sm me-2" onclick="refreshGallery()">
+                    <i class="fas fa-sync me-1"></i>Làm mới
+                </button>
+                <button class="btn btn-custom btn-sm" onclick="triggerFileInput()">
+                <i class="fas fa-plus me-2"></i>Thêm ảnh
+            </button>
+            </div>
+          </div>
+          <div class="section-body">
+              <!-- Hidden file input for upload -->
+              <input type="file" id="galleryFileInput" accept="image/*" multiple style="display: none;" onchange="handleMultipleUpload(event)">
+
+            <!-- Gallery Grid -->
+            <div class="gallery-container">
+                <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery images will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyGallery" class="empty-gallery" style="display: none;">
+                <i class="fas fa-images fa-4x mb-3"></i>
+                <h5>Chưa có ảnh nào</h5>
+                <p>Hãy thêm ảnh đầu tiên vào thư viện!</p>
+                <button class="btn btn-custom mt-3" onclick="triggerFileInput()">
+                    <i class="fas fa-plus me-2"></i>Thêm ảnh đầu tiên
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Gallery management
+let galleryImages = [];
+let currentUploading = false;
+
+// Initialize gallery
+function initializeGalleryPage() {
+    console.log('🚀 Initializing gallery page');
+    loadGalleryImages();
+}
+
+// Load gallery images
+async function loadGalleryImages() {
+    try {
+        console.log('📸 Loading gallery images...');
+        
+        const response = await fetch('http://localhost:5001/api/data');
+        const result = await response.json();
+        
+        if (result.success && result.data && result.data.gallery) {
+            galleryImages = result.data.gallery;
+            console.log('📸 Gallery images loaded:', galleryImages);
+            renderGallery();
+        } else {
+            console.log('📭 No gallery images found');
+            galleryImages = [];
+            renderEmptyState();
+        }
+    } catch (error) {
+        console.error('Error loading gallery images:', error);
+        galleryImages = [];
+        renderEmptyState();
+    }
+}
+
+// Render gallery grid
+function renderGallery() {
+    const grid = document.getElementById('galleryGrid');
+    const emptyState = document.getElementById('emptyGallery');
+    
+    if (!grid) return;
+    
+    if (galleryImages.length === 0) {
+        renderEmptyState();
+        return;
+    }
+    
+    // Hide empty state
+    if (emptyState) emptyState.style.display = 'none';
+    
+    grid.innerHTML = galleryImages.map((image, index) => `
+        <div class="gallery-item" data-image-id="${image.id || index}">
+            <div class="gallery-image">
+                <img src="http://localhost:5001${image.src.replace('./', '/')}" alt="${image.alt || 'Gallery image'}" 
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlPC90ZXh0Pjwvc3ZnPg=='">
+                <div class="gallery-overlay">
+                    <div class="gallery-actions">
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteImage('${image.id || index}')" title="Xóa">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="gallery-info">
+                <div class="gallery-name">${image.name || `Ảnh ${index + 1}`}</div>
+                <div class="gallery-meta">
+                    <small class="text-muted">
+                        <i class="fas fa-hdd me-1"></i>${formatFileSize(image.size || 0)}
+                        <span class="mx-1">•</span>
+                        <i class="fas fa-clock me-1"></i>${formatDate(image.uploadedAt || new Date())}
+                    </small>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Render empty state
+function renderEmptyState() {
+    const grid = document.getElementById('galleryGrid');
+    const emptyState = document.getElementById('emptyGallery');
+    
+    if (grid) grid.innerHTML = '';
+    if (emptyState) emptyState.style.display = 'block';
+}
+
+
+// Trigger file input
+function triggerFileInput() {
+    console.log('🔍 triggerFileInput called');
+    const fileInput = document.getElementById('galleryFileInput');
+    console.log('🔍 File input element:', fileInput);
+    if (fileInput) {
+        console.log('✅ Clicking file input...');
+        fileInput.click();
+    } else {
+        console.error('❌ File input not found!');
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: 'Không thể tìm thấy file input. Vui lòng refresh trang.',
+            timer: 3000
+        });
+    }
+}
+
+// Handle multiple file upload
+async function handleMultipleUpload(event) {
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
+    
+    console.log('📸 Uploading', files.length, 'files');
+    
+    // Show loading
+    Swal.fire({
+        title: 'Đang tải ảnh...',
+        text: `Đang tải ${files.length} ảnh, vui lòng chờ`,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    let successCount = 0;
+    let errorCount = 0;
+    
+    for (const file of files) {
+        try {
+            await uploadSingleImage(file);
+            successCount++;
+        } catch (error) {
+            console.error('Upload error for', file.name, ':', error);
+            errorCount++;
+        }
+    }
+    
+    Swal.close();
+    
+    if (successCount > 0) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: `Đã tải ${successCount} ảnh thành công${errorCount > 0 ? `, ${errorCount} ảnh lỗi` : ''}`,
+            timer: 2000,
+            showConfirmButton: false
+        });
+        
+        // Refresh gallery
+        setTimeout(loadGalleryImages, 1000);
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: 'Không thể tải ảnh nào',
+            confirmButtonText: 'OK'
+        });
+    }
+    
+    // Clear file input
+    event.target.value = '';
+}
+
+// Upload single image
+async function uploadSingleImage(file) {
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+        throw new Error('File không phải là ảnh');
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+        throw new Error('File quá lớn (tối đa 5MB)');
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'gallery');
+    
+    const response = await fetch('http://localhost:5001/api/upload', {
+        method: 'POST',
+        body: formData
+    });
+    
+    const result = await response.json();
+    
+    if (!result.success) {
+        throw new Error(result.message || 'Upload failed');
+    }
+    
+    // Add to gallery
+    const newImage = {
+        id: Date.now().toString(),
+        src: result.url,
+        name: file.name,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+        visible: true
+    };
+    
+    galleryImages.unshift(newImage);
+    
+    // Save to server
+    await saveGalleryToServer();
+    
+    return newImage;
+}
+
+// Save gallery to server
+async function saveGalleryToServer() {
+    try {
+        const response = await fetch('http://localhost:5001/api/data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gallery: galleryImages })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to save gallery');
+        }
+    } catch (error) {
+        console.error('Error saving gallery:', error);
+        throw error;
+    }
+}
+
+
+
+// Delete image
+async function deleteImage(imageId) {
+    const image = galleryImages.find(img => img.id === imageId);
+    if (!image) return;
+    
+    const result = await Swal.fire({
+        title: 'Xác nhận xóa',
+        text: `Xóa ảnh "${image.name || 'không tên'}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+    });
+    
+    if (result.isConfirmed) {
+        try {
+            // Delete file from server
+            await deleteImageFile(image.src);
+            
+            // Remove from array
+            galleryImages = galleryImages.filter(img => img.id !== imageId);
+            
+            // Save to server
+            await saveGalleryToServer();
+            
+            // Refresh display
+            renderGallery();
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: 'Đã xóa ảnh',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không thể xóa ảnh',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+}
+
+
+// Delete image file from server
+async function deleteImageFile(imageSrc) {
+    try {
+        // Extract filename from path
+        const filename = imageSrc.split('/').pop();
+        
+        const response = await fetch('http://localhost:5001/api/delete-file', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: filename, type: 'gallery' })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete file from server');
+        }
+        
+        console.log('File deleted from server:', filename);
+    } catch (error) {
+        console.error('Error deleting file from server:', error);
+        // Don't throw error, just log it - we still want to remove from gallery
+    }
+}
+
+// Refresh gallery
+function refreshGallery() {
+    loadGalleryImages();
+}
+
+// Helper functions
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN');
+}
+
+// Export functions
+window.initializeGallery = initializeGalleryPage;
+window.refreshGallery = refreshGallery;
+window.triggerFileInput = triggerFileInput;
+window.handleMultipleUpload = handleMultipleUpload;
+window.deleteImage = deleteImage;
+
+// Auto-initialize
+document.addEventListener('DOMContentLoaded', initializeGalleryPage);
+</script>
+
+<style>
+/* Gallery styles */
+.upload-section {
+    margin-bottom: 30px;
+}
+
+.image-upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.image-upload-area:hover {
+    border-color: #9f5958;
+    background: #fff5f5;
+}
+
+.upload-placeholder {
+    color: #6c757d;
+}
+
+.upload-placeholder i {
+    color: #9f5958;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 24px;
+    color: white;
+}
+
+.stat-card:nth-child(1) .stat-icon { background: #28a745; }
+.stat-card:nth-child(2) .stat-icon { background: #17a2b8; }
+.stat-card:nth-child(3) .stat-icon { background: #ffc107; }
+.stat-card:nth-child(4) .stat-icon { background: #6c757d; }
+
+.stat-content h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.stat-content p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.gallery-container {
+    margin-top: 20px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.gallery-item {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.gallery-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover .gallery-image img {
+    transform: scale(1.05);
+}
+
+.gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-item:hover .gallery-overlay {
+    opacity: 1;
+}
+
+.gallery-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.gallery-actions .btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+}
+
+.gallery-info {
+    padding: 15px;
+}
+
+.gallery-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gallery-meta {
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.empty-gallery {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.empty-gallery i {
+    color: #dee2e6;
+    margin-bottom: 20px;
+}
+
+.empty-gallery h5 {
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+.empty-gallery p {
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .gallery-actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .gallery-actions .btn {
+        width: 100%;
+    }
+}
+</style>

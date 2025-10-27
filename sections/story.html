@@ -1,0 +1,538 @@
+<style>
+    @media (max-width: 991px) {
+    .boder {
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    aspect-ratio: 1/1;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    max-height: 500px;
+    }
+    }
+    #story .image-editor {
+    max-width: 500px;
+    max-height: 500px;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    }
+    @media (min-width: 991px) {
+    #story .image-wrapper {
+    border-radius: 0px;
+    }
+    }
+    #story .movableImage {
+    position: absolute;
+    left: 0;
+    }
+    #story .super-break {
+    word-wrap: break-word;
+    }
+    #story .font-opensans {
+    font-family: "Open Sans", sans-serif;
+    }
+    #story .font-h4 {
+    font-size: 28px;
+    }
+ </style>
+<!-- Story Section -->
+<section id="story" class="editable-parent">
+    <div class="children" style="display: block">
+        <section id="storysub" class="editable-parent parallax-background bg-color-overlay section-divider-bottom-2 padding-divider-top" style="background-image: url('./public/images/default/story/default-story-background.svg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh;">
+            <div class="children" style="display: block">
+                <div class="section-divider-top-1 off-section"></div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h1 class="section-title light">Chuyện chúng mình</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+                    <div class="timeline">
+                        <!-- Stories will be dynamically loaded here by JavaScript -->
+                        <div class="timeline_footer">
+                            <div data-animation-direction="from-top" data-animation-delay="250" class="animate-from-top animation-from-top">
+                                <i class="icon-diamond-ring"></i>
+                            </div>
+                            <div class="punchline animate-from-bottom animation-from-bottom" data-animation-direction="from-bottom" data-animation-delay="250">
+                                <small class="editable" id="story_content_4_1">This is where our FOREVER BEGINS</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Story API Functions
+async function loadStoriesFromAPI() {
+    try {
+        console.log('Loading stories from API...');
+        const response = await fetch('/api/data');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log('Full API response:', result);
+        
+        if (result.success && result.data) {
+            console.log('API data keys:', Object.keys(result.data));
+            
+            // Kiểm tra xem có stories không
+            if (result.data.story && Array.isArray(result.data.story) && result.data.story.length > 0) {
+                console.log('Stories loaded from API:', result.data.story);
+                console.log('First story details:', result.data.story[0]);
+                return result.data.story;
+            } else {
+                console.log('No stories found in API data (empty array or null), using fallback...');
+                throw new Error('No stories in API response');
+            }
+        } else {
+            throw new Error('Invalid API response format');
+        }
+    } catch (error) {
+        console.error('Error loading stories from API:', error);
+        console.log('Using fallback data...');
+        // Fallback data nếu API không hoạt động
+        return [
+            {
+                id: 1,
+                milestone: "BẮT ĐẦU TỪ 2022",
+                src: "./public/images/default/story/default-story-1.svg",
+                title: "Chúng mình đã từng...",
+                content: "Chúng mình quen nhau qua mạng xã hội, từ những tin nhắn làm quen đến những buổi trò chuyện không dứt. Một ngày, bạn rủ mình đi lễ nhà thờ. Lần đầu gặp, mình hồi hộp suýt làm rơi kinh thánh, còn bạn thì cười bảo sẽ giữ giúp. Từ đó, tình yêu lớn lên qua những buổi cầu nguyện và cà phê. Hôm nay, mình hạnh phúc vì hành trình ấy đã đưa chúng mình đến đây, trở thành một gia đình.",
+                visible: true,
+                order: 1
+            },
+            {
+                id: 2,
+                milestone: "HÀNH TRÌNH YÊU THƯƠNG",
+                src: "./public/images/default/story/default-story-2.svg",
+                title: "Tình bạn thành tình yêu..",
+                content: "Đến ngày 20/02, mình quyết định cầu hôn. Chẳng có hoa hay ánh nến lãng mạn như người ta, chỉ có mình rón rén lôi chiếc nhẫn ra, tim đập thình thịch, rồi thủ thỉ: 'Làm vợ anh nhé?' Bạn nhìn mình, cười nhẹ, và gật đầu. Giản dị vậy thôi, nhưng khoảnh khắc ấy với mình là cả thế giới.",
+                visible: true,
+                order: 2
+            },
+            {
+                id: 3,
+                milestone: "NGÀY TRỌNG ĐẠI",
+                src: "./public/images/default/story/default-story-3.svg",
+                title: "Ngày chung đôi",
+                content: "Hơn 4 năm tình bạn, và 4 năm tình yêu không phải là quãng thời gian quá dài, nhưng cũng không quá ngắn, đủ để chúng mình nhận ra nhiều điều. Cuối cùng ngày vui nhất của chúng mình cũng tới rồi. Cảm ơn vì chúng ta đã luôn là một phần trong cuộc sống của nhau. Em và anh không chỉ là người yêu mà còn là tri kỷ, là bạn đồng hành. Kể từ Ngày hôm nay, em là Vợ, anh là Chồng và chúng ta là Một gia đình hạnh phúc.",
+                visible: true,
+                order: 3
+            }
+        ];
+    }
+}
+
+function createStoryHTML(story, index) {
+    console.log(`Creating story HTML for story ${index + 1}:`, {
+        id: story.id,
+        milestone: story.milestone,
+        title: story.title,
+        src: story.src,
+        description: story.description,
+        content: story.content,
+        visible: story.visible,
+        order: story.order
+    });
+    
+    // Ensure unique ID
+    const uniqueId = story.id || `story_${index}_${Date.now()}`;
+    console.log(`Using unique ID: ${uniqueId}`);
+    
+    // Debug image path processing
+    let imageSrc = '';
+    if (story.src) {
+        if (story.src.startsWith('http://localhost:5001/')) {
+            imageSrc = story.src;
+        } else if (story.src.startsWith('/public/')) {
+            // Convert /public/images/story/file.webp to ./public/images/story/file.webp
+            imageSrc = story.src.replace('/public', './public');
+        } else {
+            imageSrc = story.src;
+        }
+    } else {
+        imageSrc = story.image || '';
+    }
+    
+    // Add cache busting
+    if (imageSrc && !imageSrc.includes('?')) {
+        imageSrc += `?t=${Date.now()}`;
+    }
+    console.log(`Story ${index + 1} image path:`, {
+        original: story.src,
+        processed: imageSrc,
+        title: story.title
+    });
+    
+    const animationDelay = 250 + (index * 100);
+    return `
+        <div class="editable-child">
+            <div class="children" style="display: block">
+                <div class="year animate-from-top animation-from-top" data-animation-direction="from-top" data-animation-delay="${animationDelay}">
+                    <span class="neela-style">
+                        <span class="h-lines"></span><span class="v-lines"></span>
+                        <span class="h-lines"></span><span class="v-lines"></span>
+                        <span class="editable" id="story_date_title_${uniqueId}">${story.milestone || story.title || ''}</span>
+                    </span>
+                </div>
+                <div class="gallery-container">
+                    <div class="timeline-gallery-wrapper animate-from-left animation-from-left" data-animation-direction="from-left" data-animation-delay="${animationDelay}">
+                        <div class="timeline-gallery-del">
+                            <div class="item text-center">
+                                <div class="editable image-editor">
+                                    <div class="image-action">
+                                        <svg class="unchange" width="170" height="24" viewBox="0 0 170 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M30.1477 17V5.36364H34.6023C35.4432 5.36364 36.142 5.49621 36.6989 5.76136C37.2595 6.02273 37.678 6.38068 37.9545 6.83523C38.2348 7.28977 38.375 7.80492 38.375 8.38068C38.375 8.85417 38.2841 9.25947 38.1023 9.59659C37.9205 9.92992 37.6761 10.2008 37.3693 10.4091C37.0625 10.6174 36.7197 10.767 36.3409 10.858V10.9716C36.7538 10.9943 37.1496 11.1212 37.5284 11.3523C37.911 11.5795 38.2235 11.9015 38.4659 12.3182C38.7083 12.7348 38.8295 13.2386 38.8295 13.8295C38.8295 14.4318 38.6837 14.9735 38.392 15.4545C38.1004 15.9318 37.661 16.3087 37.0739 16.5852C36.4867 16.8617 35.7481 17 34.858 17H30.1477ZM32.2557 15.2386H34.5227C35.2879 15.2386 35.839 15.0928 36.1761 14.8011C36.517 14.5057 36.6875 14.1269 36.6875 13.6648C36.6875 13.3201 36.6023 13.0095 36.4318 12.733C36.2614 12.4527 36.0189 12.233 35.7045 12.0739C35.3902 11.911 35.0152 11.8295 34.5795 11.8295H32.2557V15.2386ZM32.2557 10.3125H34.3409C34.7045 10.3125 35.0322 10.2462 35.3239 10.1136C35.6155 9.97727 35.8447 9.78598 36.0114 9.53977C36.1818 9.28977 36.267 8.99432 36.267 8.65341C36.267 8.20265 36.108 7.83144 35.7898 7.53977C35.4754 7.24811 35.0076 7.10227 34.3864 7.10227H32.2557V10.3125Z" fill="white"></path>
+                                            <path d="M10.0011 14.1367L10.0011 1M10.0011 1L4.4519 6.0195M10.0011 1L15.5503 6.0195M1 18.563V20.121C1.4553 20.5558 2.07281 20.8 2.71669 20.8H17.2833C17.9272 20.8 18.5447 20.5558 19 20.121V18.563" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </div>
+                                    <input type="file" class="img-up-load" accept="image/*">
+                                    <div class="image-wrapper boder" style="max-height:500px;">
+                                        <img id="story_img_${uniqueId}" data-movable="0" src="${imageSrc}" alt="${story.title || ''}" data-width="1200" data-height="1200" class="w-100 h-auto output-image edit-im" style="max-width:500px; object-fit: cover; left:0;" onerror="console.error('Image failed to load:', this.src); this.src='./public/images/default/story/default-story-1.svg'">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="description-wrapper animate-from-bottom animation-from-bottom" data-animation-direction="from-bottom" data-animation-delay="${animationDelay}">
+                        <div class="description">
+                            <div class="neela-style">
+                                <span class="h-lines"></span><span class="v-lines"></span><span class="h-lines"></span><span class="v-lines"></span>
+                                <h4 class="editable super-break font-h4" id="story_title_${uniqueId}">${story.title || ''}</h4>
+                                <p class="editable super-break font-opensans" id="story_content_${uniqueId}">
+                                    ${story.description || story.content || ''}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+async function renderStories() {
+    try {
+        console.log('Rendering stories...');
+        const allStories = await loadStoriesFromAPI();
+        
+        // Check if we have any stories
+        if (!allStories || allStories.length === 0) {
+            console.log('No stories available, using fallback...');
+            const fallbackStories = [
+                {
+                    id: 1,
+                    milestone: "BẮT ĐẦU TỪ 2022",
+                    src: "./public/images/default/story/default-story-1.svg",
+                    title: "Chúng mình đã từng...",
+                    content: "Chúng mình quen nhau qua mạng xã hội, từ những tin nhắn làm quen đến những buổi trò chuyện không dứt. Một ngày, bạn rủ mình đi lễ nhà thờ. Lần đầu gặp, mình hồi hộp suýt làm rơi kinh thánh, còn bạn thì cười bảo sẽ giữ giúp. Từ đó, tình yêu lớn lên qua những buổi cầu nguyện và cà phê. Hôm nay, mình hạnh phúc vì hành trình ấy đã đưa chúng mình đến đây, trở thành một gia đình.",
+                    visible: true,
+                    order: 1
+                },
+                {
+                    id: 2,
+                    milestone: "HÀNH TRÌNH YÊU THƯƠNG",
+                    src: "./public/images/default/story/default-story-2.svg",
+                    title: "Tình bạn thành tình yêu..",
+                    content: "Đến ngày 20/02, mình quyết định cầu hôn. Chẳng có hoa hay ánh nến lãng mạn như người ta, chỉ có mình rón rén lôi chiếc nhẫn ra, tim đập thình thịch, rồi thủ thỉ: 'Làm vợ anh nhé?' Bạn nhìn mình, cười nhẹ, và gật đầu. Giản dị vậy thôi, nhưng khoảnh khắc ấy với mình là cả thế giới.",
+                    visible: true,
+                    order: 2
+                },
+                {
+                    id: 3,
+                    milestone: "NGÀY TRỌNG ĐẠI",
+                    src: "./public/images/default/story/default-story-3.svg",
+                    title: "Ngày chung đôi",
+                    content: "Hơn 4 năm tình bạn, và 4 năm tình yêu không phải là quãng thời gian quá dài, nhưng cũng không quá ngắn, đủ để chúng mình nhận ra nhiều điều. Cuối cùng ngày vui nhất của chúng mình cũng tới rồi. Cảm ơn vì chúng ta đã luôn là một phần trong cuộc sống của nhau. Em và anh không chỉ là người yêu mà còn là tri kỷ, là bạn đồng hành. Kể từ Ngày hôm nay, em là Vợ, anh là Chồng và chúng ta là Một gia đình hạnh phúc.",
+                    visible: true,
+                    order: 3
+                }
+            ];
+            renderStoriesHTML(fallbackStories);
+            return;
+        }
+        
+        // Filter visible stories and sort by order
+        const visibleStories = allStories
+            .filter(story => story.visible !== false)
+            .sort((a, b) => (a.order || 0) - (b.order || 0));
+        
+        console.log(`Found ${visibleStories.length} visible stories out of ${allStories.length} total`);
+        
+        // Tìm container timeline
+        const timelineContainer = document.querySelector('.timeline');
+        if (!timelineContainer) {
+            console.error('Timeline container not found');
+            return;
+        }
+
+        console.log('Timeline container found:', timelineContainer);
+        console.log(`Ready to render ${visibleStories.length} stories`);
+        
+        // Tìm và giữ lại timeline_footer
+        const timelineFooter = timelineContainer.querySelector('.timeline_footer');
+        console.log('Timeline footer found:', timelineFooter);
+        
+        // Clear timeline container nhưng giữ lại footer
+        if (timelineFooter) {
+            timelineContainer.innerHTML = '';
+            timelineContainer.appendChild(timelineFooter);
+        } else {
+            timelineContainer.innerHTML = '';
+        }
+        
+        // Render từng story trước footer
+        visibleStories.forEach((story, index) => {
+            const storyHTML = createStoryHTML(story, index);
+            console.log(`Rendering story ${index + 1}: ${story.title}`);
+            if (timelineFooter) {
+                timelineFooter.insertAdjacentHTML('beforebegin', storyHTML);
+            } else {
+                timelineContainer.insertAdjacentHTML('beforeend', storyHTML);
+            }
+        });
+
+        console.log(`✅ Rendered ${visibleStories.length} stories successfully`);
+        
+        // Trigger animations sau khi render
+        setTimeout(() => {
+            // Có thể cần trigger lại animations nếu site sử dụng animation library
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
+        }, 100);
+
+    } catch (error) {
+        console.error('Error rendering stories:', error);
+    }
+}
+
+// Helper function to render stories HTML
+function renderStoriesHTML(stories) {
+    console.log(`Rendering ${stories.length} stories...`);
+    
+    // Tìm container timeline
+    const timelineContainer = document.querySelector('.timeline');
+    if (!timelineContainer) {
+        console.error('Timeline container not found');
+        return;
+    }
+
+    console.log('Timeline container found:', timelineContainer);
+    
+    // Tìm và giữ lại timeline_footer
+    const timelineFooter = timelineContainer.querySelector('.timeline_footer');
+    console.log('Timeline footer found:', timelineFooter);
+    
+    // Clear timeline container nhưng giữ lại footer
+    if (timelineFooter) {
+        timelineContainer.innerHTML = '';
+        timelineContainer.appendChild(timelineFooter);
+    } else {
+        timelineContainer.innerHTML = '';
+    }
+    
+    // Render từng story trước footer
+    stories.forEach((story, index) => {
+        const storyHTML = createStoryHTML(story, index);
+        console.log(`Rendering story ${index + 1}: ${story.title}`);
+        if (timelineFooter) {
+            timelineFooter.insertAdjacentHTML('beforebegin', storyHTML);
+        } else {
+            timelineContainer.insertAdjacentHTML('beforeend', storyHTML);
+        }
+    });
+
+    console.log(`✅ Rendered ${stories.length} stories successfully`);
+}
+
+// Initialize stories when DOM is ready
+function initStories() {
+    console.log('Initializing stories...');
+    initializeStorySection();
+}
+
+// Try to initialize immediately
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStories);
+} else {
+    initStories();
+}
+
+// Expose reload function globally for admin updates
+window.reloadStories = renderStories;
+
+// Force clear and reload function
+window.forceReloadStories = function() {
+    console.log('🔄 Force reloading stories...');
+    const timelineContainer = document.querySelector('.timeline');
+    if (timelineContainer) {
+        timelineContainer.innerHTML = `
+            <div class="timeline_footer">
+                <div data-animation-direction="from-top" data-animation-delay="250" class="animate-from-top animation-from-top">
+                    <i class="icon-diamond-ring"></i>
+                </div>
+                <div class="punchline animate-from-bottom animation-from-bottom" data-animation-direction="from-bottom" data-animation-delay="250">
+                    <small class="editable" id="story_content_4_2">This is where our FOREVER BEGINS</small>
+                </div>
+            </div>
+        `;
+        console.log('✅ Timeline cleared and reset');
+    }
+    // Reload stories after a short delay
+    setTimeout(() => {
+        renderStories();
+    }, 100);
+};
+
+// Initialize story section
+function initializeStorySection() {
+    console.log('📖 Initializing story section...');
+    
+    // Load background image from API
+    loadStoryBackground();
+    
+    // Load stories
+    renderStories();
+}
+
+// Test function to check image loading
+window.testStoryImages = function() {
+    console.log('🧪 Testing story images...');
+    const images = document.querySelectorAll('img[id^="story_img_"]');
+    console.log(`Found ${images.length} story images:`, images);
+    images.forEach((img, index) => {
+        console.log(`Image ${index + 1}:`, {
+            id: img.id,
+            src: img.src,
+            alt: img.alt,
+            loaded: img.complete
+        });
+    });
+};
+
+// Load story background from API
+async function loadStoryBackground() {
+    try {
+        console.log('🎨 Loading story background from API...');
+        
+        // Check if siteData is available
+        if (typeof window.siteData !== 'undefined' && window.siteData.story && window.siteData.story.background) {
+            console.log('📡 Using API background:', window.siteData.story.background);
+            updateStoryBackground(window.siteData.story.background);
+            return;
+        }
+        
+        // Try direct API call
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        
+        if (data && data.data && data.data.story && data.data.story.background) {
+            console.log('📡 Found background via API:', data.data.story.background);
+            updateStoryBackground(data.data.story.background);
+        } else {
+            console.log('🔄 No API background, using default');
+            updateStoryBackground('./public/images/default/story/default-story-background.svg');
+        }
+    } catch (error) {
+        console.log('🔄 API failed, using default background:', error);
+        updateStoryBackground('./public/images/default/story/default-story-background.svg');
+    }
+}
+
+// Update story background
+function updateStoryBackground(backgroundUrl) {
+    const storySection = document.getElementById('storysub');
+    if (storySection) {
+        storySection.style.backgroundImage = `url('${backgroundUrl}?t=${Date.now()}')`;
+        console.log('✅ Updated story background:', backgroundUrl);
+    }
+}
+
+// Initialize when DOM is ready
+$(document).ready(function() {
+    console.log('📄 Story DOM ready, initializing...');
+    initializeStorySection();
+});
+
+// Re-initialize when site data is updated
+if (typeof window !== 'undefined') {
+    window.addEventListener('siteDataUpdated', function() {
+        console.log('📡 siteDataUpdated event received, re-initializing story section...');
+        initializeStorySection();
+    });
+}
+
+// Function to create sample stories in database
+window.createSampleStories = async function() {
+    try {
+        console.log('Creating sample stories...');
+        const sampleStories = [
+            {
+                id: "story_1",
+                milestone: "BẮT ĐẦU",
+                src: "./public/images/default/story/default-story-1.svg",
+                title: "Chúng mình đã từng...",
+                description: "Chúng mình quen nhau qua mạng xã hội, từ những tin nhắn làm quen đến những buổi trò chuyện không dứt. Một ngày, bạn rủ mình đi lễ nhà thờ. Lần đầu gặp, mình hồi hộp suýt làm rơi kinh thánh, còn bạn thì cười bảo sẽ giữ giúp. Từ đó, tình yêu lớn lên qua những buổi cầu nguyện và cà phê. Hôm nay, mình hạnh phúc vì hành trình ấy đã đưa chúng mình đến đây, trở thành một gia đình.",
+                visible: true,
+                order: 0
+            },
+            {
+                id: "story_2", 
+                milestone: "20/02/2020",
+                src: "./public/images/default/story/default-story-2.svg",
+                title: "Tình bạn thành tình yêu..",
+                description: "Đến ngày 20/02, mình quyết định cầu hôn. Chẳng có hoa hay ánh nến lãng mạn như người ta, chỉ có mình rón rén lôi chiếc nhẫn ra, tim đập thình thịch, rồi thủ thỉ: 'Làm vợ anh nhé?' Bạn nhìn mình, cười nhẹ, và gật đầu. Giản dị vậy thôi, nhưng khoảnh khắc ấy với mình là cả thế giới.",
+                visible: true,
+                order: 1
+            },
+            {
+                id: "story_3",
+                milestone: "24/03/2024 và sau nữa",
+                src: "./public/images/default/story/default-story-3.svg", 
+                title: "Ngày chung đôi",
+                description: "Hơn 4 năm tình bạn, và 4 năm tình yêu không phải là quãng thời gian quá dài, nhưng cũng không quá ngắn, đủ để chúng mình nhận ra nhiều điều. Cuối cùng ngày vui nhất của chúng mình cũng tới rồi. Cảm ơn vì chúng ta đã luôn là một phần trong cuộc sống của nhau. Em và anh không chỉ là người yêu mà còn là tri kỷ, là bạn đồng hành. Kể từ Ngày hôm nay, em là Vợ, anh là Chồng và chúng ta là Một gia đình hạnh phúc.",
+                visible: true,
+                order: 2
+            }
+        ];
+
+        const response = await fetch('/api/data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                stories: sampleStories
+            })
+        });
+
+        const result = await response.json();
+        console.log('Sample stories created:', result);
+        
+        if (result.success) {
+            console.log('✅ Sample stories created successfully!');
+            // Reload stories after creating
+            setTimeout(() => {
+                renderStories();
+            }, 500);
+        } else {
+            console.error('❌ Failed to create sample stories:', result.message);
+        }
+    } catch (error) {
+        console.error('Error creating sample stories:', error);
+    }
+};
+</script>

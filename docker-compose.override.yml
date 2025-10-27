@@ -1,0 +1,23 @@
+# Docker Compose Override cho Development
+# File này sẽ được tự động load trong development
+
+services:
+  wedding-admin:
+    build: .
+    environment:
+      - FLASK_ENV=development
+      - DEBUG=true
+      - PYTHONPATH=/app
+    volumes:
+      # Mount source code để hot reload
+      - ./api:/app/api
+      - ./admin.html:/app/admin.html
+      - ./admin:/app/admin
+      - ./public:/app/public
+      - ./webfonts:/app/webfonts
+      - ./data:/app/data
+    ports:
+      - "5001:5001"
+    command: ["python", "api/app_sqlite.py"]
+    restart: unless-stopped
+

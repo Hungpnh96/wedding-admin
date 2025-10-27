@@ -1,0 +1,354 @@
+<div class="tab-content-wrapper">
+    <!-- Event Management Header -->
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-calendar-alt me-2"></i>Quản lý sự kiện</h5>
+            <div class="section-actions">
+                <button class="btn btn-primary" id="addEventBtn">
+                    <i class="fas fa-plus me-1"></i>Thêm sự kiện
+                </button>
+            </div>
+        </div>
+        <div class="section-body">
+            <!-- Events List -->
+            <div id="eventsList" class="events-list">
+                <div class="empty-state">
+                    <i class="fas fa-calendar-plus"></i>
+                    <h6>Chưa có sự kiện nào</h6>
+                    <p>Nhấn "Thêm sự kiện" để tạo sự kiện đầu tiên</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Form Modal -->
+    <div id="eventModal" class="custom-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeEventModal()"></div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Thêm sự kiện mới</h5>
+                    <button type="button" class="btn-close" onclick="closeEventModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="eventForm">
+                        <div class="row">
+                            <!-- Event Title -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Tiêu đề sự kiện <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="eventTitle" placeholder="VD: Sự Kiện Cưới" required>
+                                </div>
+                            </div>
+
+                            <!-- Event Name -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Tên sự kiện <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="eventName" placeholder="VD: THÁNH LỄ HÔN PHỐI" required>
+                                </div>
+                            </div>
+
+                            <!-- Date and Time -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Ngày <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="eventDate" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Giờ <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control" id="eventTime" required>
+                                </div>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Tên địa điểm <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="eventVenue" placeholder="VD: Nhà Thờ Giáo Xứ Phú Long" required>
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Địa chỉ chi tiết <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="eventAddress" rows="2" placeholder="VD: 372/5 Nguyễn Văn Cừ, Tân Lập, Buôn Ma Thuột, Đắk Lắk, Việt Nam" required></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Google Maps Link -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Link Google Maps</label>
+                                    <input type="url" class="form-control" id="eventMapsLink" placeholder="https://maps.google.com/...">
+                                </div>
+                            </div>
+
+                            <!-- Visibility -->
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="eventVisible" checked>
+                                    <label class="form-check-label">
+                                        Hiển thị sự kiện trên website
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEventModal()">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="saveEventBtn">Lưu sự kiện</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-dialog {
+        position: relative;
+        width: 90%;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-footer {
+        padding: 20px;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 15px;
+    }
+</style>
+
+<script>
+console.log('🚀 SIMPLE EVENT SCRIPT LOADING...');
+
+// Global variables
+let events = [];
+
+// Simple functions
+function openEventModal() {
+    console.log('📋 Opening modal...');
+    document.getElementById('eventModal').style.display = 'flex';
+}
+
+function closeEventModal() {
+    console.log('📋 Closing modal...');
+    document.getElementById('eventModal').style.display = 'none';
+}
+
+function saveEvent() {
+    console.log('💾 Saving event...');
+    
+    // Get form data
+    const title = document.getElementById('eventTitle').value;
+    const name = document.getElementById('eventName').value;
+    const date = document.getElementById('eventDate').value;
+    const time = document.getElementById('eventTime').value;
+    const venue = document.getElementById('eventVenue').value;
+    const address = document.getElementById('eventAddress').value;
+    const mapsLink = document.getElementById('eventMapsLink').value;
+    const visible = document.getElementById('eventVisible').checked;
+    
+    console.log('📋 Form data:', { title, name, date, time, venue, address, mapsLink, visible });
+    
+    // Validate required fields
+    if (!title || !name || !date || !time || !venue || !address) {
+        alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+        return;
+    }
+    
+    // Create event object
+    const eventData = {
+        title: title,
+        name: name,
+        date: date,
+        time: time,
+        venue: venue,
+        address: address,
+        mapsLink: mapsLink,
+        visible: visible
+    };
+    
+    // Add to events array
+    events.push(eventData);
+    console.log('📋 Events array:', events);
+    
+    // Show success message
+    alert('Sự kiện đã được lưu thành công!');
+    
+    // Close modal
+    closeEventModal();
+    
+    // Reset form
+    document.getElementById('eventForm').reset();
+    
+    // Update events list
+    renderEventsList();
+}
+
+function renderEventsList() {
+    const container = document.getElementById('eventsList');
+    if (!container) return;
+    
+    if (events.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-calendar-plus"></i>
+                <h6>Chưa có sự kiện nào</h6>
+                <p>Nhấn "Thêm sự kiện" để tạo sự kiện đầu tiên</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = events.map((event, index) => `
+        <div class="event-card" style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px; background: #fff;">
+            <h6>${event.name}</h6>
+            <p><strong>Tiêu đề:</strong> ${event.title}</p>
+            <p><strong>Ngày:</strong> ${event.date} ${event.time}</p>
+            <p><strong>Địa điểm:</strong> ${event.venue}</p>
+            <p><strong>Địa chỉ:</strong> ${event.address}</p>
+            <p><strong>Hiển thị:</strong> ${event.visible ? 'Có' : 'Không'}</p>
+        </div>
+    `).join('');
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    console.log('📋 Setting up event listeners...');
+    
+    const addEventBtn = document.getElementById('addEventBtn');
+    const saveEventBtn = document.getElementById('saveEventBtn');
+    
+    console.log('📋 Elements found:', {
+        addEventBtn: !!addEventBtn,
+        saveEventBtn: !!saveEventBtn
+    });
+    
+    if (addEventBtn) {
+        console.log('📋 Add button found, setting up handler');
+        addEventBtn.onclick = function(e) {
+            e.preventDefault();
+            console.log('📋 Add button clicked');
+            openEventModal();
+        };
+        
+        // Also try addEventListener
+        addEventBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('📋 Add button clicked (addEventListener)');
+            openEventModal();
+        });
+    } else {
+        console.error('📋 Add button not found!');
+    }
+    
+    if (saveEventBtn) {
+        console.log('📋 Save button found, setting up handler');
+        saveEventBtn.onclick = function(e) {
+            e.preventDefault();
+            console.log('📋 Save button clicked');
+            saveEvent();
+        };
+        
+        // Also try addEventListener
+        saveEventBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('📋 Save button clicked (addEventListener)');
+            saveEvent();
+        });
+        
+        // Test direct function call
+        console.log('📋 Testing direct function call...');
+        try {
+            saveEvent();
+            console.log('📋 Direct saveEvent() call successful');
+        } catch (error) {
+            console.error('📋 Direct saveEvent() call failed:', error);
+        }
+    } else {
+        console.error('📋 Save button not found!');
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📋 DOM Content Loaded');
+    setupEventListeners();
+    renderEventsList();
+});
+
+// Also try immediate setup
+setTimeout(function() {
+    console.log('📋 Timeout setup');
+    setupEventListeners();
+}, 1000);
+
+console.log('🚀 SIMPLE EVENT SCRIPT LOADED');
+</script>

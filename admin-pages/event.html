@@ -1,0 +1,982 @@
+<div class="tab-content-wrapper">
+    <!-- Event Management Header -->
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-calendar-alt me-2"></i>Quản lý sự kiện</h5>
+            <div class="section-actions">
+                <button class="btn btn-primary" id="addEventBtn">
+                    <i class="fas fa-plus me-1"></i>Thêm sự kiện
+                </button>
+            </div>
+        </div>
+        <div class="section-body">
+            <!-- Events List -->
+            <div id="eventsList" class="events-list">
+                <!-- Events will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Form Modal -->
+    <div id="eventModal" class="custom-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeEventModal()"></div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Thêm sự kiện mới</h5>
+                    <button type="button" class="btn-close" onclick="closeEventModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="eventForm">
+                        <div class="row">
+                            <!-- Event Title -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Tiêu đề sự kiện <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="eventTitle" placeholder="VD: Sự Kiện Cưới" required>
+                                </div>
+                            </div>
+
+                            <!-- Event Name -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Tên sự kiện <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="eventName" placeholder="VD: THÁNH LỄ HÔN PHỐI" required>
+                                </div>
+                            </div>
+
+                            <!-- Date and Time -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Ngày <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="eventDate" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Giờ <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control" id="eventTime" required>
+                                </div>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Tên địa điểm <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="eventVenue" placeholder="VD: Nhà Thờ Giáo Xứ Phú Long" required>
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Địa chỉ chi tiết <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="eventAddress" rows="2" placeholder="VD: 372/5 Nguyễn Văn Cừ, Tân Lập, Buôn Ma Thuột, Đắk Lắk, Việt Nam" required></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Google Maps Link -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Link Google Maps</label>
+                                    <input type="url" class="form-control" id="eventMapsLink" placeholder="https://maps.google.com/...">
+                                </div>
+                            </div>
+
+                            <!-- Event Image -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Ảnh sự kiện</label>
+                                    <div class="image-upload-area" id="imageUploadArea">
+                                        <input type="file" class="form-control d-none" id="eventImage" accept="image/*">
+                                        <div class="upload-placeholder" id="uploadPlaceholder">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <p>Nhấn để chọn ảnh</p>
+                                            <small class="text-muted">JPG, PNG, WebP (tối đa 5MB)</small>
+                                        </div>
+                                        <div class="image-preview" id="eventImagePreview" style="display: none;">
+                                            <img id="previewImg" src="" alt="Preview" class="uploaded-image">
+                                            <div class="image-actions">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEventImage()">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Event Description -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Mô tả sự kiện</label>
+                                    <textarea class="form-control" id="eventDescription" rows="3" placeholder="Mô tả chi tiết về sự kiện..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Visibility -->
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="eventVisible" checked>
+                                    <label class="form-check-label">
+                                        Hiển thị sự kiện trên website
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEventModal()">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="saveEventBtn">Lưu sự kiện</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .events-list {
+        display: grid;
+        gap: 15px;
+    }
+    
+    .event-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        background: #fff;
+        transition: all 0.3s ease;
+    }
+    
+    .event-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+    
+    .event-info h6 {
+        margin: 0;
+        color: #333;
+        font-weight: 600;
+    }
+    
+    .event-info .event-title {
+        color: #666;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    
+    .event-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .event-actions .btn {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    
+    .event-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .event-detail {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .event-detail i {
+        margin-right: 8px;
+        width: 16px;
+        color: #007bff;
+    }
+    
+    .event-image {
+        width: 100%;
+        max-width: 200px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-top: 10px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 15px;
+    }
+    
+    .image-upload-area {
+        border: 2px dashed #dee2e6;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .image-upload-area:hover {
+        border-color: #007bff;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,123,255,0.15);
+    }
+    
+    .upload-placeholder {
+        cursor: pointer;
+        pointer-events: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .upload-placeholder i {
+        color: #007bff;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+        opacity: 0.7;
+    }
+    
+    .upload-placeholder p {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+    
+    .upload-placeholder small {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .image-preview {
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+    
+    .uploaded-image {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .image-actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .image-preview:hover .image-actions {
+        opacity: 1;
+    }
+    
+    .image-actions .btn {
+        background: rgba(255,255,255,0.9);
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .image-actions .btn:hover {
+        background: #dc3545;
+        color: white;
+        transform: scale(1.1);
+    }
+    
+    /* Custom Modal Styles */
+    .custom-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-dialog {
+        position: relative;
+        width: 90%;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-footer {
+        padding: 20px;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+    }
+    
+    .btn-close:hover {
+        color: #000;
+    }
+    
+    @media (max-width: 768px) {
+        .event-details {
+            grid-template-columns: 1fr;
+        }
+        
+        .event-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .event-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
+    }
+</style>
+
+<script>
+console.log('🚀 EVENT MANAGEMENT SCRIPT LOADING...');
+
+// Global variables
+let events = [];
+let currentEventId = null;
+
+// Format date for display
+function formatDate(dateString) {
+    if (!dateString) return '';
+    
+    try {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    } catch (error) {
+        console.error('Error formatting date:', error);
+        return dateString;
+    }
+}
+
+// Create default events data
+function createDefaultEvents() {
+    console.log('📋 Creating default events...');
+    
+    const defaultEvents = [
+        {
+            title: "Lễ Cưới",
+            name: "THÁNH LỄ HÔN PHỐI",
+            date: "2025-05-03",
+            time: "08:00",
+            venue: "Nhà Thờ Giáo Xứ Phú Long",
+            address: "372/5 Nguyễn Văn Cừ, Tân Lập, Buôn Ma Thuột, Đắk Lắk, Việt Nam",
+            mapsLink: "https://maps.google.com/",
+            description: "Thánh lễ hôn phối của cặp đôi",
+            visible: true,
+            image: "./public/images/default/event-default.webp"
+        },
+        {
+            title: "Tiệc Cưới",
+            name: "TIỆC CƯỚI TẠI NHÀ HÀNG",
+            date: "2025-05-03",
+            time: "18:00",
+            venue: "Nhà Hàng Tiệc Cưới",
+            address: "123 Đường ABC, Quận 1, TP.HCM, Việt Nam",
+            mapsLink: "https://maps.google.com/",
+            description: "Tiệc cưới chính thức",
+            visible: true,
+            image: "./public/images/default/event-default.webp"
+        },
+        {
+            title: "Tiệc Trà",
+            name: "TIỆC TRÀ GIA ĐÌNH",
+            date: "2025-05-02",
+            time: "14:00",
+            venue: "Nhà Gia Đình",
+            address: "456 Đường XYZ, Quận 2, TP.HCM, Việt Nam",
+            mapsLink: "https://maps.google.com/",
+            description: "Tiệc trà gặp mặt gia đình",
+            visible: true,
+            image: "./public/images/default/event-default.webp"
+        }
+    ];
+    
+    console.log('📋 Created default events:', defaultEvents);
+    return defaultEvents;
+}
+
+// Initialize event management
+function initializeEvent() {
+    console.log('📋 Initializing event management...');
+    loadEvents();
+    setupEventListeners();
+}
+
+// Load events from API
+async function loadEvents() {
+    try {
+        console.log('📋 Loading events from API...');
+        const response = await fetch('http://localhost:5001/api/data');
+        const data = await response.json();
+        
+        if (data && data.success && data.data) {
+            events = data.data.events || [];
+            console.log('📋 Loaded events from API:', events);
+            
+            // Nếu không có sự kiện nào, tạo dữ liệu mặc định
+            if (events.length === 0) {
+                console.log('📋 No events found, creating default events...');
+                events = createDefaultEvents();
+                // Lưu dữ liệu mặc định vào API
+                await saveEventsToAPI();
+            }
+        } else {
+            console.log('📋 No API data, creating default events...');
+            events = createDefaultEvents();
+            // Lưu dữ liệu mặc định vào API
+            await saveEventsToAPI();
+        }
+        
+        renderEventsList();
+    } catch (error) {
+        console.error('📋 Error loading events:', error);
+        console.log('📋 Creating default events due to error...');
+        events = createDefaultEvents();
+        renderEventsList();
+    }
+}
+
+// Render events list
+function renderEventsList() {
+    const container = document.getElementById('eventsList');
+    if (!container) return;
+    
+    if (events.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-calendar-plus"></i>
+                <h6>Chưa có sự kiện nào</h6>
+                <p>Nhấn "Thêm sự kiện" để tạo sự kiện đầu tiên</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = events.map((event, index) => `
+        <div class="event-card" data-event-id="${index}">
+            <div class="event-header">
+                <div class="event-info">
+                    <h6>${event.name || 'Chưa có tên'}</h6>
+                    <div class="event-title">${event.title || 'Chưa có tiêu đề'}</div>
+                </div>
+                <div class="event-actions">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editEvent(${index})">
+                        <i class="fas fa-edit"></i> Sửa
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteEvent(${index})">
+                        <i class="fas fa-trash"></i> Xóa
+                    </button>
+                </div>
+            </div>
+            
+            <div class="event-details">
+                <div class="event-detail">
+                    <i class="fas fa-calendar"></i>
+                    <span>${formatDate(event.date) || 'Chưa có ngày'}</span>
+                </div>
+                <div class="event-detail">
+                    <i class="fas fa-clock"></i>
+                    <span>${event.time || 'Chưa có giờ'}</span>
+                </div>
+                <div class="event-detail">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>${event.venue || 'Chưa có địa điểm'}</span>
+                </div>
+                <div class="event-detail">
+                    <i class="fas fa-eye"></i>
+                    <span>${event.visible ? 'Hiển thị' : 'Ẩn'}</span>
+                </div>
+            </div>
+            
+            ${event.address ? `<div class="event-detail"><i class="fas fa-home"></i><span>${event.address}</span></div>` : ''}
+            
+            ${event.image ? `<img src="${event.image}" alt="Event Image" class="event-image" onerror="this.src='./public/images/default/event-default.webp'">` : ''}
+            
+            ${event.description ? `<div class="mt-2"><small class="text-muted">${event.description}</small></div>` : ''}
+        </div>
+    `).join('');
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    console.log('📋 Setting up event listeners...');
+    
+    const addEventBtn = document.getElementById('addEventBtn');
+    const saveEventBtn = document.getElementById('saveEventBtn');
+    
+    if (addEventBtn) {
+        console.log('📋 Add button found');
+        addEventBtn.onclick = function(e) {
+            e.preventDefault();
+            console.log('📋 Add button clicked');
+            openEventModal();
+        };
+    } else {
+        console.error('📋 Add button not found!');
+    }
+    
+    if (saveEventBtn) {
+        console.log('📋 Save button found');
+        saveEventBtn.onclick = function(e) {
+            e.preventDefault();
+            console.log('📋 Save button clicked');
+            saveEvent();
+        };
+    } else {
+        console.error('📋 Save button not found!');
+    }
+    
+    // Image preview
+    const eventImage = document.getElementById('eventImage');
+    if (eventImage) {
+        eventImage.addEventListener('change', handleImagePreview);
+    }
+    
+    // Upload area click
+    const imageUploadArea = document.getElementById('imageUploadArea');
+    if (imageUploadArea) {
+        imageUploadArea.addEventListener('click', function() {
+            eventImage.click();
+        });
+    }
+}
+
+// Open event modal
+function openEventModal(eventId = null) {
+    console.log('📋 Opening event modal, eventId:', eventId);
+    currentEventId = eventId;
+    const modalElement = document.getElementById('eventModal');
+    const modalTitle = document.getElementById('eventModalLabel');
+    
+    if (eventId !== null) {
+        // Edit mode
+        modalTitle.textContent = 'Chỉnh sửa sự kiện';
+        const event = events[eventId];
+        if (event) {
+            document.getElementById('eventTitle').value = event.title || '';
+            document.getElementById('eventName').value = event.name || '';
+            document.getElementById('eventDate').value = event.date || '';
+            document.getElementById('eventTime').value = event.time || '';
+            document.getElementById('eventVenue').value = event.venue || '';
+            document.getElementById('eventAddress').value = event.address || '';
+            document.getElementById('eventMapsLink').value = event.mapsLink || '';
+            document.getElementById('eventDescription').value = event.description || '';
+            document.getElementById('eventVisible').checked = event.visible !== false;
+            
+            // Show existing image
+            if (event.image) {
+                const preview = document.getElementById('eventImagePreview');
+                const placeholder = document.getElementById('uploadPlaceholder');
+                const img = document.getElementById('previewImg');
+                img.src = event.image;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+            }
+        }
+    } else {
+        // Add mode
+        modalTitle.textContent = 'Thêm sự kiện mới';
+        document.getElementById('eventForm').reset();
+        document.getElementById('eventImagePreview').style.display = 'none';
+    }
+    
+    modalElement.style.display = 'flex';
+}
+
+// Close event modal
+function closeEventModal() {
+    console.log('📋 Closing event modal');
+    const modalElement = document.getElementById('eventModal');
+    modalElement.style.display = 'none';
+}
+
+// Save event
+async function saveEvent() {
+    console.log('💾 Saving event...');
+    
+    const form = document.getElementById('eventForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    // Show loading
+    Swal.fire({
+        title: 'Đang lưu...',
+        text: 'Vui lòng chờ trong giây lát',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    try {
+        let imageUrl = null;
+        const imageFile = document.getElementById('eventImage').files[0];
+        
+        // Upload image if exists
+        if (imageFile) {
+            console.log('📸 Uploading image...');
+            imageUrl = await uploadEventImage(imageFile);
+            console.log('📸 Image uploaded:', imageUrl);
+        } else if (currentEventId !== null && events[currentEventId] && events[currentEventId].image) {
+            // Keep existing image if no new image selected
+            imageUrl = events[currentEventId].image;
+        }
+        
+        const eventData = {
+            title: document.getElementById('eventTitle').value,
+            name: document.getElementById('eventName').value,
+            date: document.getElementById('eventDate').value,
+            time: document.getElementById('eventTime').value,
+            venue: document.getElementById('eventVenue').value,
+            address: document.getElementById('eventAddress').value,
+            mapsLink: document.getElementById('eventMapsLink').value,
+            description: document.getElementById('eventDescription').value,
+            visible: document.getElementById('eventVisible').checked,
+            image: imageUrl
+        };
+        
+        if (currentEventId !== null) {
+            // Delete old image if updating and new image is different
+            if (events[currentEventId] && events[currentEventId].image && imageUrl !== events[currentEventId].image) {
+                console.log('🗑️ Deleting old image:', events[currentEventId].image);
+                await deleteEventImage(events[currentEventId].image);
+            }
+            // Update existing event
+            events[currentEventId] = eventData;
+        } else {
+            // Add new event
+            events.push(eventData);
+        }
+        
+        // Save to API
+        await saveEventsToAPI();
+        
+        // Close modal
+        closeEventModal();
+        
+        // Refresh list
+        renderEventsList();
+        
+        // Success message
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: 'Sự kiện đã được lưu thành công!',
+            timer: 2000,
+            showConfirmButton: false
+        });
+        
+    } catch (error) {
+        console.error('❌ Error saving event:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: 'Không thể lưu sự kiện: ' + error.message
+        });
+    }
+}
+
+// Save events to API
+async function saveEventsToAPI() {
+    try {
+        console.log('💾 Saving events to API...');
+        
+        // Load current site data
+        const getResponse = await fetch('http://localhost:5001/api/data');
+        const currentData = await getResponse.json();
+        
+        let siteData = {};
+        if (currentData.success && currentData.data) {
+            siteData = currentData.data;
+        }
+        
+        // Update events
+        siteData.events = events;
+        
+        console.log('💾 Full site data to save:', siteData);
+        
+        // Save to API
+        const response = await fetch('http://localhost:5001/api/data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(siteData)
+        });
+        
+        const result = await response.json();
+        console.log('💾 Save response:', result);
+        
+        if (result.success) {
+            console.log('✅ Events saved successfully');
+        } else {
+            console.error('❌ Failed to save events:', result.message);
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error('❌ Error saving events:', error);
+        throw error;
+    }
+}
+
+// Edit event
+function editEvent(eventId) {
+    openEventModal(eventId);
+}
+
+// Delete event
+async function deleteEvent(eventId) {
+    const result = await Swal.fire({
+        title: 'Xác nhận xóa',
+        text: 'Bạn có chắc chắn muốn xóa sự kiện này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+    });
+    
+    if (result.isConfirmed) {
+        try {
+            // Delete image file if exists
+            if (events[eventId] && events[eventId].image) {
+                await deleteEventImage(events[eventId].image);
+            }
+            
+            // Remove from array
+            events.splice(eventId, 1);
+            
+            // Save to API
+            await saveEventsToAPI();
+            
+            // Refresh list
+            renderEventsList();
+            
+            // Success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Đã xóa!',
+                text: 'Sự kiện đã được xóa thành công!',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            
+        } catch (error) {
+            console.error('❌ Error deleting event:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không thể xóa sự kiện: ' + error.message
+            });
+        }
+    }
+}
+
+// Upload event image
+async function uploadEventImage(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'event'); // Use 'type' instead of 'folder'
+    
+    const response = await fetch('http://localhost:5001/api/upload', {
+        method: 'POST',
+        body: formData
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+        // Return full URL path from API response
+        return result.data.path;
+    } else {
+        throw new Error(result.message || 'Upload failed');
+    }
+}
+
+// Delete event image
+async function deleteEventImage(imageUrl) {
+    if (!imageUrl) return;
+    
+    try {
+        console.log('🗑️ Attempting to delete image:', imageUrl);
+        
+        const response = await fetch('http://localhost:5001/api/delete-image', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ imageUrl: imageUrl })
+        });
+        
+        const result = await response.json();
+        console.log('🗑️ Delete image result:', result);
+        
+        if (result.success) {
+            console.log('✅ Image deleted successfully:', imageUrl);
+        } else {
+            console.error('❌ Failed to delete image:', result.message);
+        }
+    } catch (error) {
+        console.error('🗑️ Error deleting image:', error);
+    }
+}
+
+// Handle image preview
+function handleImagePreview(event) {
+    const file = event.target.files[0];
+    if (file) {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Vui lòng chọn file ảnh hợp lệ!'
+            });
+            return;
+        }
+        
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'File ảnh quá lớn! Vui lòng chọn file nhỏ hơn 5MB.'
+            });
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('eventImagePreview');
+            const placeholder = document.getElementById('uploadPlaceholder');
+            const img = document.getElementById('previewImg');
+            img.src = e.target.result;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Remove event image
+function removeEventImage() {
+    const eventImage = document.getElementById('eventImage');
+    const preview = document.getElementById('eventImagePreview');
+    const placeholder = document.getElementById('uploadPlaceholder');
+    
+    // Clear file input
+    eventImage.value = '';
+    
+    // Hide preview, show placeholder
+    preview.style.display = 'none';
+    placeholder.style.display = 'flex';
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📋 DOM Content Loaded');
+    initializeEvent();
+});
+
+// Also try immediate setup
+setTimeout(function() {
+    console.log('📋 Timeout setup');
+    if (typeof initializeEvent === 'function') {
+        initializeEvent();
+    }
+}, 1000);
+
+// Export functions for global access
+window.initializeEvent = initializeEvent;
+window.editEvent = editEvent;
+window.deleteEvent = deleteEvent;
+window.closeEventModal = closeEventModal;
+window.removeEventImage = removeEventImage;
+
+console.log('🚀 EVENT MANAGEMENT SCRIPT LOADED');
+</script>

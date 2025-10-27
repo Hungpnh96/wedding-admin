@@ -1,0 +1,189 @@
+<div class="tab-content-wrapper">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="section-card">
+                <div class="section-header">
+                    <h5><i class="fas fa-chart-line me-2"></i>Thống kê nhanh</h5>
+                </div>
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="h3 text-primary mb-1" id="totalImages">0</div>
+                                <div class="text-muted">Hình ảnh</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="h3 text-success mb-1" id="totalStories">0</div>
+                                <div class="text-muted">Câu chuyện</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="h3 text-warning mb-1" id="totalSections">0</div>
+                                <div class="text-muted">Phần nội dung</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="h3 text-info mb-1" id="lastUpdated">Chưa cập nhật</div>
+                                <div class="text-muted">Lần cuối</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <h5><i class="fas fa-eye me-2"></i>Xem trước website</h5>
+                </div>
+                <div class="section-body">
+                    <p class="text-muted mb-3">Nhấn nút bên dưới để xem trước website với các thay đổi hiện tại.</p>
+                    <button class="btn btn-custom" onclick="previewWebsite()">
+                        <i class="fas fa-external-link-alt me-2"></i>Xem trước website
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="section-card">
+                <div class="section-header">
+                    <h5><i class="fas fa-save me-2"></i>Lưu trữ & Xuất</h5>
+                </div>
+                <div class="section-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success" onclick="saveSiteData()">
+                            <i class="fas fa-save me-2"></i>Lưu thay đổi
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="downloadData()">
+                            <i class="fas fa-download me-2"></i>Tải file JSON
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="loadData()">
+                            <i class="fas fa-upload me-2"></i>Nhập file JSON
+                        </button>
+                        <button class="btn btn-outline-info" onclick="exportUploadedFiles()">
+                            <i class="fas fa-file-export me-2"></i>Xuất file ảnh
+                        </button>
+                        <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="handleFileUpload(this)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <h5><i class="fas fa-info-circle me-2"></i>Hướng dẫn nhanh</h5>
+                </div>
+                <div class="section-body">
+                    <div class="alert alert-info">
+                        <small>
+                            <strong>💡 Mẹo:</strong><br>
+                            • Kéo thả để sắp xếp nội dung<br>
+                            • Click vào ảnh để thay đổi<br>
+                            • Sử dụng nút "Xem trước" để kiểm tra<br>
+                            • Nhớ lưu thay đổi trước khi đóng
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Overview Tab JavaScript
+function initializeOverview() {
+    console.log('Initializing overview tab');
+    
+    // Load overview statistics
+    loadOverviewStats();
+    
+    // Setup event listeners
+    setupOverviewEventListeners();
+}
+
+function loadOverviewStats() {
+    // Update statistics from siteData
+    if (window.siteData) {
+        const totalImages = (window.siteData.gallery?.length || 0) + 
+                           (window.siteData.hero?.slides?.length || 0) + 
+                           (window.siteData.story?.length || 0);
+        
+        const totalStories = window.siteData.story?.length || 0;
+        const totalSections = Object.keys(window.siteData.visibility?.sections || {}).length;
+        const lastUpdated = window.siteData.admin?.lastUpdate || 'Chưa cập nhật';
+        
+        const totalImagesEl = document.getElementById('totalImages');
+        const totalStoriesEl = document.getElementById('totalStories');
+        const totalSectionsEl = document.getElementById('totalSections');
+        const lastUpdatedEl = document.getElementById('lastUpdated');
+        
+        if (totalImagesEl) totalImagesEl.textContent = totalImages;
+        if (totalStoriesEl) totalStoriesEl.textContent = totalStories;
+        if (totalSectionsEl) totalSectionsEl.textContent = totalSections;
+        if (lastUpdatedEl) lastUpdatedEl.textContent = lastUpdated;
+    }
+}
+
+function setupOverviewEventListeners() {
+    // Preview website button
+    const previewBtn = document.querySelector('[onclick*="previewWebsite"]');
+    if (previewBtn) {
+        previewBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof previewWebsite === 'function') {
+                previewWebsite();
+            }
+        });
+    }
+    
+    // Save changes button
+    const saveBtn = document.querySelector('[onclick*="saveSiteData"]');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof saveSiteData === 'function') {
+                saveSiteData();
+            }
+        });
+    }
+    
+    // Download data button
+    const downloadBtn = document.querySelector('[onclick*="downloadData"]');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof downloadData === 'function') {
+                downloadData();
+            }
+        });
+    }
+    
+    // Load data button
+    const loadBtn = document.querySelector('[onclick*="loadData"]');
+    if (loadBtn) {
+        loadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof loadData === 'function') {
+                loadData();
+            }
+        });
+    }
+    
+    // Export files button
+    const exportBtn = document.querySelector('[onclick*="exportUploadedFiles"]');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof exportUploadedFiles === 'function') {
+                exportUploadedFiles();
+            }
+        });
+    }
+}
+
+// Export functions for global access
+window.initializeOverview = initializeOverview;
+</script>

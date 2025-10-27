@@ -1,0 +1,290 @@
+<div class="tab-content-wrapper">
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-palette me-2"></i>Tùy chỉnh màu sắc</h5>
+        </div>
+        <div class="section-body">
+            <!-- Color Presets -->
+            <div class="form-group mb-4">
+                <label class="form-label">Bộ màu có sẵn</label>
+                <div class="color-presets d-flex flex-wrap gap-2">
+                    <div class="color-preset" data-theme="wedding" onclick="applyColorPreset('wedding')">
+                        <div class="preset-colors">
+                            <div class="preset-color" style="background: #9f5958;"></div>
+                            <div class="preset-color" style="background: #f8f9fa;"></div>
+                            <div class="preset-color" style="background: #2c3e50;"></div>
+                        </div>
+                        <small>Wedding Classic</small>
+                    </div>
+                    <div class="color-preset" data-theme="romantic" onclick="applyColorPreset('romantic')">
+                        <div class="preset-colors">
+                            <div class="preset-color" style="background: #e74c3c;"></div>
+                            <div class="preset-color" style="background: #fdf2f8;"></div>
+                            <div class="preset-color" style="background: #1f2937;"></div>
+                        </div>
+                        <small>Romantic Pink</small>
+                    </div>
+                    <div class="color-preset" data-theme="elegant" onclick="applyColorPreset('elegant')">
+                        <div class="preset-colors">
+                            <div class="preset-color" style="background: #2c3e50;"></div>
+                            <div class="preset-color" style="background: #ecf0f1;"></div>
+                            <div class="preset-color" style="background: #34495e;"></div>
+                        </div>
+                        <small>Elegant Blue</small>
+                    </div>
+                    <div class="color-preset" data-theme="golden" onclick="applyColorPreset('golden')">
+                        <div class="preset-colors">
+                            <div class="preset-color" style="background: #f39c12;"></div>
+                            <div class="preset-color" style="background: #fef9e7;"></div>
+                            <div class="preset-color" style="background: #8b4513;"></div>
+                        </div>
+                        <small>Golden Luxury</small>
+                    </div>
+                    <div class="color-preset" data-theme="forest" onclick="applyColorPreset('forest')">
+                        <div class="preset-colors">
+                            <div class="preset-color" style="background: #27ae60;"></div>
+                            <div class="preset-color" style="background: #eafaf1;"></div>
+                            <div class="preset-color" style="background: #1e8449;"></div>
+                        </div>
+                        <small>Forest Green</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-circle text-primary me-1"></i>Màu chủ đạo
+                        </label>
+                        <div class="color-input-group">
+                            <input type="color" class="form-control color-picker" id="primaryThemeColor" value="#9f5958">
+                            <input type="text" class="form-control color-text" id="primaryThemeColorText" value="#9f5958" placeholder="#9f5958">
+                        </div>
+                        <small class="form-text text-muted">Màu chính của website</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-circle text-secondary me-1"></i>Màu phụ
+                        </label>
+                        <div class="color-input-group">
+                            <input type="color" class="form-control color-picker" id="secondaryThemeColor" value="#f8f9fa">
+                            <input type="text" class="form-control color-text" id="secondaryThemeColorText" value="#f8f9fa" placeholder="#f8f9fa">
+                        </div>
+                        <small class="form-text text-muted">Màu nền và phụ</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-font me-1" style="color: #2c3e50;"></i>Màu văn bản
+                        </label>
+                        <div class="color-input-group">
+                            <input type="color" class="form-control color-picker" id="textColor" value="#2c3e50">
+                            <input type="text" class="form-control color-text" id="textColorText" value="#2c3e50" placeholder="#2c3e50">
+                        </div>
+                        <small class="form-text text-muted">Màu chữ chính</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-square me-1" style="color: #ffffff; border: 1px solid #ccc;"></i>Màu nền
+                        </label>
+                        <div class="color-input-group">
+                            <input type="color" class="form-control color-picker" id="backgroundColor" value="#ffffff">
+                            <input type="text" class="form-control color-text" id="backgroundColorText" value="#ffffff" placeholder="#ffffff">
+                        </div>
+                        <small class="form-text text-muted">Màu nền chính</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-square me-1" style="color: #dee2e6;"></i>Màu viền
+                        </label>
+                        <div class="color-input-group">
+                            <input type="color" class="form-control color-picker" id="borderColor" value="#dee2e6">
+                            <input type="text" class="form-control color-text" id="borderColorText" value="#dee2e6" placeholder="#dee2e6">
+                        </div>
+                        <small class="form-text text-muted">Màu viền và phân cách</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-star me-1" style="color: #e74c3c;"></i>Màu accent
+                        </label>
+                        <div class="color-input-group">
+                            <input type="color" class="form-control color-picker" id="accentColor" value="#e74c3c">
+                            <input type="text" class="form-control color-text" id="accentColorText" value="#e74c3c" placeholder="#e74c3c">
+                        </div>
+                        <small class="form-text text-muted">Màu nhấn và highlight</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-font me-2"></i>Tùy chỉnh font chữ</h5>
+        </div>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Font chính</label>
+                        <select class="form-control" id="primaryFont">
+                            <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                            <option value="'Roboto', sans-serif">Roboto</option>
+                            <option value="'Open Sans', sans-serif">Open Sans</option>
+                            <option value="'Lato', sans-serif">Lato</option>
+                            <option value="'Poppins', sans-serif">Poppins</option>
+                            <option value="'Montserrat', sans-serif">Montserrat</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Font tiêu đề</label>
+                        <select class="form-control" id="headingFont">
+                            <option value="'Playfair Display', serif">Playfair Display</option>
+                            <option value="'Merriweather', serif">Merriweather</option>
+                            <option value="'Lora', serif">Lora</option>
+                            <option value="'Source Serif Pro', serif">Source Serif Pro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Kích thước font chính</label>
+                        <input type="range" class="form-range" id="baseFontSize" min="12" max="20" value="16">
+                        <small class="form-text text-muted">16px</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kích thước font tiêu đề</label>
+                        <input type="range" class="form-range" id="headingFontSize" min="24" max="48" value="32">
+                        <small class="form-text text-muted">32px</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-eye me-2"></i>Xem trước theme</h5>
+        </div>
+        <div class="section-body">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Thay đổi sẽ được áp dụng ngay lập tức. Bạn có thể xem trước trong tab "Xem trước website".
+            </div>
+            <button class="btn btn-custom" onclick="applyTheme()">
+                <i class="fas fa-paint-brush me-2"></i>Áp dụng theme
+            </button>
+            <button class="btn btn-outline-secondary ms-2" onclick="resetTheme()">
+                <i class="fas fa-undo me-2"></i>Khôi phục mặc định
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>// Theme Tab JavaScript
+function initializeTheme() {
+    console.log("Initializing theme tab");
+    
+    // Load theme data
+    loadThemeData();
+    
+    // Setup event listeners
+    setupThemeEventListeners();
+}
+
+function loadThemeData() {
+    if (window.siteData  window.siteData.theme) {
+        const theme = window.siteData.theme;
+        
+        // Update color fields
+        setFieldValue("primaryThemeColor", theme.primaryColor);
+        setFieldValue("primaryThemeColorText", theme.primaryColor);
+        setFieldValue("secondaryThemeColor", theme.secondaryColor);
+        setFieldValue("secondaryThemeColorText", theme.secondaryColor);
+        setFieldValue("textColor", theme.textColor);
+        setFieldValue("textColorText", theme.textColor);
+        setFieldValue("backgroundColor", theme.backgroundColor);
+        setFieldValue("backgroundColorText", theme.backgroundColor);
+        setFieldValue("borderColor", theme.borderColor);
+        setFieldValue("borderColorText", theme.borderColor);
+        setFieldValue("accentColor", theme.accentColor);
+        setFieldValue("accentColorText", theme.accentColor);
+        
+        // Update font fields
+        setFieldValue("primaryFont", theme.primaryFont);
+        setFieldValue("headingFont", theme.headingFont);
+        setFieldValue("baseFontSize", theme.baseFontSize);
+        setFieldValue("headingFontSize", theme.headingFontSize);
+    }
+}
+
+function setupThemeEventListeners() {
+    // Color picker listeners
+    const colorPickers = document.querySelectorAll(".color-picker");
+    colorPickers.forEach(picker => {
+        picker.addEventListener("change", function() {
+            const textField = document.getElementById(this.id.replace("Color", "ColorText"));
+            if (textField) {
+                textField.value = this.value;
+            }
+            updateSiteDataFromThemeForm();
+        });
+    });
+    
+    // Color text listeners
+    const colorTexts = document.querySelectorAll(".color-text");
+    colorTexts.forEach(textField => {
+        textField.addEventListener("input", function() {
+            const picker = document.getElementById(this.id.replace("Text", ""));
+            if (picker  /^#[0-9A-F]{6}$/i.test(this.value)) {
+                picker.value = this.value;
+            }
+            updateSiteDataFromThemeForm();
+        });
+    });
+    
+    // Font field listeners
+    const fontFields = ["primaryFont", "headingFont", "baseFontSize", "headingFontSize"];
+    fontFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener("change", function() {
+                updateSiteDataFromThemeForm();
+            });
+        }
+    });
+}
+
+function updateSiteDataFromThemeForm() {
+    if (!window.siteData) window.siteData = {};
+    if (!window.siteData.theme) window.siteData.theme = {};
+    
+    // Update theme data
+    window.siteData.theme.primaryColor = document.getElementById("primaryThemeColor")?.value || "#9f5958";
+    window.siteData.theme.secondaryColor = document.getElementById("secondaryThemeColor")?.value || "#f8f9fa";
+    window.siteData.theme.textColor = document.getElementById("textColor")?.value || "#2c3e50";
+    window.siteData.theme.backgroundColor = document.getElementById("backgroundColor")?.value || "#ffffff";
+    window.siteData.theme.borderColor = document.getElementById("borderColor")?.value || "#dee2e6";
+    window.siteData.theme.accentColor = document.getElementById("accentColor")?.value || "#e74c3c";
+    window.siteData.theme.primaryFont = document.getElementById("primaryFont")?.value || ""Segoe UI", sans-serif";
+    window.siteData.theme.headingFont = document.getElementById("headingFont")?.value || ""Playfair Display", serif";
+    window.siteData.theme.baseFontSize = parseInt(document.getElementById("baseFontSize")?.value) || 16;
+    window.siteData.theme.headingFontSize = parseInt(document.getElementById("headingFontSize")?.value) || 32;
+    
+    // Update last modified
+    if (!window.siteData.admin) window.siteData.admin = {};
+    window.siteData.admin.lastUpdate = new Date().toISOString();
+}
+
+function setFieldValue(fieldId, value) {
+    const field = document.getElementById(fieldId);
+    if (field  value !== undefined) {
+        field.value = value;
+    }
+}
+
+// Export functions for global access
+window.initializeTheme = initializeTheme;
+</script>

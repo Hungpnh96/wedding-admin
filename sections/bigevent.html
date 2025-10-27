@@ -1,0 +1,358 @@
+<style>
+   #invitation  .font-h3 {
+   font-family: "Open Sans", sans-serif;
+   font-size: 16px;
+   }
+
+   /* Countdown Clock Styles */
+   .count-down-clock {
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       margin-top: 30px;
+   }
+
+   #bigevent-clock {
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       gap: 20px;
+       flex-wrap: wrap;
+   }
+
+   #bigevent-clock .box {
+       text-align: center;
+       padding: 20px 15px;
+       min-width: 80px;
+       background: rgba(255, 255, 255, 0.1);
+       border-radius: 10px;
+       backdrop-filter: blur(10px);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+       transition: all 0.3s ease;
+   }
+
+   #bigevent-clock .box:hover {
+       transform: translateY(-5px);
+       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+   }
+
+   #bigevent-clock .box > div {
+       font-size: 32px;
+       font-weight: bold;
+       color: white;
+       margin-bottom: 8px;
+       line-height: 1;
+       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+   }
+
+   #bigevent-clock .box > span {
+       font-size: 14px;
+       color: rgba(255, 255, 255, 0.9);
+       font-weight: 500;
+       text-transform: uppercase;
+       letter-spacing: 1px;
+   }
+
+   /* Responsive Design */
+   @media (max-width: 1199px) {
+       #bigevent-clock .box > div {
+           font-size: 28px;
+       }
+   }
+
+   @media (max-width: 991px) {
+       #bigevent-clock {
+           gap: 15px;
+       }
+       
+       #bigevent-clock .box {
+           min-width: 70px;
+           padding: 15px 10px;
+       }
+       
+       #bigevent-clock .box > div {
+           font-size: 24px;
+       }
+   }
+
+   @media (max-width: 767px) {
+       #bigevent-clock {
+           gap: 10px;
+       }
+       
+       #bigevent-clock .box {
+           min-width: 60px;
+           padding: 12px 8px;
+       }
+       
+       #bigevent-clock .box > div {
+           font-size: 20px;
+       }
+       
+       #bigevent-clock .box > span {
+           font-size: 12px;
+       }
+   }
+
+   @media (max-width: 575px) {
+       #bigevent-clock {
+           gap: 8px;
+       }
+       
+       #bigevent-clock .box {
+           min-width: 50px;
+           padding: 10px 6px;
+       }
+       
+       #bigevent-clock .box > div {
+           font-size: 18px;
+       }
+       
+       #bigevent-clock .box > span {
+           font-size: 11px;
+       }
+   }
+</style>
+
+<section id="invitation" class="editable-parent parallax-background bg-color-overlay padding-divider-top section-divider-bottom-1" style="background-image: url(&quot;https://thiepcuoionline.huythanhjewelry.vn/images/large.webp&quot;); background-position: center -488px;">
+    <div class="children" style="display: block">
+       <div>
+          <div class="container">
+             <div class="row">
+                <div class="col-sm-12">
+                   <h1 class="section-title light">The Big Day!</h1>
+                </div>
+             </div>
+             <div class="row">
+                <div class="col-md-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 center">
+                   <div class="invite neela-style animate-from-left animation-from-left" data-animation-direction="from-left" data-animation-delay="100">
+                      <span class="h-lines"></span><span class="v-lines"></span><span class="h-lines"></span><span class="v-lines"></span>
+                      <div class="invite_title">
+                         <div class="text">
+                            Save<small>the</small>Date
+                         </div>
+                      </div>
+                      <div class="invite_info px-2 px-lg-4">
+                         <h2 class="fs-1">
+                            <span id="invitation_male-name" class="editable">Huy Hùng</span>
+                            <small>&amp;</small>
+                            <span id="invitation_female-name" class="editable" style="text-wrap: nowrap;">Ngọc Trâm</span>
+                         </h2>
+                         <div class="editable font-h3" id="big_day_invitation">Một lời chúc của bạn chắc chắn sẽ làm cho đám cưới của chúng mình có thêm một niềm hạnh phúc!</div>
+                         <div class="center m-0 mt-2">
+                            <a href="#rsvp" class="btn btn-primary reverse scrollto text-white px-2" style="min-width: 240px; max-width: 240px; width: 255px;"><span class="h-lines"></span><span class="v-lines"></span><span class="h-lines"></span><span class="v-lines"></span>Gửi lời chúc</a>
+                         </div>
+                         
+                         <!-- <div class="center m-0"> -->
+                            <!-- <a href="./Accept.html" target="_blank" class="btn btn-primary reverse text-white px-2 mt-2" style="min-width: 240px; max-width: 240px; width: 255px;"><span class="h-lines"></span><span class="v-lines"></span><span class="h-lines"></span><span class="v-lines"></span>Xác nhận tham dự</a> -->
+                         <!-- </div> -->
+
+                         <div class="date">
+                            <span id="invitation_date" class="">03 tháng 05 2025</span>
+                         </div>
+                         <div class="count-down-clock">
+                            <div id="bigevent-clock" data-date="2025-05-03" data-text-day="Ngày" data-text-hour="Giờ" data-text-minute="Phút" data-text-second="Giây">
+                               <div class="box">
+                                  <div id="bigevent-days">00</div>
+                                  <span>Ngày</span>
+                               </div>
+                               <div class="box">
+                                  <div id="bigevent-hours">00</div>
+                                  <span>Giờ</span> 
+                               </div>
+                               <div class="box">
+                                  <div id="bigevent-minutes">00</div>
+                                  <span>Phút</span> 
+                               </div>
+                               <div class="box">
+                                  <div id="bigevent-seconds">00</div>
+                                  <span>Giây</span>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </section>
+
+<script>
+// BigEvent Countdown Timer
+class BigEventCountdown {
+    constructor() {
+        this.targetDate = null;
+        this.intervalId = null;
+    }
+
+    async init() {
+        console.log('🕒 Initializing BigEvent Countdown...');
+        
+        // Load date from API or use default
+        await this.loadWeddingDate();
+        
+        // Start countdown after date is loaded
+        this.startCountdown();
+    }
+
+    async loadWeddingDate() {
+        try {
+            const response = await fetch('/api/data');
+            const result = await response.json();
+            
+            if (result.success && result.data && result.data.hero && result.data.hero.weddingDate) {
+                const weddingDate = result.data.hero.weddingDate;
+                console.log('📅 Wedding date from API:', weddingDate);
+                
+                // Parse date and set target
+                this.targetDate = new Date(weddingDate);
+                console.log('📅 Parsed target date:', this.targetDate);
+                
+                // Update display date
+                this.updateDisplayDate(weddingDate);
+                
+                // Update clock data attribute
+                document.getElementById('bigevent-clock').setAttribute('data-date', weddingDate);
+                
+            } else {
+                // Fallback to default date
+                console.log('⚠️ Using fallback wedding date');
+                this.targetDate = new Date('2025-05-03');
+            }
+        } catch (error) {
+            console.error('❌ Error loading wedding date:', error);
+            // Fallback to default date
+            this.targetDate = new Date('2025-05-03');
+        }
+    }
+
+    updateDisplayDate(weddingDate) {
+        try {
+            const date = new Date(weddingDate);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            
+            const formattedDate = `${day} tháng ${month} ${year}`;
+            document.getElementById('invitation_date').textContent = formattedDate;
+            console.log('📅 Updated display date:', formattedDate);
+        } catch (error) {
+            console.error('❌ Error updating display date:', error);
+        }
+    }
+
+    startCountdown() {
+        if (!this.targetDate) {
+            console.error('❌ No target date set');
+            return;
+        }
+
+        console.log('⏰ Starting countdown to:', this.targetDate);
+        
+        // Clear any existing interval
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+        }
+
+        // Update immediately
+        this.updateCountdown();
+        
+        // Update every second
+        this.intervalId = setInterval(() => {
+            this.updateCountdown();
+        }, 1000);
+    }
+
+    updateCountdown() {
+        const now = new Date();
+        console.log('🕐 Current time:', now);
+        console.log('🎯 Target time:', this.targetDate);
+        
+        const timeDiff = this.targetDate.getTime() - now.getTime();
+        console.log('⏱️ Time difference (ms):', timeDiff);
+
+        if (timeDiff <= 0) {
+            // Event has passed
+            console.log('❌ Event has passed, timeDiff <= 0');
+            this.showEventPassed();
+            return;
+        }
+
+        // Calculate time units
+        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+        console.log(`📊 Calculated: ${days}d ${hours}h ${minutes}m ${seconds}s`);
+
+        // Update display
+        const daysEl = document.getElementById('bigevent-days');
+        const hoursEl = document.getElementById('bigevent-hours');
+        const minutesEl = document.getElementById('bigevent-minutes');
+        const secondsEl = document.getElementById('bigevent-seconds');
+        
+        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+        if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+        if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+
+        console.log(`⏰ Updated display: ${String(days).padStart(2, '0')}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`);
+    }
+
+    showEventPassed() {
+        document.getElementById('bigevent-days').textContent = '00';
+        document.getElementById('bigevent-hours').textContent = '00';
+        document.getElementById('bigevent-minutes').textContent = '00';
+        document.getElementById('bigevent-seconds').textContent = '00';
+        
+        console.log('🎉 Event has passed!');
+        
+        // Clear interval
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    }
+
+    destroy() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+        console.log('🛑 BigEvent Countdown destroyed');
+    }
+}
+
+// Initialize countdown when DOM is ready
+let bigEventCountdown = null;
+
+async function initBigEventCountdown() {
+    if (document.getElementById('bigevent-clock')) {
+        bigEventCountdown = new BigEventCountdown();
+        await bigEventCountdown.init();
+        console.log('✅ BigEvent Countdown initialized');
+    }
+}
+
+// Auto-initialize
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBigEventCountdown);
+} else {
+    initBigEventCountdown();
+}
+
+// Expose for manual control
+window.bigEventCountdown = {
+    init: initBigEventCountdown,
+    destroy: () => {
+        if (bigEventCountdown) {
+            bigEventCountdown.destroy();
+            bigEventCountdown = null;
+        }
+    }
+};
+</script>

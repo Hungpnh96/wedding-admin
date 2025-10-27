@@ -1,0 +1,830 @@
+<style>
+    /* Gallery - Original CSS from your working code */
+    .gallery-container {
+        position: relative;
+        width: 100%;
+        height: 500px;
+    }
+    
+    .grid-item {
+        position: absolute;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        width: 30%;
+        height: 450px;
+    }
+    
+    .grid-item:hover {
+        transform: scale(1.05);
+        z-index: 2;
+    }
+    
+    .grid-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    
+    @media (max-width: 768px) {
+        .gallery-container {
+            height: auto !important;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .grid-item {
+            position: relative !important;
+            width: calc(50% - 5px) !important;
+            height: 200px !important;
+            margin: 0 !important;
+            display: block !important;
+            left: auto !important;
+            top: auto !important;
+        }
+        
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    }
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .gallery-container {
+            height: auto !important;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 15px;
+        }
+        
+        .grid-item {
+            position: relative !important;
+            width: calc(33.33% - 10px) !important;
+            height: 220px !important;
+            margin: 0 !important;
+            display: block !important;
+            left: auto !important;
+            top: auto !important;
+        }
+        
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    }
+    
+    /* Lightbox - Professional Google Photos style */
+    .popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000 !important;
+        z-index: 99999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        flex-direction: column;
+    }
+    
+    .popup.show {
+        opacity: 1;
+    }
+    
+    /* Hide floating elements when popup is open */
+    body.popup-open {
+        overflow: hidden !important;
+    }
+    
+    /* Hide music player and other elements when popup is open */
+    body.popup-open .music-player,
+    body.popup-open .audio-control,
+    body.popup-open .floating-buttons,
+    body.popup-open .side-buttons,
+    body.popup-open [class*="float"],
+    body.popup-open [class*="fixed"]:not(.popup),
+    body.popup-open .btn-music,
+    body.popup-open .btn-sound,
+    body.popup-open .menu-access,
+    body.popup-open .bii-player,
+    body.popup-open [class*="menu"],
+    body.popup-open [class*="access"],
+    body.popup-open [id*="menu"],
+    body.popup-open [id*="access"] {
+        display: none !important;
+    }
+    
+    /* Top Bar */
+    .popup-topbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 10001;
+    }
+    
+    .popup-counter {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 400;
+    }
+    
+    .popup-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    
+    .popup-control-btn {
+        background: transparent;
+        border: none;
+        color: #fff;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+    
+    .popup-control-btn:hover {
+        background: rgba(255,255,255,0.1);
+    }
+    
+    /* Main Content */
+    .popup-content {
+        width: 100% !important;
+        height: calc(100vh - 64px - 120px);
+        top: 64px;
+        left: 0;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0;
+        background: #000 !important;
+    }
+    
+    .popup-content img {
+        max-width: 95%;
+        max-height: 95%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        user-select: none;
+        display: block;
+    }
+    
+    /* Navigation Buttons */
+    .popup-nav {
+        position: absolute;
+        background: rgba(255,255,255,0.1);
+        border: none;
+        color: #fff;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        z-index: 10000;
+    }
+    
+    .popup-nav:hover {
+        background: rgba(255,255,255,0.2);
+    }
+    
+    .popup-prev {
+        left: 20px;
+    }
+    
+    .popup-next {
+        right: 20px;
+    }
+    
+    /* Thumbnails Strip */
+    .popup-thumbnails {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 120px;
+        background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        z-index: 10001;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    
+    .popup-thumbnails::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .popup-thumbnails::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.1);
+    }
+    
+    .popup-thumbnails::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.3);
+        border-radius: 2px;
+    }
+    
+    .popup-thumbnails-container {
+        display: flex;
+        gap: 8px;
+        padding: 10px 0;
+    }
+    
+    .popup-thumbnail {
+        flex-shrink: 0;
+        width: 80px;
+        height: 80px;
+        border-radius: 4px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s ease;
+        opacity: 0.6;
+    }
+    
+    .popup-thumbnail:hover {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    
+    .popup-thumbnail.active {
+        border-color: #fff;
+        opacity: 1;
+    }
+    
+    .popup-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        .popup-topbar {
+            height: 56px;
+            padding: 0 12px;
+        }
+        
+        .popup-content {
+            height: calc(100% - 56px - 100px);
+            top: 56px;
+            padding: 0 12px;
+        }
+        
+        .popup-nav {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .popup-prev {
+            left: 8px;
+        }
+        
+        .popup-next {
+            right: 8px;
+        }
+        
+        .popup-thumbnails {
+            height: 100px;
+            padding: 0 12px;
+        }
+        
+        .popup-thumbnail {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .popup-control-btn {
+            width: 36px;
+            height: 36px;
+        }
+    }
+    
+    /* Tablet responsive */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .popup-content {
+            padding: 0 40px;
+        }
+        
+        .popup-nav {
+            width: 44px;
+            height: 44px;
+        }
+    }
+</style>
+
+<!-- Gallery Section -->
+<section id="gallery" class="editable-parent scroll-to">
+    <div class="children" style="display: block">
+       <div class="container">
+          <div class="row">
+             <div class="col-sm-12">
+                <h1 class="section-title">Album Hình Cưới</h1>
+             </div>
+          </div>
+       </div>
+       <div class="container">
+          <div class="row">
+             <div class="col col-xs-12">
+                    <div id="gallery-container" class="gallery-container"></div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </section>
+
+<!-- Gallery Popup - Professional Style -->
+<div id="gallery-popup" class="popup">
+    <!-- Top Bar -->
+    <div class="popup-topbar">
+        <div class="popup-counter" id="popup-counter">1 / 1</div>
+        <div class="popup-controls">
+            <button class="popup-control-btn" id="popup-play" title="Play slideshow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+            </button>
+            <button class="popup-control-btn" id="popup-pause" title="Pause slideshow" style="display:none;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                </svg>
+            </button>
+            <button class="popup-control-btn" id="popup-fullscreen" title="Fullscreen">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                </svg>
+            </button>
+            <button class="popup-close" title="Close">&times;</button>
+        </div>
+    </div>
+    
+    <!-- Main Image -->
+    <div class="popup-content">
+        <button class="popup-nav popup-prev" id="popup-prev">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+        </button>
+        <img src="" alt="Gallery Image" id="popup-image">
+        <button class="popup-nav popup-next" id="popup-next">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+            </svg>
+        </button>
+    </div>
+    
+    <!-- Thumbnail Strip -->
+    <div class="popup-thumbnails" id="popup-thumbnails">
+        <div class="popup-thumbnails-container" id="popup-thumbnails-container">
+            <!-- Thumbnails will be generated here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // Gallery Implementation - Load from API with fallback
+    (function() {
+        'use strict';
+        
+        console.log('📸 Gallery script loading...');
+        
+        // Album items - will be populated from API or fallback
+        let albumItems = [];
+        let currentImageIndex = 0;
+        
+        // Load gallery from API
+        async function loadGalleryFromAPI() {
+            try {
+                console.log('📸 Loading gallery from API...');
+                const response = await fetch('/api/data');
+                console.log('📸 API response status:', response.status);
+                const data = await response.json();
+                console.log('📸 Full API response:', data);
+                
+                if (data && data.data && data.data.gallery && Array.isArray(data.data.gallery) && data.data.gallery.length > 0) {
+                    console.log('📸 API returned', data.data.gallery.length, 'images');
+                    return data.data.gallery;
+                }
+                
+                console.log('📸 No gallery data from API, using fallback');
+                return null;
+            } catch (error) {
+                console.error('📸 Error loading from API:', error);
+                return null;
+            }
+        }
+        
+        // Render gallery - Masonry layout like your original
+        async function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            if (!container) return;
+            
+            // Load from API
+            const galleryData = await loadGalleryFromAPI();
+            
+            // Use fallback if no API data
+            const imagesToRender = galleryData && galleryData.length > 0 ? galleryData.map(item => ({
+                src: item.src
+            })) : [
+                { src: "./public/images/default/gallery-01.jpg" },
+                { src: "./public/images/default/gallery-02.jpg" },
+                { src: "./public/images/default/gallery-03.jpg" }
+            ];
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Update albumItems for lightbox
+            albumItems = imagesToRender.map(item => item.src);
+            
+            // Masonry layout - 3 columns with proper spacing
+            imagesToRender.forEach((item, index) => {
+                const column = index % 3;
+                const row = Math.floor(index / 3);
+                
+                const gridItem = document.createElement('div');
+                gridItem.className = 'grid grid-item btn-see-more-gallery';
+                gridItem.setAttribute('data-index', index);
+                gridItem.style.position = 'absolute';
+                gridItem.style.left = `${column * 33.33}%`;
+                gridItem.style.top = `${row * 470}px`;
+                
+                const img = document.createElement('img');
+                img.src = item.src;
+                img.alt = '';
+                img.className = 'img img-responsive';
+                
+                gridItem.appendChild(img);
+                container.appendChild(gridItem);
+                
+                gridItem.addEventListener('click', function() {
+                    openLightbox(index);
+                });
+            });
+            
+            // Set container height - larger calculation
+            const totalRows = Math.ceil(imagesToRender.length / 3);
+            container.style.height = `${totalRows * 470}px`;
+        }
+    
+        // Slideshow state
+        let slideshowInterval = null;
+        let isPlaying = false;
+        
+        // Lightbox functions - Expose to window for accessibility
+        window.openLightbox = function(index) {
+            console.log('📸 Opening lightbox for image:', index);
+            const popup = document.getElementById('gallery-popup');
+            const img = document.getElementById('popup-image');
+            const counter = document.getElementById('popup-counter');
+            
+            if (!popup || !img || !counter) {
+                console.error('📸 Lightbox elements not found!');
+                return;
+            }
+            
+            currentImageIndex = index;
+            img.src = albumItems[index];
+            counter.textContent = `${index + 1} / ${albumItems.length}`;
+            
+            // Generate thumbnails
+            generateThumbnails();
+            updateActiveThumbnail();
+            
+            popup.style.display = 'flex';
+            // Trigger animation
+            setTimeout(() => {
+                popup.classList.add('show');
+            }, 10);
+            
+            // Prevent body scroll and hide other elements
+            document.body.classList.add('popup-open');
+            document.body.style.overflow = 'hidden';
+            
+            // Auto start slideshow when popup opens
+            setTimeout(() => {
+                startSlideshow();
+            }, 500); // Start after popup animation
+            
+            console.log('📸 Lightbox opened successfully');
+        };
+        
+        window.closeLightbox = function() {
+            console.log('📸 Closing lightbox...');
+            const popup = document.getElementById('gallery-popup');
+            if (!popup) return;
+            
+            // Stop slideshow
+            stopSlideshow();
+            
+            popup.classList.remove('show');
+            
+            // Allow body scroll and show other elements
+            document.body.classList.remove('popup-open');
+            document.body.style.overflow = '';
+            
+            // Hide after animation
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 300);
+            console.log('📸 Lightbox closed');
+        };
+    
+        // Generate thumbnails
+        function generateThumbnails() {
+            const container = document.getElementById('popup-thumbnails-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            albumItems.forEach((src, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'popup-thumbnail';
+                thumb.innerHTML = `<img src="${src}" alt="">`;
+                thumb.addEventListener('click', () => {
+                    currentImageIndex = index;
+                    updateLightboxImage();
+                    updateActiveThumbnail();
+                });
+                container.appendChild(thumb);
+            });
+        }
+        
+        // Update active thumbnail
+        function updateActiveThumbnail() {
+            const thumbnails = document.querySelectorAll('.popup-thumbnail');
+            thumbnails.forEach((thumb, index) => {
+                if (index === currentImageIndex) {
+                    thumb.classList.add('active');
+                    // Scroll thumbnail into view
+                    thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+               } else {
+                    thumb.classList.remove('active');
+                }
+            });
+        }
+        
+        // Start slideshow
+        function startSlideshow() {
+            if (isPlaying) return;
+            isPlaying = true;
+            document.getElementById('popup-play').style.display = 'none';
+            document.getElementById('popup-pause').style.display = 'flex';
+            
+            slideshowInterval = setInterval(() => {
+                window.showNextImage();
+            }, 3000); // 3 seconds per image
+        }
+        
+        // Stop slideshow
+        function stopSlideshow() {
+            if (!isPlaying) return;
+            isPlaying = false;
+            document.getElementById('popup-play').style.display = 'flex';
+            document.getElementById('popup-pause').style.display = 'none';
+            
+            if (slideshowInterval) {
+                clearInterval(slideshowInterval);
+                slideshowInterval = null;
+            }
+        }
+        
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            const popup = document.getElementById('gallery-popup');
+            if (!document.fullscreenElement) {
+                popup.requestFullscreen().catch(err => {
+                    console.error('Error attempting to enable fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        window.showNextImage = function() {
+            console.log('📸 Next image...');
+            if (currentImageIndex < albumItems.length - 1) {
+                currentImageIndex++;
+            } else {
+                currentImageIndex = 0; // Loop to first
+            }
+            updateLightboxImage();
+        };
+        
+        window.showPrevImage = function() {
+            console.log('📸 Previous image...');
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+            } else {
+                currentImageIndex = albumItems.length - 1; // Loop to last
+            }
+            updateLightboxImage();
+        };
+        
+        function updateLightboxImage() {
+            console.log('📸 Updating lightbox image to:', currentImageIndex);
+            const img = document.getElementById('popup-image');
+            const counter = document.getElementById('popup-counter');
+            
+            if (!img || !counter) return;
+            
+            img.src = albumItems[currentImageIndex];
+            counter.textContent = `${currentImageIndex + 1} / ${albumItems.length}`;
+            updateActiveThumbnail();
+        }
+    
+        // Initialize gallery
+        function initializeGallery() {
+            console.log('📸 Initializing gallery...');
+            console.log('📸 Gallery container exists:', !!document.getElementById('gallery-container'));
+            try {
+                renderGallery();
+                setupEventListeners();
+                console.log('📸 Gallery initialization completed');
+            } catch (error) {
+                console.error('📸 Error initializing gallery:', error);
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            console.log('📸 Setting up event listeners...');
+            
+            // Close button
+            const closeBtn = document.querySelector('.popup-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.closeLightbox();
+                });
+            }
+            
+            // Navigation buttons
+            const prevBtn = document.getElementById('popup-prev');
+            const nextBtn = document.getElementById('popup-next');
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.showPrevImage();
+                });
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.showNextImage();
+                });
+            }
+            
+            // Slideshow controls
+            const playBtn = document.getElementById('popup-play');
+            const pauseBtn = document.getElementById('popup-pause');
+            const fullscreenBtn = document.getElementById('popup-fullscreen');
+            
+            if (playBtn) {
+                playBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    startSlideshow();
+                });
+            }
+            
+            if (pauseBtn) {
+                pauseBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    stopSlideshow();
+                });
+            }
+            
+            if (fullscreenBtn) {
+                fullscreenBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleFullscreen();
+                });
+            }
+            
+            // Popup background click
+            const popup = document.getElementById('gallery-popup');
+            if (popup) {
+                popup.addEventListener('click', function(e) {
+                    if (e.target === popup) {
+                        window.closeLightbox();
+                    }
+                });
+            }
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                const popup = document.getElementById('gallery-popup');
+                if (popup && popup.style.display === 'flex') {
+                    switch(e.key) {
+                        case 'Escape':
+                            window.closeLightbox();
+                            break;
+                        case 'ArrowLeft':
+                            window.showPrevImage();
+                            break;
+                        case 'ArrowRight':
+                            window.showNextImage();
+                            break;
+                    }
+                }
+            });
+            
+            // Touch/swipe navigation for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            if (popup) {
+                popup.addEventListener('touchstart', function(e) {
+                    touchStartX = e.changedTouches[0].screenX;
+                });
+                
+                popup.addEventListener('touchend', function(e) {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                });
+            }
+            
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        // Swipe left - next image
+                        window.showNextImage();
+                    } else {
+                        // Swipe right - previous image
+                        window.showPrevImage();
+                    }
+                }
+            }
+        }
+        
+        // Handle orientation change and resize
+        let resizeTimeout;
+        function handleResize() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                console.log('📸 Device orientation/resize detected, re-rendering gallery...');
+                renderGallery();
+            }, 300);
+        }
+        
+        // Listen for orientation and resize changes
+        window.addEventListener('orientationchange', handleResize);
+        window.addEventListener('resize', handleResize);
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeGallery);
+        } else {
+            initializeGallery();
+        }
+        
+        // Global test function
+        window.testGalleryScript = function() {
+            console.log('✅ Gallery script is working!');
+            console.log('✅ albumItems:', albumItems);
+            console.log('✅ Functions available:', {
+                openLightbox: typeof window.openLightbox,
+                closeLightbox: typeof window.closeLightbox,
+                showNextImage: typeof window.showNextImage,
+                showPrevImage: typeof window.showPrevImage
+            });
+        };
+        
+        console.log('📸 Gallery script loaded');
+        console.log('📸 Test function available: testGalleryScript()');
+    })(); // End IIFE isolation
+</script>

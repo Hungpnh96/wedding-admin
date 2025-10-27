@@ -1,0 +1,585 @@
+<div class="tab-content-wrapper">
+    <div class="section-card">
+        <div class="section-header d-flex justify-content-between align-items-center">
+            <h5><i class="fas fa-database me-2"></i>Quản lý Backup Database</h5>
+            <div>
+                <button class="btn btn-info btn-sm me-2" onclick="refreshBackupStats()">
+                    <i class="fas fa-sync me-1"></i>Làm mới
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="cleanupBackups()">
+                    <i class="fas fa-trash me-1"></i>Dọn dẹp
+                </button>
+            </div>
+        </div>
+        <div class="section-body">
+            <!-- Backup Stats -->
+            <div id="backupStats" class="mb-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalBackups">-</h3>
+                                <p>Tổng backup</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-hdd"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalSize">-</h3>
+                                <p>Dung lượng</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="maxBackups">5</h3>
+                                <p>Giới hạn</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="lastBackup">-</h3>
+                                <p>Backup mới nhất</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Backups -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Backup gần đây
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="backupList">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Đang tải...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup Actions -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-tools me-2"></i>Thao tác
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button class="btn btn-success w-100 mb-2" onclick="createBackup()">
+                                <i class="fas fa-plus me-2"></i>Tạo backup mới
+                            </button>
+                            <button class="btn btn-info w-100" onclick="refreshBackupStats()">
+                                <i class="fas fa-sync me-2"></i>Làm mới thống kê
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-warning w-100 mb-2" onclick="cleanupBackups()">
+                                <i class="fas fa-trash me-2"></i>Dọn dẹp backup cũ
+                            </button>
+                            <button class="btn btn-secondary w-100" onclick="exportBackupList()">
+                                <i class="fas fa-download me-2"></i>Xuất danh sách
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="alert alert-info mt-4">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Thông tin:</strong> Hệ thống tự động giữ lại 5 backup mới nhất. 
+                Backup cũ sẽ được xóa tự động khi tạo backup mới.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Backup management functions
+let backupStats = null;
+
+// Initialize backup page
+function initializeBackup() {
+    console.log('🚀 Initializing backup page');
+    refreshBackupStats();
+}
+
+// Load backup stats
+async function refreshBackupStats() {
+    try {
+        console.log('📊 Loading backup stats...');
+        
+        const response = await fetch('http://localhost:5001/api/backup/stats');
+        const result = await response.json();
+        
+        if (result.success) {
+            backupStats = result.data;
+            displayBackupStats();
+            displayBackupList();
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error('Error loading backup stats:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: 'Không thể tải thống kê backup: ' + error.message,
+            confirmButtonText: 'OK'
+        });
+    }
+}
+
+// Display backup stats
+function displayBackupStats() {
+    if (!backupStats) return;
+    
+    document.getElementById('totalBackups').textContent = backupStats.total_backups;
+    document.getElementById('totalSize').textContent = formatFileSize(backupStats.total_size);
+    document.getElementById('maxBackups').textContent = backupStats.max_backups;
+    
+    if (backupStats.recent_backups.length > 0) {
+        const lastBackup = backupStats.recent_backups[0];
+        document.getElementById('lastBackup').textContent = formatDate(lastBackup.created);
+    } else {
+        document.getElementById('lastBackup').textContent = 'Chưa có';
+    }
+}
+
+// Display backup list
+function displayBackupList() {
+    const backupList = document.getElementById('backupList');
+    if (!backupStats || !backupStats.recent_backups) {
+        backupList.innerHTML = '<p class="text-muted">Không có backup nào</p>';
+        return;
+    }
+    
+    if (backupStats.recent_backups.length === 0) {
+        backupList.innerHTML = '<p class="text-muted">Chưa có backup nào</p>';
+        return;
+    }
+    
+    backupList.innerHTML = backupStats.recent_backups.map((backup, index) => `
+        <div class="backup-item ${index === 0 ? 'latest' : ''}">
+            <div class="backup-info">
+                <div class="backup-name">
+                    <i class="fas fa-database me-2"></i>
+                    ${backup.filename}
+                    ${index === 0 ? '<span class="badge bg-success ms-2">Mới nhất</span>' : ''}
+                </div>
+                <div class="backup-details">
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>${formatDate(backup.created)}
+                        <span class="mx-2">•</span>
+                        <i class="fas fa-hdd me-1"></i>${formatFileSize(backup.size)}
+                    </small>
+                </div>
+            </div>
+            <div class="backup-actions">
+                <button class="btn btn-sm btn-outline-primary" onclick="restoreBackup('${backup.filename}')" title="Khôi phục">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-info" onclick="downloadBackup('${backup.filename}')" title="Tải về">
+                    <i class="fas fa-download"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Create new backup
+async function createBackup() {
+    try {
+        Swal.fire({
+            title: 'Tạo backup mới',
+            text: 'Bạn có chắc chắn muốn tạo backup mới?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Tạo backup',
+            cancelButtonText: 'Hủy'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                // Show loading
+                Swal.fire({
+                    title: 'Đang tạo backup...',
+                    text: 'Vui lòng chờ trong giây lát',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Trigger backup by saving data
+                const response = await fetch('http://localhost:5001/api/data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trigger_backup: true })
+                });
+                
+                if (response.ok) {
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'Backup đã được tạo',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    
+                    // Refresh stats
+                    setTimeout(refreshBackupStats, 1000);
+                } else {
+                    throw new Error('Failed to create backup');
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error creating backup:', error);
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: 'Không thể tạo backup: ' + error.message,
+            confirmButtonText: 'OK'
+        });
+    }
+}
+
+// Cleanup old backups
+async function cleanupBackups() {
+    try {
+        const result = await Swal.fire({
+            title: 'Dọn dẹp backup',
+            text: 'Xóa các backup cũ, chỉ giữ lại 5 bản mới nhất?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Dọn dẹp',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#d33'
+        });
+        
+        if (result.isConfirmed) {
+            // Show loading
+            Swal.fire({
+                title: 'Đang dọn dẹp...',
+                text: 'Vui lòng chờ trong giây lát',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            const response = await fetch('http://localhost:5001/api/backup/cleanup', {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            
+            Swal.close();
+            
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: result.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // Refresh stats
+                setTimeout(refreshBackupStats, 1000);
+            } else {
+                throw new Error(result.message);
+            }
+        }
+    } catch (error) {
+        console.error('Error cleaning up backups:', error);
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: 'Không thể dọn dẹp backup: ' + error.message,
+            confirmButtonText: 'OK'
+        });
+    }
+}
+
+// Restore backup
+async function restoreBackup(filename) {
+    try {
+        const result = await Swal.fire({
+            title: 'Khôi phục backup',
+            text: `Khôi phục từ backup "${filename}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Khôi phục',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#d33'
+        });
+        
+        if (result.isConfirmed) {
+            // Show loading
+            Swal.fire({
+                title: 'Đang khôi phục...',
+                text: 'Vui lòng chờ trong giây lát',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            const response = await fetch(`http://localhost:5001/api/backup/restore/${filename}`, {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            
+            Swal.close();
+            
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: result.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // Refresh stats
+                setTimeout(refreshBackupStats, 1000);
+            } else {
+                throw new Error(result.message);
+            }
+        }
+    } catch (error) {
+        console.error('Error restoring backup:', error);
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: 'Không thể khôi phục backup: ' + error.message,
+            confirmButtonText: 'OK'
+        });
+    }
+}
+
+// Download backup
+function downloadBackup(filename) {
+    // This would need to be implemented on the server side
+    Swal.fire({
+        icon: 'info',
+        title: 'Tính năng sắp có',
+        text: 'Tính năng tải backup sẽ được thêm trong phiên bản tiếp theo',
+        confirmButtonText: 'OK'
+    });
+}
+
+// Export backup list
+function exportBackupList() {
+    if (!backupStats || !backupStats.recent_backups) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Không có dữ liệu',
+            text: 'Không có backup nào để xuất',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+    
+    const data = {
+        total_backups: backupStats.total_backups,
+        total_size: backupStats.total_size,
+        max_backups: backupStats.max_backups,
+        recent_backups: backupStats.recent_backups
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `backup-list-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: 'Danh sách backup đã được tải về',
+        timer: 1500,
+        showConfirmButton: false
+    });
+}
+
+// Helper functions
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleString('vi-VN');
+}
+
+// Export functions
+window.initializeBackup = initializeBackup;
+window.refreshBackupStats = refreshBackupStats;
+window.createBackup = createBackup;
+window.cleanupBackups = cleanupBackups;
+window.restoreBackup = restoreBackup;
+window.downloadBackup = downloadBackup;
+window.exportBackupList = exportBackupList;
+
+// Auto-initialize
+document.addEventListener('DOMContentLoaded', initializeBackup);
+</script>
+
+<style>
+/* Backup page styles */
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 24px;
+    color: white;
+}
+
+.stat-card:nth-child(1) .stat-icon { background: #28a745; }
+.stat-card:nth-child(2) .stat-icon { background: #17a2b8; }
+.stat-card:nth-child(3) .stat-icon { background: #ffc107; }
+.stat-card:nth-child(4) .stat-icon { background: #6c757d; }
+
+.stat-content h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.stat-content p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.backup-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.backup-item:hover {
+    border-color: #9f5958;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.backup-item.latest {
+    border-color: #28a745;
+    background: #f8fff9;
+}
+
+.backup-info {
+    flex: 1;
+}
+
+.backup-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.backup-details {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.backup-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.backup-actions .btn {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .backup-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .backup-actions {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+</style>
+
+

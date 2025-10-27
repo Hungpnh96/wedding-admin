@@ -1,0 +1,75 @@
+<style>
+    #menu-access li {
+    display: block;
+    }
+    #menu-access li.inactive {
+    display: none;
+    }
+ </style>
+
+
+ <div id="menu-access" class="">
+    <div class="btn-menu-open" style="display: none;">
+       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5">
+          </path>
+       </svg>
+    </div>
+    <div class="btn-menu-close" style="display: block;">
+       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z">
+          </path>
+       </svg>
+    </div>
+    <ul class="p-0 m-0 list-menu-icon" style="opacity: 1;">
+       <li class="text-center shake">
+          <a href="#rsvp" class="text-white">
+          <span class="content-button tooltipBtn">
+          <span class="tooltiptext">Gửi lời chúc</span>
+          <img class="access-icon" style="transform: scale(1);" src="./index_files/wishes.webp" alt="">
+          </span>
+          </a>
+       </li>
+       <li class="text-center buttonDonate">
+          <a href="#donate" class="text-white">
+          <span class="content-button tooltipBtn">
+          <span class="tooltiptext">Mừng cưới</span>
+          <img class="access-icon" style="transform: scale(1);" src="./index_files/money_bag.webp" alt="">
+          </span>
+          </a>
+       </li>
+       <!-- Back to top button integrated into menu -->
+       <li class="text-center" id="backToTopMenu" style="display: none;">
+          <a href="#" class="text-white" onclick="scrollToTop(); return false;">
+          <span class="content-button tooltipBtn">
+          <span class="tooltiptext">Quay về đầu trang</span>
+          <i class="fas fa-arrow-up access-icon" style="font-size: 24px; color: white;"></i>
+          </span>
+          </a>
+       </li>
+    </ul>
+ </div>
+
+<!-- Music -->
+ <div >
+    <audio id="backgroundAudio" src="./index_files/audio/wedding-music.mp3"></audio>
+    <span id="playerVolumeOff">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="27" fill="#fff" class="bi bi-volume-mute-fill" viewBox="0 0 16 16">
+        <path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"></path>
+        <path d="M13.854 5.646a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0z"></path>
+        </svg>
+    </span>
+
+    <span style="display:none;" id="playerVolumeOn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="27" fill="#fff" class="bi bi-volume-up-fill" viewBox="0 0 16 16">
+        <path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"></path>
+        <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.483 5.483 0 0 1 11.025 8a5.483 5.483 0 0 1-1.61 3.89l.706.706z"></path>
+        <path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"></path>
+        </svg>
+    </span>
+
+</div>
+
+
+    <!-- Audio -->
+    <audio src="./index_files/audio/wedding-music.mp3" controls="controls" style="display: none;"></audio>

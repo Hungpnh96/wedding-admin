@@ -1,0 +1,123 @@
+<div class="tab-content-wrapper">
+    <div class="section-card">
+        <div class="section-header">
+            <h5><i class="fas fa-eye me-2"></i>Hiển thị các phần</h5>
+        </div>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="showGallery" checked>
+                        <label class="form-check-label" for="showGallery">
+                            Hiển thị thư viện ảnh
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="showStory" checked>
+                        <label class="form-check-label" for="showStory">
+                            Hiển thị câu chuyện
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="showCouple" checked>
+                        <label class="form-check-label" for="showCouple">
+                            Hiển thị thông tin cặp đôi
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="showRSVP" checked>
+                        <label class="form-check-label" for="showRSVP">
+                            Hiển thị phần xác nhận tham dự
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="showDonate" checked>
+                        <label class="form-check-label" for="showDonate">
+                            Hiển thị phần chúc mừng
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="showAudio" checked>
+                        <label class="form-check-label" for="showAudio">
+                            Phát nhạc nền
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>// Settings Tab JavaScript
+function initializeSettings() {
+    console.log("Initializing settings tab");
+    
+    // Load settings data
+    loadSettingsData();
+    
+    // Setup event listeners
+    setupSettingsEventListeners();
+}
+
+function loadSettingsData() {
+    if (window.siteData  window.siteData.visibility?.sections) {
+        const sections = window.siteData.visibility.sections;
+        
+        // Update form fields
+        setFieldValue("showGallery", sections.gallery);
+        setFieldValue("showStory", sections.story);
+        setFieldValue("showCouple", sections.couple);
+        setFieldValue("showRSVP", sections.rsvp);
+        setFieldValue("showDonate", sections.donate);
+        setFieldValue("showAudio", sections.audio);
+    }
+}
+
+function setupSettingsEventListeners() {
+    // Form field listeners
+    const settingsFields = ["showGallery", "showStory", "showCouple", "showRSVP", "showDonate", "showAudio"];
+    
+    settingsFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener("change", function() {
+                updateSiteDataFromSettingsForm();
+            });
+        }
+    });
+}
+
+function updateSiteDataFromSettingsForm() {
+    if (!window.siteData) window.siteData = {};
+    if (!window.siteData.visibility) window.siteData.visibility = {};
+    if (!window.siteData.visibility.sections) window.siteData.visibility.sections = {};
+    
+    // Update visibility settings
+    window.siteData.visibility.sections.gallery = document.getElementById("showGallery")?.checked || false;
+    window.siteData.visibility.sections.story = document.getElementById("showStory")?.checked || false;
+    window.siteData.visibility.sections.couple = document.getElementById("showCouple")?.checked || false;
+    window.siteData.visibility.sections.rsvp = document.getElementById("showRSVP")?.checked || false;
+    window.siteData.visibility.sections.donate = document.getElementById("showDonate")?.checked || false;
+    window.siteData.visibility.sections.audio = document.getElementById("showAudio")?.checked || false;
+    
+    // Update last modified
+    if (!window.siteData.admin) window.siteData.admin = {};
+    window.siteData.admin.lastUpdate = new Date().toISOString();
+}
+
+function setFieldValue(fieldId, value) {
+    const field = document.getElementById(fieldId);
+    if (field  value !== undefined) {
+        if (field.type === "checkbox") {
+            field.checked = !!value;
+        } else {
+            field.value = value;
+        }
+    }
+}
+
+// Export functions for global access
+window.initializeSettings = initializeSettings;
+</script>
