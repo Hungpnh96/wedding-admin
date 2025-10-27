@@ -14,7 +14,7 @@ services:
       - ./public/uploads:/app/public/uploads
       - ./public/images:/app/public/images
       - ./images:/app/images
-      - ./webfonts:/app/webfonts
+      - ./public/webfonts:/app/webfonts
       # Mount admin files
       - ./admin.html:/app/admin.html
       - ./admin:/app/admin
