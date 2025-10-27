@@ -65,7 +65,7 @@ async function loadStories() {
     
     try {
         // Load data from main API
-        const response = await fetch('http://localhost:5001/api/data');
+        const response = await fetch('window.location.origin/api/data');
         const result = await response.json();
         
         if (result.success && result.data && result.data.story && Array.isArray(result.data.story)) {
@@ -93,7 +93,7 @@ async function loadStories() {
  */
 async function loadDataFromAPI() {
     try {
-        const response = await fetch('http://localhost:5001/api/data');
+        const response = await fetch('window.location.origin/api/data');
         const result = await response.json();
         
         if (result.success && result.data) {
@@ -217,7 +217,7 @@ function setupStoryFormListeners() {
     const formData = new FormData();
     formData.append('file', file);
     
-    fetch('http://localhost:5001/api/upload', {
+    fetch('window.location.origin/api/upload', {
         method: 'POST',
         body: formData
     })
@@ -255,7 +255,7 @@ function showStoryImagePreview(imageUrl) {
     const placeholder = document.getElementById('storyUploadPlaceholder');
     
     if (preview && actions && placeholder) {
-        preview.src = `http://localhost:5001${imageUrl}`;
+        preview.src = `window.location.origin${imageUrl}`;
         preview.style.display = 'block';
         actions.style.display = 'block';
         placeholder.style.display = 'none';
@@ -374,7 +374,7 @@ async function saveStoriesToServer() {
         
         console.log('🔍 Debug: Sending only story data:', storyData);
         
-        const response = await fetch('http://localhost:5001/api/data', {
+        const response = await fetch('window.location.origin/api/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -578,7 +578,7 @@ async function deleteStoryImage(imageSrc) {
         if (!filename) return;
         
         // Call API to delete file
-        const response = await fetch(`http://localhost:5001/api/delete-file`, {
+        const response = await fetch(`window.location.origin/api/delete-file`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -769,7 +769,7 @@ async function handleStoryImageSelect(event) {
         formData.append('file', file);
         formData.append('type', 'story');
         
-        const response = await fetch('http://localhost:5001/api/upload-image', {
+        const response = await fetch('window.location.origin/api/upload-image', {
             method: 'POST',
             body: formData
         });
@@ -873,7 +873,7 @@ async function uploadImageFile(file) {
         formData.append('type', 'story');
         
         // Upload to server
-        const response = await fetch('http://localhost:5001/api/upload-image', {
+        const response = await fetch('window.location.origin/api/upload-image', {
             method: 'POST',
             body: formData
         });
@@ -1079,14 +1079,14 @@ function normalizeStoryImagePath(src) {
     
     // If starts with /public/, make it a full URL
     if (src.startsWith('/public/')) {
-        const fullUrl = `http://localhost:5001${src}`;
+        const fullUrl = `window.location.origin${src}`;
         console.log('🖼️ Converted to full URL:', fullUrl);
         return fullUrl;
     }
     
     // If relative path, add /public/ prefix
     if (src.startsWith('./') || !src.startsWith('/')) {
-        const fullUrl = `http://localhost:5001/public/images/story/${src}`;
+        const fullUrl = `window.location.origin/public/images/story/${src}`;
         console.log('🖼️ Added prefix:', fullUrl);
         return fullUrl;
     }

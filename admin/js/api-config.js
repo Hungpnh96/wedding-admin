@@ -1,6 +1,6 @@
-// API Configuration
-// This ensures both admin and frontend call the same domain
-window.API_CONFIG = {
+// Admin API Configuration
+// This ensures admin calls use the same domain as frontend
+window.ADMIN_API_CONFIG = {
     // Use the current domain for API calls
     getBaseUrl: function() {
         // Use current domain (hungpnh.dev) for API calls
@@ -14,10 +14,10 @@ window.API_CONFIG = {
     }
 };
 
-// Helper function for easy API calls
-window.apiCall = function(endpoint, options = {}) {
-    const url = window.API_CONFIG.getApiUrl(endpoint);
-    console.log('🌐 API Call:', url);
+// Helper function for easy API calls in admin
+window.adminApiCall = function(endpoint, options = {}) {
+    const url = window.ADMIN_API_CONFIG.getApiUrl(endpoint);
+    console.log('🔧 Admin API Call:', url);
     
     return fetch(url, {
         headers: {

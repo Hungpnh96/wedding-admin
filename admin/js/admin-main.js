@@ -376,7 +376,7 @@ async function loadSiteData() {
         
         // Then try to load from API
         try {
-            const response = await fetch('http://localhost:5001/api/data');
+            const response = await fetch('window.location.origin/api/data');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -1297,7 +1297,7 @@ async function saveChanges() {
         console.log('After updateSiteDataFromForm - siteData:', siteData);
         
         // Save to server
-        const response = await fetch('http://localhost:5001/api/data', {
+        const response = await fetch('window.location.origin/api/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

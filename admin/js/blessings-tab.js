@@ -119,13 +119,13 @@ async function loadBlessings() {
             approved: window.currentBlessingStatus || ''
         });
 
-        console.log('📡 API URL:', `http://localhost:5001/api/blessing/admin/list?${params}`);
+        console.log('📡 API URL:', `${window.location.origin}/api/blessing/admin/list?${params}`);
 
         // Add timeout to prevent hanging
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-        const response = await fetch(`http://localhost:5001/api/blessing/admin/list?${params}`, {
+        const response = await fetch(`${window.location.origin}/api/blessing/admin/list?${params}`, {
             signal: controller.signal
         });
         
@@ -306,7 +306,7 @@ function clearBlessingFilters() {
 // Approve blessing
 async function approveBlessing(blessingId) {
     try {
-        const response = await fetch(`http://localhost:5001/api/blessing/admin/${blessingId}/approve`, {
+        const response = await fetch(`${window.location.origin}/api/blessing/admin/${blessingId}/approve`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -335,7 +335,7 @@ async function approveBlessing(blessingId) {
 // Reject blessing
 async function rejectBlessing(blessingId) {
     try {
-        const response = await fetch(`http://localhost:5001/api/blessing/admin/${blessingId}/approve`, {
+        const response = await fetch(`${window.location.origin}/api/blessing/admin/${blessingId}/approve`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -376,7 +376,7 @@ async function deleteBlessing(blessingId) {
 
     if (result.isConfirmed) {
         try {
-            const response = await fetch(`http://localhost:5001/api/blessing/admin/${blessingId}`, {
+            const response = await fetch(`${window.location.origin}/api/blessing/admin/${blessingId}`, {
                 method: 'DELETE'
             });
 

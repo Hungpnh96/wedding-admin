@@ -19,7 +19,7 @@ function initBannerManagement() {
 // Clear and reload banner data from server
 async function reloadBannerData() {
     try {
-        const response = await fetch('http://localhost:5001/api/data');
+        const response = await fetch('window.location.origin/api/data');
         if (response.ok) {
             const result = await response.json();
             if (result.success && result.data) {
@@ -282,7 +282,7 @@ function uploadSlideFile(slideId, file) {
         }
     });
     
-    fetch('http://localhost:5001/api/upload', {
+    fetch('window.location.origin/api/upload', {
         method: 'POST',
         body: formData
     })
@@ -373,7 +373,7 @@ function uploadBannerFile(file) {
         }
     });
     
-    fetch('http://localhost:5001/api/upload', {
+    fetch('window.location.origin/api/upload', {
         method: 'POST',
         body: formData
     })
@@ -584,7 +584,7 @@ function updateSiteDataBanner() {
 // Save banner data to server
 async function saveBannerDataToServer() {
     try {
-        const response = await fetch('http://localhost:5001/api/data', {
+        const response = await fetch('window.location.origin/api/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

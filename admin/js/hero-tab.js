@@ -43,7 +43,7 @@ async function loadHeroDataFromAPI() {
     console.log('🔄 Loading hero data from API...');
     
     try {
-        const response = await fetch('http://localhost:5001/api/data');
+        const response = await fetch('window.location.origin/api/data');
         console.log('📡 API Response status:', response.status);
         
         if (!response.ok) {
@@ -137,7 +137,7 @@ function fillHeroFormFields() {
             console.log('📊 Full heroData:', heroData);
             
             // Try to get data from API directly
-            fetch('http://localhost:5001/api/data')
+            fetch('window.location.origin/api/data')
                 .then(response => response.json())
                 .then(data => {
                     console.log('🔄 Direct API call result:', data);
@@ -323,7 +323,7 @@ async function deleteOldBannerFiles() {
         console.log('📊 Current banner files:', currentFilenames);
         
         // Get all banner files from directory
-        const dirResponse = await fetch('http://localhost:5001/api/list-files?type=banner');
+        const dirResponse = await fetch('window.location.origin/api/list-files?type=banner');
         const dirData = await dirResponse.json();
         
         if (dirData.success && dirData.files) {
@@ -340,7 +340,7 @@ async function deleteOldBannerFiles() {
             // Delete each old file
             for (const filename of filesToDelete) {
                 try {
-                    const deleteResponse = await fetch('http://localhost:5001/api/delete-file', {
+                    const deleteResponse = await fetch('window.location.origin/api/delete-file', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -499,7 +499,7 @@ function uploadHeroBannerFile(file) {
     formData.append('file', file);
     formData.append('type', 'banner');
     
-    fetch('http://localhost:5001/api/upload', {
+    fetch('window.location.origin/api/upload', {
         method: 'POST',
         body: formData
     })
@@ -851,7 +851,7 @@ async function saveHeroData() {
         let result;
         if (typeof AdminAPI === 'undefined') {
             console.error('❌ AdminAPI not found, using fetch directly');
-            const response = await fetch('http://localhost:5001/api/data/hero', {
+            const response = await fetch('window.location.origin/api/data/hero', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -891,7 +891,7 @@ function testHeroData() {
     console.log('3. window.siteData:', window.siteData);
     
     // Test API call
-    fetch('http://localhost:5001/api/data')
+    fetch('window.location.origin/api/data')
         .then(response => response.json())
         .then(data => {
             console.log('4. API Response:', data);

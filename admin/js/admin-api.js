@@ -13,23 +13,8 @@ class WeddingAdminAPI {
     }
 
     getBaseURL() {
-        // Nếu đang chạy từ file:// thì dùng localhost
-        if (window.location.protocol === 'file:') {
-            return 'http://localhost:5001/api';
-        }
-        
-        // Nếu đang chạy từ web server thì dùng relative path
-        const protocol = window.location.protocol;
-        const hostname = window.location.hostname;
-        const port = window.location.port;
-        
-        // Nếu có port cụ thể (development)
-        if (port && port !== '80' && port !== '443') {
-            return `${protocol}//${hostname}:${port}/api`;
-        }
-        
-        // Production hoặc default port
-        return `${protocol}//${hostname}/api`;
+        // Always use current domain for API calls
+        return window.location.origin + '/api';
     }
 
     // Utility methods

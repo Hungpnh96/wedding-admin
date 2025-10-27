@@ -179,7 +179,7 @@ async function loadTelegramConfig() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-        const response = await fetch('http://localhost:5001/api/telegram/config', {
+        const response = await fetch(window.location.origin + '/api/telegram/config', {
             signal: controller.signal
         });
         
@@ -274,7 +274,7 @@ async function saveTelegramConfig() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-        const response = await fetch('http://localhost:5001/api/telegram/config', {
+        const response = await fetch(window.location.origin + '/api/telegram/config', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -327,7 +327,7 @@ async function testTelegram() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-        const response = await fetch('http://localhost:5001/api/blessing/send', {
+        const response = await fetch(window.location.origin + '/api/blessing/send', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
