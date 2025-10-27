@@ -61,7 +61,7 @@
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row">
+            <div class="row">
             <!-- Main content -->
             <main class="col-md ms-sm-auto col-lg-12">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -158,9 +158,9 @@
                                         <div id="qrPreview">
                                             <i class="fas fa-qrcode fa-3x text-muted"></i>
                                             <p class="text-muted mt-2">Chưa có QR code</p>
-                                        </div>
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
+                </div>
                                 
                                 <div class="mb-3">
                                     <label for="isActive" class="form-label">Trạng thái</label>
@@ -185,10 +185,10 @@
                     <button type="button" class="btn btn-primary" onclick="savePayment()">
                         <i class="fas fa-save"></i> Lưu Thông Tin
                     </button>
-                </div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -431,7 +431,7 @@
                             text: 'Thông tin chuyển khoản đã được xóa'
                         });
                         loadPayments();
-                    } else {
+        } else {
                         showError('Không thể xóa: ' + data.message);
                     }
                 } catch (error) {
@@ -500,6 +500,6 @@
                 `;
             }
         }
-    </script>
+</script>
 </body>
 </html>

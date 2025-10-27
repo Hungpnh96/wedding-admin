@@ -7755,7 +7755,7 @@ textarea.form-control {
 }
 
 .btn-menu-open {
-    display: none;
+    display: block;
 }
 
 .btn-menu-open::after,
@@ -7786,7 +7786,7 @@ textarea.form-control {
 }
 
 .btn-menu-close {
-    display: block;
+    display: none;
     position: absolute;
 }
 
