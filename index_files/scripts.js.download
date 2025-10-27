@@ -820,23 +820,28 @@ var Neela;
     = MENU ACCESSBILITY
     -------------------------------------------*/
     $('.btn-menu-open').click(function() {
+        console.log('Open button clicked');
         $('ul.list-menu-icon').css('opacity','1');
         $('ul.list-menu-icon').css('pointer-events','');
         $('.btn-menu-close').show();
         $('.btn-menu-open').hide();
     })
     $('.btn-menu-close').click(function() {
+        console.log('Close button clicked');
         $('ul.list-menu-icon').css('opacity','0');
         $('ul.list-menu-icon').css('pointer-events','none');
         $('.btn-menu-open').show();
         $('.btn-menu-close').hide();
+        console.log('Menu closed');
     })
     // Initialize menu state - show close button and menu items
     setTimeout(() => {
+        console.log('Initializing menu state');
         $('.btn-menu-open').hide();
         $('.btn-menu-close').show();
         $('ul.list-menu-icon').css('opacity','1');
         $('ul.list-menu-icon').css('pointer-events','');
+        console.log('Menu initialized');
     }, 3000);
     if($('.bii-logo').length > 0){
        $('#menu-access').css('bottom','278px');
@@ -865,10 +870,7 @@ var Neela;
     //         myInterval = setInterval(shakeTooltip, 20000);
     //     }, 3000);
     // }
-    $('.btn-menu-close').click(function(){
-        $('tooltiptext').css('visibility','');
-        clearInterval(myInterval);
-    });
+    // Remove duplicate click handler - functionality moved to main click handler above
 
     // ALBUM GALLERIES
 	$(document).on('click', '.btn-see-more-gallery', function(e){

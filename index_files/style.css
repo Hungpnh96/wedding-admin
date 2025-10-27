@@ -7725,7 +7725,7 @@ textarea.form-control {
 }
 
 .list-menu-icon {
-    opacity: 1;
+    opacity: 1 !important;
     transition: opacity 0.3s ease-in-out;
     padding: 0;
     margin: 0;
@@ -7755,7 +7755,7 @@ textarea.form-control {
 }
 
 .btn-menu-open {
-    display: none;
+    display: none !important;
 }
 
 .btn-menu-open::after,
@@ -7786,7 +7786,7 @@ textarea.form-control {
 }
 
 .btn-menu-close {
-    display: block;
+    display: block !important;
     position: absolute;
 }
 
