@@ -829,11 +829,11 @@ var Neela;
     })
     $(document).on('click', '.btn-menu-close', function() {
         console.log('CLOSE BUTTON CLICKED!');
-        alert('Close button clicked!');
         $('ul.list-menu-icon').css('opacity','0');
         $('ul.list-menu-icon').css('pointer-events','none');
         $('.btn-menu-open').show();
         $('.btn-menu-close').hide();
+        console.log('Menu closed - showing open button');
     })
     // Initialize menu state - show close button and menu items
     setTimeout(() => {

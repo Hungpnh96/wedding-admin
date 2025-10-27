@@ -7725,14 +7725,13 @@ textarea.form-control {
 }
 
 .list-menu-icon {
-    opacity: 1 !important;
+    opacity: 1;
     transition: opacity 0.3s ease-in-out;
     padding: 0;
     margin: 0;
     list-style: none;
     position: absolute;
     bottom: -116px;
-    border: 2px solid red !important;
 }
 
 .menu-icon {
@@ -7756,7 +7755,7 @@ textarea.form-control {
 }
 
 .btn-menu-open {
-    display: none !important;
+    display: none;
 }
 
 .btn-menu-open::after,
@@ -7787,9 +7786,8 @@ textarea.form-control {
 }
 
 .btn-menu-close {
-    display: block !important;
+    display: block;
     position: absolute;
-    background-color: #ff6b6b !important;
 }
 
 .btn-menu-open>svg,
