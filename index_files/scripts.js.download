@@ -819,6 +819,7 @@ var Neela;
             /*------------------------------------------
     = MENU ACCESSBILITY
     -------------------------------------------*/
+    console.log('MENU SCRIPT LOADED!');
     $('.btn-menu-open').click(function() {
         console.log('Open button clicked');
         $('ul.list-menu-icon').css('opacity','1');
@@ -826,14 +827,13 @@ var Neela;
         $('.btn-menu-close').show();
         $('.btn-menu-open').hide();
     })
-    $('.btn-menu-close').click(function() {
-        console.log('Close button clicked - FORCE REFRESH TEST');
+    $(document).on('click', '.btn-menu-close', function() {
+        console.log('CLOSE BUTTON CLICKED!');
         alert('Close button clicked!');
         $('ul.list-menu-icon').css('opacity','0');
         $('ul.list-menu-icon').css('pointer-events','none');
         $('.btn-menu-open').show();
         $('.btn-menu-close').hide();
-        console.log('Menu closed');
     })
     // Initialize menu state - show close button and menu items
     setTimeout(() => {
