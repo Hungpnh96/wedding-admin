@@ -827,7 +827,8 @@ var Neela;
         $('.btn-menu-open').hide();
     })
     $('.btn-menu-close').click(function() {
-        console.log('Close button clicked');
+        console.log('Close button clicked - FORCE REFRESH TEST');
+        alert('Close button clicked!');
         $('ul.list-menu-icon').css('opacity','0');
         $('ul.list-menu-icon').css('pointer-events','none');
         $('.btn-menu-open').show();

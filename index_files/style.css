@@ -7732,6 +7732,7 @@ textarea.form-control {
     list-style: none;
     position: absolute;
     bottom: -116px;
+    border: 2px solid red !important;
 }
 
 .menu-icon {
@@ -7788,6 +7789,7 @@ textarea.form-control {
 .btn-menu-close {
     display: block !important;
     position: absolute;
+    background-color: #ff6b6b !important;
 }
 
 .btn-menu-open>svg,
