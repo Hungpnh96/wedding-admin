@@ -102,6 +102,38 @@
         </style>
           
         <style>
+           /* Menu and Music Controls */
+           #menu-access li {
+               display: block;
+           }
+           #menu-access li.inactive {
+               display: none;
+           }
+           
+           .btn-menu-open {
+               display: block;
+           }
+           
+           .btn-menu-close {
+               display: none;
+           }
+           
+           .list-menu-icon {
+               display: none;
+           }
+           
+           .music-btn {
+               cursor: pointer;
+           }
+           
+           #playerVolumeOff {
+               display: block;
+           }
+           
+           #playerVolumeOn {
+               display: none;
+           }
+           
            /* Hero Fullscreen Responsive */
            .hero-fullscreen {
               min-height: 100vh !important;
@@ -678,6 +710,7 @@
     <script src="./index_files/croppie.min.js.download"></script>
     <script src="./index_files/flatpickr"></script>
     <script src="./index_files/confirmDate.js.download"></script>
+    <script src="/public/js/api-config.js"></script>
     <script src="/public/js/site-loader.js"></script>
     <script src="/public/js/myjs.js"></script>
     <script src="/public/js/maps.js"></script>
@@ -1182,7 +1215,6 @@
      </div>
      <img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 39.18px; height: 39.18px; position: absolute; font-size: 0px; z-index: 999999; top: 9818px; left: 1363.3px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 46.76px; height: 46.76px; position: absolute; font-size: 0px; z-index: 999999; top: 9720px; left: 1343.89px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 55.03px; height: 55.03px; position: absolute; font-size: 0px; z-index: 999999; top: 14202px; left: 1404.09px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 56.27px; height: 56.27px; position: absolute; font-size: 0px; z-index: 999999; top: 14358px; left: 1676.72px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 37.36px; height: 37.36px; position: absolute; font-size: 0px; z-index: 999999; top: 11582px; left: 1600.33px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 59.06px; height: 59.06px; position: absolute; font-size: 0px; z-index: 999999; top: 9082px; left: 425.385px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 43.79px; height: 43.79px; position: absolute; font-size: 0px; z-index: 999999; top: 5668px; left: 1264.07px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 48.82px; height: 48.82px; position: absolute; font-size: 0px; z-index: 999999; top: 2198px; left: 1285.73px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 46.23px; height: 46.23px; position: absolute; font-size: 0px; z-index: 999999; top: 8610px; left: 1147.6px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 45.57px; height: 45.57px; position: absolute; font-size: 0px; z-index: 999999; top: 208px; left: 476.228px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 56.44px; height: 56.44px; position: absolute; font-size: 0px; z-index: 999999; top: 4848px; left: 67.8232px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 42.57px; height: 42.57px; position: absolute; font-size: 0px; z-index: 999999; top: 13566px; left: 1138.44px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 38.05px; height: 38.05px; position: absolute; font-size: 0px; z-index: 999999; top: 10444px; left: 1619.5px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 28.27px; height: 28.27px; position: absolute; font-size: 0px; z-index: 999999; top: 13394px; left: 755.362px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 53.1px; height: 53.1px; position: absolute; font-size: 0px; z-index: 999999; top: 13314px; left: 1472.47px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 44.94px; height: 44.94px; position: absolute; font-size: 0px; z-index: 999999; top: 12950px; left: 617.936px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 52.87px; height: 52.87px; position: absolute; font-size: 0px; z-index: 999999; top: 12994px; left: 551.309px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 34.43px; height: 34.43px; position: absolute; font-size: 0px; z-index: 999999; top: 12514px; left: 1005.16px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 38.88px; height: 38.88px; position: absolute; font-size: 0px; z-index: 999999; top: 166px; left: 1538.08px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 57.79px; height: 57.79px; position: absolute; font-size: 0px; z-index: 999999; top: 4816px; left: 1257.5px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 29.34px; height: 29.34px; position: absolute; font-size: 0px; z-index: 999999; top: 3192px; left: 202.287px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 53.31px; height: 53.31px; position: absolute; font-size: 0px; z-index: 999999; top: 3120px; left: 277.105px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 26.24px; height: 26.24px; position: absolute; font-size: 0px; z-index: 999999; top: 8032px; left: 1517.28px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 46.62px; height: 46.62px; position: absolute; font-size: 0px; z-index: 999999; top: 14110px; left: 1202.36px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 27.08px; height: 27.08px; position: absolute; font-size: 0px; z-index: 999999; top: 12164px; left: 272.812px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 34.28px; height: 34.28px; position: absolute; font-size: 0px; z-index: 999999; top: 12734px; left: 1263.4px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 40.36px; height: 40.36px; position: absolute; font-size: 0px; z-index: 999999; top: 13848px; left: 1314.31px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 58.66px; height: 58.66px; position: absolute; font-size: 0px; z-index: 999999; top: 6942px; left: 1174.95px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 59.7px; height: 59.7px; position: absolute; font-size: 0px; z-index: 999999; top: 10365px; left: 749.481px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 25.31px; height: 25.31px; position: absolute; font-size: 0px; z-index: 999999; top: 8186px; left: 1275.72px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 28.46px; height: 28.46px; position: absolute; font-size: 0px; z-index: 999999; top: 6026px; left: 479.396px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 50.13px; height: 50.13px; position: absolute; font-size: 0px; z-index: 999999; top: 1011px; left: 1283.67px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 31.85px; height: 31.85px; position: absolute; font-size: 0px; z-index: 999999; top: 13732px; left: 1480.57px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 30.66px; height: 30.66px; position: absolute; font-size: 0px; z-index: 999999; top: 1184px; left: 322.936px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 50.96px; height: 50.96px; position: absolute; font-size: 0px; z-index: 999999; top: 12056px; left: 589.474px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 51.33px; height: 51.33px; position: absolute; font-size: 0px; z-index: 999999; top: 8597px; left: 733.611px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 59.65px; height: 59.65px; position: absolute; font-size: 0px; z-index: 999999; top: 5966px; left: 194.188px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 43.17px; height: 43.17px; position: absolute; font-size: 0px; z-index: 999999; top: 4903px; left: 816.885px;"><img src="./index_files/TraiTimNen.png" class="snowfall-flakes" style="width: 42.77px; height: 42.77px; position: absolute; font-size: 0px; z-index: 999999; top: 11986px; left: 1629.87px;"><img src="./index_files/TraiTimNen.png" class="
         " style="width: 46.79px; height: 46.79px; position: absolute; font-size: 0px; z-index: 999999; top: 11127px; left: 179.44px;">
-     <audio src="./index_files/audio/wedding-music.mp3" controls="controls" style="display: none;"></audio>
      
    <!-- Loading -->
    <div id="loading-overlay">
@@ -1261,7 +1293,7 @@
 async function loadCoupleInfo() {
     try {
         console.log('🔄 Loading couple info for footer...');
-        const response = await fetch('http://localhost:5001/api/couple/info');
+        const response = await window.apiCall('/couple/info');
         const data = await response.json();
         
         if (data.success) {
@@ -1417,6 +1449,194 @@ function simpleFooterCheck() {
         
     }, 2000); // Wait 2 seconds to ensure all content is loaded
 }
+
+// Menu and Music functionality - Enhanced version
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎵 Menu and Music script loaded in index.html');
+    
+    // Wait for sections to load
+    setTimeout(function() {
+        initializeMenuAndMusic();
+    }, 1000);
+});
+
+// Also try when window loads (fallback)
+window.addEventListener('load', function() {
+    console.log('🎵 Window loaded, trying to initialize menu and music...');
+    setTimeout(function() {
+        initializeMenuAndMusic();
+    }, 2000);
+});
+
+function initializeMenuAndMusic() {
+    console.log('🎵 Initializing menu and music...');
+    
+    // Menu functionality
+    const openBtn = document.querySelector('.btn-menu-open');
+    const closeBtn = document.querySelector('.btn-menu-close');
+    const menuItems = document.querySelector('.list-menu-icon');
+    
+    console.log('🎵 Menu elements found:', {
+        openBtn: !!openBtn,
+        closeBtn: !!closeBtn,
+        menuItems: !!menuItems
+    });
+    
+    if (openBtn) {
+        openBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🍔 Open menu clicked');
+            if (menuItems) menuItems.style.display = 'block';
+            if (openBtn) openBtn.style.display = 'none';
+            if (closeBtn) closeBtn.style.display = 'block';
+        });
+    }
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('❌ Close menu clicked');
+            if (menuItems) menuItems.style.display = 'none';
+            if (closeBtn) closeBtn.style.display = 'none';
+            if (openBtn) openBtn.style.display = 'block';
+        });
+    }
+    
+    // Music functionality - Global variable
+    window.isPlaying = false;
+    
+    function toggleMusic() {
+        const audio = document.getElementById('backgroundAudio');
+        const muteIcon = document.getElementById('playerVolumeOff');
+        const playIcon = document.getElementById('playerVolumeOn');
+        
+        console.log('🎵 Toggle music clicked, current state:', window.isPlaying);
+        console.log('🎵 Audio elements found:', {
+            audio: !!audio,
+            muteIcon: !!muteIcon,
+            playIcon: !!playIcon
+        });
+        
+        if (!audio) {
+            console.error('❌ Audio element not found!');
+            return;
+        }
+        
+        if (window.isPlaying) {
+            // Stop music
+            audio.pause();
+            audio.currentTime = 0;
+            if (muteIcon) muteIcon.style.display = 'block';
+            if (playIcon) playIcon.style.display = 'none';
+            window.isPlaying = false;
+            console.log('🔇 Music stopped');
+        } else {
+            // Play music
+            audio.play().then(() => {
+                if (muteIcon) muteIcon.style.display = 'none';
+                if (playIcon) playIcon.style.display = 'block';
+                window.isPlaying = true;
+                console.log('🔊 Music started');
+            }).catch(error => {
+                console.error('❌ Error playing music:', error);
+                // Show user-friendly error
+                alert('Không thể phát nhạc. Vui lòng thử lại sau.');
+            });
+        }
+    }
+    
+    // Handle audio events
+    function setupAudioEvents() {
+        const audio = document.getElementById('backgroundAudio');
+        if (audio) {
+            audio.addEventListener('ended', function() {
+                console.log('🎵 Music ended, resetting to mute state');
+                window.isPlaying = false;
+                const muteIcon = document.getElementById('playerVolumeOff');
+                const playIcon = document.getElementById('playerVolumeOn');
+                if (muteIcon) muteIcon.style.display = 'block';
+                if (playIcon) playIcon.style.display = 'none';
+            });
+            
+            audio.addEventListener('error', function(e) {
+                console.error('❌ Audio error:', e);
+                window.isPlaying = false;
+            });
+        }
+    }
+    
+    // Add click handlers to music buttons
+    const muteBtn = document.getElementById('playerVolumeOff');
+    const playBtn = document.getElementById('playerVolumeOn');
+    
+    console.log('🎵 Music buttons found:', {
+        muteBtn: !!muteBtn,
+        playBtn: !!playBtn
+    });
+    
+    if (muteBtn) {
+        muteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleMusic();
+        });
+    }
+    if (playBtn) {
+        playBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleMusic();
+        });
+    }
+    
+    // Setup audio event listeners
+    setupAudioEvents();
+    
+    // Force check current audio state
+    checkAudioState();
+}
+
+// Function to check and sync audio state with icons
+function checkAudioState() {
+    const audio = document.getElementById('backgroundAudio');
+    const muteIcon = document.getElementById('playerVolumeOff');
+    const playIcon = document.getElementById('playerVolumeOn');
+    
+    if (!audio || !muteIcon || !playIcon) {
+        console.log('🎵 Audio elements not ready yet');
+        return;
+    }
+    
+    console.log('🎵 Checking audio state:', {
+        paused: audio.paused,
+        currentTime: audio.currentTime,
+        duration: audio.duration
+    });
+    
+    // If audio is playing, show play icon
+    if (!audio.paused && audio.currentTime > 0) {
+        console.log('🎵 Audio is playing, updating icons');
+        muteIcon.style.display = 'none';
+        playIcon.style.display = 'block';
+        window.isPlaying = true;
+    } else {
+        console.log('🎵 Audio is not playing, showing mute icon');
+        muteIcon.style.display = 'block';
+        playIcon.style.display = 'none';
+        window.isPlaying = false;
+    }
+}
+
+// Global function to force sync music icons (for debugging)
+window.syncMusicIcons = function() {
+    console.log('🎵 Force syncing music icons...');
+    checkAudioState();
+};
+
+// Add periodic check to ensure icons stay in sync
+setInterval(function() {
+    if (typeof window.isPlaying !== 'undefined') {
+        checkAudioState();
+    }
+}, 3000); // Check every 3 seconds
 </script>
   
 </body>

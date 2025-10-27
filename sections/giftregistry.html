@@ -800,9 +800,9 @@
 async function loadEventsFromAPI() {
     try {
         console.log('📋 Loading events from API...');
-        console.log('📋 API URL: http://localhost:5001/api/data');
+        console.log('📋 API URL:', window.API_CONFIG.getApiUrl('/data'));
         
-        const response = await fetch('http://localhost:5001/api/data');
+        const response = await window.apiCall('/data');
         console.log('📋 Response status:', response.status);
         console.log('📋 Response ok:', response.ok);
         
@@ -893,7 +893,7 @@ function createDefaultEvents() {
 async function saveEventsToAPI(events) {
     try {
         console.log('📋 Saving events to API...');
-        const response = await fetch('http://localhost:5001/api/data', {
+        const response = await window.apiCall('/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1028,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', function() {
 async function testAPI() {
     try {
         console.log('🧪 Testing API connection...');
-        const response = await fetch('http://localhost:5001/api/data');
+        const response = await window.apiCall('/data');
         const data = await response.json();
         console.log('🧪 API Test Result:', data);
         return data;

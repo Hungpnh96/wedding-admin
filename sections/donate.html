@@ -164,7 +164,7 @@
 async function loadPaymentData() {
     try {
         console.log('🔄 Loading payment data from API...');
-        const response = await fetch('http://localhost:5001/api/payment/frontend');
+        const response = await window.apiCall('/payment/frontend');
         const data = await response.json();
         
         if (data.success) {

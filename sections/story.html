@@ -154,7 +154,7 @@ function createStoryHTML(story, index) {
     // Debug image path processing
     let imageSrc = '';
     if (story.src) {
-        if (story.src.startsWith('http://localhost:5001/')) {
+        if (story.src.startsWith(window.API_CONFIG.getBaseUrl() + '/')) {
             imageSrc = story.src;
         } else if (story.src.startsWith('/public/')) {
             // Convert /public/images/story/file.webp to ./public/images/story/file.webp

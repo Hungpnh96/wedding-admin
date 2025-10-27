@@ -331,7 +331,7 @@
    function fetchBlessingData() {
        // Load latest blessings from new API
        $.ajax({
-           url: 'http://localhost:5001/api/blessing/latest',
+           url: window.API_CONFIG.getApiUrl('/blessing/latest'),
            method: 'GET',
            success: function(response) {
                if (response.success && response.data) {
@@ -434,7 +434,7 @@ $('.btn-blessing').on('click', function(e) {
    // Hiển thị loading
    $('#loading-overlay').show();
    $.ajax({
-      url: 'http://localhost:5001/api/blessing/send',
+      url: window.API_CONFIG.getApiUrl('/blessing/send'),
       method: 'POST',
       headers: {
          'Content-Type': 'application/json'
