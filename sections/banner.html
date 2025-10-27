@@ -186,7 +186,7 @@
         console.log('📡 No API data available, trying to load...');
         
         // Try direct API call first
-        fetch('/api/data')
+        window.apiCall('/data')
             .then(response => response.json())
             .then(data => {
                 console.log('📡 Direct API call successful:', data);

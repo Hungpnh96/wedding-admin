@@ -200,7 +200,7 @@ class BigEventCountdown {
 
     async loadWeddingDate() {
         try {
-            const response = await fetch('/api/data');
+            const response = await window.apiCall('/data');
             const result = await response.json();
             
             if (result.success && result.data && result.data.hero && result.data.hero.weddingDate) {

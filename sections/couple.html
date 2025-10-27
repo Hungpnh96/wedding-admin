@@ -470,7 +470,7 @@
         console.log('Loading couple data for popup:', type);
         
         try {
-            const response = await fetch('/api/data/couple');
+            const response = await window.apiCall('/data/couple');
             const result = await response.json();
             
             if (result.success && result.data) {
@@ -594,7 +594,7 @@
         console.log('📡 No API couple data available, trying to load...');
         
         // Try direct API call first
-        fetch('/api/data')
+        window.apiCall('/data')
             .then(response => response.json())
             .then(data => {
                 console.log('📡 Direct API call successful for couple:', data);

@@ -77,7 +77,7 @@
 async function loadStoriesFromAPI() {
     try {
         console.log('Loading stories from API...');
-        const response = await fetch('/api/data');
+        const response = await window.apiCall('/data');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -436,7 +436,7 @@ async function loadStoryBackground() {
         }
         
         // Try direct API call
-        const response = await fetch('/api/data');
+        const response = await window.apiCall('/data');
         const data = await response.json();
         
         if (data && data.data && data.data.story && data.data.story.background) {
@@ -509,7 +509,7 @@ window.createSampleStories = async function() {
             }
         ];
 
-        const response = await fetch('/api/data', {
+        const response = await window.apiCall('/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

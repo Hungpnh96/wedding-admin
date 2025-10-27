@@ -13,7 +13,7 @@ async function loadSiteData() {
     console.log('🔄 Loading site data from SQLite...');
     
     try {
-        const response = await fetch('/api/data');
+        const response = await window.apiCall('/data');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

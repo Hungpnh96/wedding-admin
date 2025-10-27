@@ -347,7 +347,7 @@ async function loadCoupleData() {
     console.log('🔄 Loading couple data from SQLite...');
     
     try {
-        const response = await fetch('/api/data/couple');
+        const response = await window.apiCall('/data/couple');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
