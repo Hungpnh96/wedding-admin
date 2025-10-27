@@ -11,7 +11,6 @@ services:
     volumes:
       # Mount data directory để persist database và uploads
       - ./data:/app/data
-      - ./public/uploads:/app/public/uploads
       - ./public/images:/app/public/images
       - ./images:/app/images
       - ./public/webfonts:/app/webfonts
@@ -20,7 +19,7 @@ services:
       - ./admin:/app/admin
       - ./admin-pages:/app/admin-pages
       # Mount index files
-      - ./index_files:/app/index_files
+      - ./public/index_files:/app/public/index_files
       # Mount source code for development
       - ./api:/app/api
     restart: unless-stopped

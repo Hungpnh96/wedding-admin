@@ -29,7 +29,7 @@ CORS(app)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_FILE = os.path.join(BASE_DIR, 'data', 'wedding.db')
 BACKUP_DIR = os.path.join(BASE_DIR, 'data', 'backups')
-UPLOAD_DIR = os.path.join(BASE_DIR, 'public', 'uploads')
+UPLOAD_DIR = os.path.join(BASE_DIR, 'public', 'images')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 
@@ -1483,19 +1483,15 @@ def save_qr_code_file(file):
 def delete_qr_code(qr_url):
     """Xóa file QR code cũ"""
     try:
-        if qr_url and (qr_url.startswith('/public/uploads/qr/') or qr_url.startswith('/public/images/qr/')):
+        if qr_url and qr_url.startswith('/public/images/qr/'):
             filename = os.path.basename(qr_url)
             
-            # Try both locations
-            old_path = os.path.join(UPLOAD_DIR, 'qr', filename)
-            new_path = os.path.join(BASE_DIR, 'public', 'images', 'qr', filename)
+            # Delete from images/qr directory
+            qr_path = os.path.join(BASE_DIR, 'public', 'images', 'qr', filename)
             
-            if os.path.exists(old_path):
-                os.remove(old_path)
-                logger.info(f"Deleted old QR code file: {old_path}")
-            elif os.path.exists(new_path):
-                os.remove(new_path)
-                logger.info(f"Deleted QR code file: {new_path}")
+            if os.path.exists(qr_path):
+                os.remove(qr_path)
+                logger.info(f"Deleted QR code file: {qr_path}")
     except Exception as e:
         logger.error(f"Error deleting QR code: {e}")
 

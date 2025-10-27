@@ -203,7 +203,7 @@ export BACKUP_RETENTION_DAYS=30
 ### Upload ảnh lỗi
 1. Kiểm tra dung lượng file (< 5MB)
 2. Định dạng hỗ trợ: JPG, PNG, WebP, GIF
-3. Kiểm tra quyền ghi thư mục `public/uploads/`
+3. Kiểm tra quyền ghi thư mục `public/images/`
 
 ### Dữ liệu bị mất
 1. Khôi phục từ backup: `data/backups/`

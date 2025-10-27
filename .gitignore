@@ -54,3 +54,6 @@ node_modules/
 
 # Symlinks (if any)
 webfonts
+
+# Old uploads directory (migrated to public/images)
+public/uploads/

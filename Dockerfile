@@ -15,7 +15,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Tạo thư mục cần thiết
-RUN mkdir -p /app/data /app/public/uploads /app/public/images
+RUN mkdir -p /app/data /app/public/images
 
 # Copy source code
 COPY api/ ./api/
