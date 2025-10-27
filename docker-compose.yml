@@ -19,7 +19,7 @@ services:
       - ./admin:/app/admin
       - ./admin-pages:/app/admin-pages
       # Mount index files
-      - ./public/index_files:/app/public/index_files
+      - ./index_files:/app/index_files
       # Mount source code for development
       - ./api:/app/api
     restart: unless-stopped
