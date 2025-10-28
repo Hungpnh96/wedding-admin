@@ -487,7 +487,7 @@ function initializeEvent() {
 async function loadEvents() {
     try {
         console.log('📋 Loading events from API...');
-        const response = await fetch('window.location.origin/api/data');
+        const response = await fetch(window.location.origin + '/api/data');
         const data = await response.json();
         
         if (data && data.success && data.data) {
@@ -863,7 +863,7 @@ async function uploadEventImage(file) {
     formData.append('file', file);
     formData.append('type', 'event'); // Use 'type' instead of 'folder'
     
-    const response = await fetch('window.location.origin/api/upload', {
+    const response = await fetch(window.location.origin + '/api/upload', {
         method: 'POST',
         body: formData
     });
@@ -885,7 +885,7 @@ async function deleteEventImage(imageUrl) {
     try {
         console.log('🗑️ Attempting to delete image:', imageUrl);
         
-        const response = await fetch('window.location.origin/api/delete-image', {
+        const response = await fetch(window.location.origin + '/api/delete-image', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

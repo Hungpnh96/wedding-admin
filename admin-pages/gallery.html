@@ -51,7 +51,7 @@ async function loadGalleryImages() {
     try {
         console.log('📸 Loading gallery images...');
         
-        const response = await fetch('window.location.origin/api/data');
+        const response = await fetch(window.location.origin + '/api/data');
         const result = await response.json();
         
         if (result.success && result.data && result.data.gallery) {
@@ -88,7 +88,7 @@ function renderGallery() {
     grid.innerHTML = galleryImages.map((image, index) => `
         <div class="gallery-item" data-image-id="${image.id || index}">
             <div class="gallery-image">
-                <img src="window.location.origin${image.src.replace('./', '/')}" alt="${image.alt || 'Gallery image'}" 
+                <img src="${window.location.origin}${image.src.replace('./', '/')}" alt="${image.alt || 'Gallery image'}" 
                      onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlPC90ZXh0Pjwvc3ZnPg=='">
                 <div class="gallery-overlay">
                     <div class="gallery-actions">
@@ -214,7 +214,7 @@ async function uploadSingleImage(file) {
     formData.append('file', file);
     formData.append('type', 'gallery');
     
-    const response = await fetch('window.location.origin/api/upload', {
+    const response = await fetch(window.location.origin + '/api/upload', {
         method: 'POST',
         body: formData
     });
@@ -246,7 +246,7 @@ async function uploadSingleImage(file) {
 // Save gallery to server
 async function saveGalleryToServer() {
     try {
-        const response = await fetch('window.location.origin/api/data', {
+        const response = await fetch(window.location.origin + '/api/data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ gallery: galleryImages })
@@ -319,7 +319,7 @@ async function deleteImageFile(imageSrc) {
         // Extract filename from path
         const filename = imageSrc.split('/').pop();
         
-        const response = await fetch('window.location.origin/api/delete-file', {
+        const response = await fetch(window.location.origin + '/api/delete-file', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ filename: filename, type: 'gallery' })

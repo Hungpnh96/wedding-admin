@@ -134,7 +134,7 @@ async function refreshBackupStats() {
     try {
         console.log('📊 Loading backup stats...');
         
-        const response = await fetch('window.location.origin/api/backup/stats');
+        const response = await fetch(window.location.origin + '/api/backup/stats');
         const result = await response.json();
         
         if (result.success) {
@@ -237,7 +237,7 @@ async function createBackup() {
                 });
                 
                 // Trigger backup by saving data
-                const response = await fetch('window.location.origin/api/data', {
+                const response = await fetch(window.location.origin + '/api/data', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ trigger_backup: true })
@@ -298,7 +298,7 @@ async function cleanupBackups() {
                 }
             });
             
-            const response = await fetch('window.location.origin/api/backup/cleanup', {
+            const response = await fetch(window.location.origin + '/api/backup/cleanup', {
                 method: 'POST'
             });
             
@@ -359,7 +359,7 @@ async function restoreBackup(filename) {
                 }
             });
             
-            const response = await fetch(`window.location.origin/api/backup/restore/${filename}`, {
+            const response = await fetch(`${window.location.origin}/api/backup/restore/${filename}`, {
                 method: 'POST'
             });
             
