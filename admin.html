@@ -1286,7 +1286,7 @@
         // Test function to force load hero data
         window.forceLoadHeroData = function() {
             console.log('🚀 FORCE LOADING HERO DATA...');
-            fetch('http://localhost:5001/api/data')
+            fetch(window.location.origin + '/api/data')
                 .then(response => response.json())
                 .then(data => {
                     console.log('📊 API Data:', data);
@@ -1341,7 +1341,7 @@
         // Test function to force load couple data
         window.forceLoadCoupleData = function() {
             console.log('🚀 FORCE LOADING COUPLE DATA...');
-            fetch('http://localhost:5001/api/data')
+            fetch(window.location.origin + '/api/data')
                 .then(response => response.json())
                 .then(data => {
                     console.log('📊 API Data:', data);
@@ -1402,7 +1402,7 @@
         // Test function to force load story data
         window.forceLoadStoryData = function() {
             console.log('🚀 FORCE LOADING STORY DATA...');
-            fetch('http://localhost:5001/api/data/story')
+            fetch(window.location.origin + '/api/data/story')
                 .then(response => response.json())
                 .then(result => {
                     console.log('📡 Story API result:', result);
@@ -1476,7 +1476,7 @@
         // Force load story data directly
         window.forceLoadStoryData = function() {
             console.log('📚 FORCE LOADING STORY DATA...');
-            fetch('http://localhost:5001/api/data/story')
+            fetch(window.location.origin + '/api/data/story')
                 .then(response => response.json())
                 .then(result => {
                     console.log('📚 Story API response:', result);
@@ -1567,7 +1567,7 @@
                     title: 'BẮT ĐẦU HÀNH TRÌNH',
                     description: 'Chúng mình quen nhau qua mạng xã hội...',
                     milestone: 'BẮT ĐẦU TỪ 2022',
-                    src: 'http://localhost:5001/public/images/story/1759556278244_1736340563_gallery-05.webp',
+                    src: window.location.origin + '/public/images/story/1759556278244_1736340563_gallery-05.webp',
                     visible: true
                 }
             ];

@@ -172,7 +172,7 @@
                     approved: window.currentFilters.approved
                 });
 
-                const response = await fetch(`http://localhost:5001/api/blessing/admin/list?${params}`);
+                const response = await fetch(`window.location.origin/api/blessing/admin/list?${params}`);
                 const data = await response.json();
 
                 if (data.success) {
@@ -320,7 +320,7 @@
         // Approve blessing
         async function approveBlessing(blessingId) {
             try {
-                const response = await fetch(`http://localhost:5001/api/blessing/admin/${blessingId}/approve`, {
+                const response = await fetch(`window.location.origin/api/blessing/admin/${blessingId}/approve`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -349,7 +349,7 @@
         // Reject blessing
         async function rejectBlessing(blessingId) {
             try {
-                const response = await fetch(`http://localhost:5001/api/blessing/admin/${blessingId}/approve`, {
+                const response = await fetch(`window.location.origin/api/blessing/admin/${blessingId}/approve`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -390,7 +390,7 @@
 
             if (result.isConfirmed) {
                 try {
-                    const response = await fetch(`http://localhost:5001/api/blessing/admin/${blessingId}`, {
+                    const response = await fetch(`window.location.origin/api/blessing/admin/${blessingId}`, {
                         method: 'DELETE'
                     });
 

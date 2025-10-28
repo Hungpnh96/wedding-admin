@@ -209,7 +209,7 @@
         // Load payments from API
         async function loadPayments() {
             try {
-                const response = await fetch('http://localhost:5001/api/payment/list');
+                const response = await fetch('window.location.origin/api/payment/list');
                 const data = await response.json();
 
                 if (data.success) {
@@ -227,7 +227,7 @@
         // Load global message
         async function loadGlobalMessage() {
             try {
-                const response = await fetch('http://localhost:5001/api/payment/global-message');
+                const response = await fetch('window.location.origin/api/payment/global-message');
                 const data = await response.json();
 
                 if (data.success) {
@@ -369,8 +369,8 @@
 
             try {
                 const url = paymentId ? 
-                    `http://localhost:5001/api/payment/${paymentId}` : 
-                    'http://localhost:5001/api/payment';
+                    `window.location.origin/api/payment/${paymentId}` : 
+                    'window.location.origin/api/payment';
                 
                 const method = paymentId ? 'PUT' : 'POST';
 
@@ -418,7 +418,7 @@
 
             if (result.isConfirmed) {
                 try {
-                    const response = await fetch(`http://localhost:5001/api/payment/${id}`, {
+                    const response = await fetch(`window.location.origin/api/payment/${id}`, {
                         method: 'DELETE'
                     });
 
@@ -446,7 +446,7 @@
             const message = document.getElementById('globalMessage').value;
 
             try {
-                const response = await fetch('http://localhost:5001/api/payment/global-message', {
+                const response = await fetch('window.location.origin/api/payment/global-message', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

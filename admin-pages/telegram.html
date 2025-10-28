@@ -200,7 +200,7 @@
         // Load Telegram configuration
         async function loadConfig() {
             try {
-                const response = await fetch('http://localhost:5001/api/telegram/config');
+                const response = await fetch('window.location.origin/api/telegram/config');
                 const data = await response.json();
 
                 if (data.success) {
@@ -227,7 +227,7 @@
                     enabled: document.getElementById('enabled').checked
                 };
 
-                const response = await fetch('http://localhost:5001/api/telegram/config', {
+                const response = await fetch('window.location.origin/api/telegram/config', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -269,7 +269,7 @@
                     content: 'Đây là tin nhắn thử từ hệ thống Wedding Admin. Nếu bạn nhận được tin nhắn này, cấu hình Telegram đã hoạt động chính xác! 🎉'
                 };
 
-                const response = await fetch('http://localhost:5001/api/blessing/send', {
+                const response = await fetch('window.location.origin/api/blessing/send', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

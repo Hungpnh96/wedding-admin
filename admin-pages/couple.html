@@ -243,7 +243,7 @@ async function loadCoupleDataFromAPI() {
     console.log('🔄 Loading couple data from API...');
     
     try {
-        const response = await fetch('http://localhost:5001/api/data');
+        const response = await fetch('window.location.origin/api/data');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

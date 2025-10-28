@@ -379,14 +379,14 @@ function normalizeImagePath(src) {
     
     // If starts with /public/, make it a full URL
     if (src.startsWith('/public/')) {
-        const fullUrl = `http://localhost:5001${src}`;
+        const fullUrl = `${window.location.origin}${src}`;
         console.log('🖼️ Converted to full URL:', fullUrl);
         return fullUrl;
     }
     
     // If relative path, add /public/ prefix
     if (src.startsWith('./') || !src.startsWith('/')) {
-        const fullUrl = `http://localhost:5001/public/images/story/${src}`;
+        const fullUrl = `${window.location.origin}/public/images/story/${src}`;
         console.log('🖼️ Added prefix:', fullUrl);
         return fullUrl;
     }

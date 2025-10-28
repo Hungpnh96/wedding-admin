@@ -110,7 +110,7 @@ function initializeStory() {
 // Load stories from API
 async function loadStories() {
     try {
-        const response = await fetch('http://localhost:5001/api/data');
+        const response = await fetch('window.location.origin/api/data');
         const result = await response.json();
         
         if (result.success && result.data && result.data.story) {
@@ -147,7 +147,7 @@ function renderStories() {
     grid.innerHTML = storyData.map((story, index) => `
         <div class="story-card">
             <div class="story-image">
-                ${story.src ? `<img src="http://localhost:5001${story.src}" alt="${story.title}">` : '<div class="no-image"><i class="fas fa-image"></i></div>'}
+                ${story.src ? `<img src="window.location.origin${story.src}" alt="${story.title}">` : '<div class="no-image"><i class="fas fa-image"></i></div>'}
             </div>
             <div class="story-content">
                 <h4>${story.title || 'Câu chuyện'}</h4>
@@ -231,7 +231,7 @@ function editStory(storyId) {
     
     // Handle image
     if (story.src) {
-        showImagePreview(`http://localhost:5001${story.src}`);
+        showImagePreview(`window.location.origin${story.src}`);
     } else {
         resetImagePreview();
     }
@@ -351,7 +351,7 @@ async function handleStorySubmit(event) {
 
 // Save to server
 async function saveStories() {
-    const response = await fetch('http://localhost:5001/api/data', {
+    const response = await fetch('window.location.origin/api/data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ story: storyData })
@@ -386,7 +386,7 @@ async function handleStoryImageUpload(event) {
     formData.append('type', 'story');
     
     try {
-        const response = await fetch('http://localhost:5001/api/upload', {
+        const response = await fetch('window.location.origin/api/upload', {
             method: 'POST',
             body: formData
         });
@@ -395,7 +395,7 @@ async function handleStoryImageUpload(event) {
         console.log('Upload result:', result);
         
         if (result.success) {
-            const imageUrl = `http://localhost:5001${result.url.replace('./', '/')}`;
+            const imageUrl = `window.location.origin${result.url.replace('./', '/')}`;
             showImagePreview(imageUrl);
             
             // Close loading and show success
@@ -463,8 +463,8 @@ function getImageSrc() {
     const preview = document.getElementById('storyImagePreview');
     if (preview && preview.src && preview.style.display !== 'none') {
         let src = preview.src;
-        if (src.includes('http://localhost:5001')) {
-            src = src.replace('http://localhost:5001', '');
+        if (src.includes('window.location.origin')) {
+            src = src.replace('window.location.origin', '');
         }
         return src;
     }
