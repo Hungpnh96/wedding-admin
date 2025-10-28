@@ -374,7 +374,7 @@ async function saveStoriesToServer() {
         
         console.log('🔍 Debug: Sending only story data:', storyData);
         
-        const response = await fetch('window.location.origin/api/data', {
+        const response = await fetch(window.location.origin + '/api/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

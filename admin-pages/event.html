@@ -766,7 +766,7 @@ async function saveEventsToAPI() {
         console.log('💾 Saving events to API...');
         
         // Load current site data
-        const getResponse = await fetch('window.location.origin/api/data');
+        const getResponse = await fetch(window.location.origin + '/api/data');
         const currentData = await getResponse.json();
         
         let siteData = {};
@@ -780,7 +780,7 @@ async function saveEventsToAPI() {
         console.log('💾 Full site data to save:', siteData);
         
         // Save to API
-        const response = await fetch('window.location.origin/api/data', {
+        const response = await fetch(window.location.origin + '/api/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

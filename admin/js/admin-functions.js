@@ -584,7 +584,7 @@ function updateSiteDataBanner() {
 // Save banner data to server
 async function saveBannerDataToServer() {
     try {
-        const response = await fetch('window.location.origin/api/data', {
+        const response = await fetch(window.location.origin + '/api/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
