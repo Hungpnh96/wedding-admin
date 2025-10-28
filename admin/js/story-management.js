@@ -255,7 +255,7 @@ function showStoryImagePreview(imageUrl) {
     const placeholder = document.getElementById('storyUploadPlaceholder');
     
     if (preview && actions && placeholder) {
-        preview.src = `window.location.origin${imageUrl}`;
+        preview.src = `${window.location.origin}${imageUrl}`;
         preview.style.display = 'block';
         actions.style.display = 'block';
         placeholder.style.display = 'none';
@@ -1079,14 +1079,14 @@ function normalizeStoryImagePath(src) {
     
     // If starts with /public/, make it a full URL
     if (src.startsWith('/public/')) {
-        const fullUrl = `window.location.origin${src}`;
+        const fullUrl = `${window.location.origin}${src}`;
         console.log('🖼️ Converted to full URL:', fullUrl);
         return fullUrl;
     }
     
     // If relative path, add /public/ prefix
     if (src.startsWith('./') || !src.startsWith('/')) {
-        const fullUrl = `window.location.origin/public/images/story/${src}`;
+        const fullUrl = `${window.location.origin}/public/images/story/${src}`;
         console.log('🖼️ Added prefix:', fullUrl);
         return fullUrl;
     }
