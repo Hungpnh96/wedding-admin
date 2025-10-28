@@ -65,7 +65,7 @@ async function loadStories() {
     
     try {
         // Load data from main API
-        const response = await fetch('window.location.origin/api/data');
+        const response = await fetch(window.location.origin + '/api/data');
         const result = await response.json();
         
         if (result.success && result.data && result.data.story && Array.isArray(result.data.story)) {
@@ -93,7 +93,7 @@ async function loadStories() {
  */
 async function loadDataFromAPI() {
     try {
-        const response = await fetch('window.location.origin/api/data');
+        const response = await fetch(window.location.origin + '/api/data');
         const result = await response.json();
         
         if (result.success && result.data) {
@@ -217,7 +217,7 @@ function setupStoryFormListeners() {
     const formData = new FormData();
     formData.append('file', file);
     
-    fetch('window.location.origin/api/upload', {
+    fetch(window.location.origin + '/api/upload', {
         method: 'POST',
         body: formData
     })
@@ -578,7 +578,7 @@ async function deleteStoryImage(imageSrc) {
         if (!filename) return;
         
         // Call API to delete file
-        const response = await fetch(`window.location.origin/api/delete-file`, {
+        const response = await fetch(window.location.origin + '/api/delete-file', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -769,7 +769,7 @@ async function handleStoryImageSelect(event) {
         formData.append('file', file);
         formData.append('type', 'story');
         
-        const response = await fetch('window.location.origin/api/upload-image', {
+        const response = await fetch(window.location.origin + '/api/upload-image', {
             method: 'POST',
             body: formData
         });
@@ -873,7 +873,7 @@ async function uploadImageFile(file) {
         formData.append('type', 'story');
         
         // Upload to server
-        const response = await fetch('window.location.origin/api/upload-image', {
+        const response = await fetch(window.location.origin + '/api/upload-image', {
             method: 'POST',
             body: formData
         });

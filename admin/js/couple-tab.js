@@ -38,7 +38,7 @@ async function loadCoupleDataFromAPI() {
     console.log('🔄 Loading couple data from API...');
     
     try {
-        const response = await fetch('window.location.origin/api/data');
+        const response = await fetch(window.location.origin + '/api/data');
         console.log('📡 API Response status:', response.status);
         
         if (!response.ok) {
@@ -229,7 +229,7 @@ async function saveCoupleData() {
         let result;
         if (typeof AdminAPI === 'undefined') {
             console.error('❌ AdminAPI not found, using fetch directly');
-            const response = await fetch('window.location.origin/api/data/couple', {
+            const response = await fetch(window.location.origin + '/api/data/couple', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -269,7 +269,7 @@ function testCoupleData() {
     console.log('3. window.siteData:', window.siteData);
     
     // Test API call
-    fetch('window.location.origin/api/data')
+    fetch(window.location.origin + '/api/data')
         .then(response => response.json())
         .then(data => {
             console.log('4. API Response:', data);
@@ -396,7 +396,7 @@ async function uploadCoupleImage(type, file) {
             }
         });
         
-        const response = await fetch('window.location.origin/api/upload', {
+        const response = await fetch(window.location.origin + '/api/upload', {
             method: 'POST',
             body: formData
         });

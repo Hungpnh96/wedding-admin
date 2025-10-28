@@ -6,7 +6,7 @@
 class ImageUploadComponent {
     constructor(options = {}) {
         this.options = {
-            uploadUrl: 'window.location.origin/api/upload',
+            uploadUrl: window.location.origin + '/api/upload',
             maxFileSize: 5 * 1024 * 1024, // 5MB
             allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'],
             onSuccess: null,
