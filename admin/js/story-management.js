@@ -191,58 +191,9 @@ function setupStoryFormListeners() {
 
 /**
  * Upload story image
+ * uploadStoryImage function is defined globally below
+ * handleStoryImageSelect function is defined below
  */
-        // uploadStoryImage function is defined globally below
-
-/**
- * Handle story image selection
- */
-// handleStoryImageSelect function is defined below
-    
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-        alert('File ảnh quá lớn! Vui lòng chọn file nhỏ hơn 5MB.');
-        return;
-    }
-    
-    console.log('📸 File selected:', file.name, file.size, file.type);
-    
-    // Show loading
-    const placeholder = document.getElementById('storyUploadPlaceholder');
-    if (placeholder) {
-        placeholder.innerHTML = '<i class="fas fa-spinner fa-spin fa-3x mb-3 text-primary"></i><p>Đang tải lên...</p>';
-    }
-    
-    // Upload file
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    fetch(window.location.origin + '/api/upload', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(result => {
-        console.log('📸 Upload result:', result);
-        if (result.success) {
-            // Store the uploaded image URL
-            tempUploadedImageUrl = result.filename;
-            console.log('📸 Image uploaded successfully:', result.filename);
-            
-            // Show preview
-            showStoryImagePreview(result.filename);
-        } else {
-            throw new Error(result.message || 'Upload failed');
-        }
-    })
-    .catch(error => {
-        console.error('📸 Upload error:', error);
-        alert('Lỗi khi tải ảnh lên: ' + error.message);
-        
-        // Reset upload area
-        resetStoryImageUpload();
-    });
-}
 
 /**
  * Show story image preview
