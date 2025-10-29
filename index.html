@@ -1002,7 +1002,13 @@
     alert: JSON.parse('[]'),
     effect: JSON.parse(
     '{\"type\":\"custom\",\"setting\":{\"icon\":\".\\/index_files\\/TraiTimNen.png\",\"number\":\"20\",\"speed\":\"2\",\"minSize\":\"20\",\"maxSize\":\"40\"}}'
-    )
+    ),
+    couple: {
+        groom_name: 'Tên chú rể',
+        bride_name: 'Tên cô dâu',
+        wedding_date: '01/01/2025',
+        contact_email: 'hungpnh96@gmail.com'
+    }
     };
     
  </script>
@@ -1324,6 +1330,15 @@
 async function loadCoupleInfo() {
     try {
         console.log('🔄 Loading couple info for footer...');
+        
+        // Try to get data from biicore first
+        if (window.biicore && window.biicore.couple) {
+            console.log('✅ Couple info found in biicore:', window.biicore.couple);
+            renderFooter(window.biicore.couple);
+            return;
+        }
+        
+        // Fallback to API call
         const response = await window.apiCall('/couple/info');
         const data = await response.json();
         
@@ -1356,16 +1371,18 @@ function renderFooter(coupleData) {
     }
     
     // Render wedding date if available
-    if (coupleData.wedding_date && coupleData.wedding_date.trim()) {
+    if (weddingDateEl && coupleData.wedding_date && coupleData.wedding_date.trim()) {
         weddingDateEl.textContent = coupleData.wedding_date;
         weddingDateEl.style.display = 'block';
-    } else {
+    } else if (weddingDateEl) {
         weddingDateEl.style.display = 'none';
     }
     
     // Update contact email
-    contactEmailEl.href = `mailto:${coupleData.contact_email}`;
-    contactEmailEl.textContent = coupleData.contact_email;
+    if (contactEmailEl && coupleData.contact_email) {
+        contactEmailEl.href = `mailto:${coupleData.contact_email}`;
+        contactEmailEl.textContent = coupleData.contact_email;
+    }
 }
 
 // Render default footer when API fails
