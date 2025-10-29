@@ -623,18 +623,37 @@
               }
               
               /* Giới hạn phạm vi hiệu ứng snowfall */
-              body {
-                overflow-x: hidden;
-              }
-              
               .snowfall-flakes {
                 max-height: 100vh !important;
                 pointer-events: none;
+                overflow: hidden;
               }
               
               /* Đảm bảo ảnh không tràn ra ngoài viewport */
               .snowfall-flakes[style*="top"] {
                 max-height: calc(100vh - 50px) !important;
+              }
+              
+              /* Chỉ ẩn overflow cho container chứa snowfall */
+              body:has(.snowfall-flakes) {
+                overflow-x: hidden;
+              }
+              
+              /* Đảm bảo footer hiển thị đúng */
+              #footer-onepage {
+                position: relative !important;
+                z-index: 1 !important;
+                clear: both !important;
+              }
+              
+              /* Đảm bảo snowfall không che footer */
+              .snowfall-flakes {
+                z-index: 999 !important;
+              }
+              
+              /* Đảm bảo footer luôn ở trên cùng */
+              #footer-onepage {
+                z-index: 1000 !important;
               }
   
               .spinner {
@@ -1655,6 +1674,8 @@ window.addEventListener('load', function() {
     // Đợi hiệu ứng snowfall được khởi tạo
     setTimeout(function() {
         const flakes = document.querySelectorAll('.snowfall-flakes');
+        if (flakes.length === 0) return; // Không có flakes thì thoát
+        
         const viewportHeight = window.innerHeight;
         
         flakes.forEach(function(flake) {
@@ -1663,19 +1684,16 @@ window.addEventListener('load', function() {
             if (currentTop > viewportHeight) {
                 flake.style.top = (viewportHeight - 100) + 'px';
             }
-            
-            // Thêm animation để ảnh biến mất khi đến cuối viewport
-            flake.addEventListener('animationend', function() {
-                if (parseInt(flake.style.top) > viewportHeight - 50) {
-                    flake.style.opacity = '0';
-                    flake.style.transition = 'opacity 0.5s ease-out';
-                }
-            });
         });
         
-        // Kiểm tra và cập nhật định kỳ
-        setInterval(function() {
+        // Kiểm tra và cập nhật định kỳ - chỉ khi có flakes
+        const snowfallInterval = setInterval(function() {
             const flakes = document.querySelectorAll('.snowfall-flakes');
+            if (flakes.length === 0) {
+                clearInterval(snowfallInterval);
+                return;
+            }
+            
             const viewportHeight = window.innerHeight;
             
             flakes.forEach(function(flake) {
@@ -1687,7 +1705,7 @@ window.addEventListener('load', function() {
             });
         }, 1000);
         
-    }, 1000); // Đợi 1 giây để hiệu ứng khởi tạo
+    }, 2000); // Đợi 2 giây để hiệu ứng khởi tạo
 });
   </script>
   
