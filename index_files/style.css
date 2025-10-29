@@ -7654,18 +7654,86 @@ textarea.form-control {
 
 @media screen and (max-width:576px) {
     .parent-infos {
-
         font-size: .8rem;
-
-
+        margin-bottom: 15px;
     }
 
     .parent-info-group {
         display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+    
+    .parent-info {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .parent-info span {
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .parent-name {
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        line-height: 1.2;
+        word-break: break-word;
+    }
+}
+
+/* Extra small mobile devices */
+@media screen and (max-width: 480px) {
+    .parent-info-group {
+        gap: 15px;
+    }
+    
+    .parent-infos {
+        font-size: 0.75rem;
+        margin-bottom: 10px;
+    }
+    
+    .parent-info {
+        margin-bottom: 8px;
+    }
+    
+    .parent-name {
+        font-size: 0.9rem !important;
+        line-height: 1.1;
+    }
+}
+
+/* Tablet responsive */
+@media screen and (max-width: 768px) and (min-width: 577px) {
+    .parent-info-group {
+        display: flex;
         flex-direction: row;
         justify-content: space-around;
+        gap: 30px;
     }
-
+    
+    .parent-info {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .parent-info span {
+        display: block;
+        margin-bottom: 3px;
+    }
+    
+    .parent-name {
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
+        line-height: 1.3;
+        word-break: break-word;
+    }
 }
 
 .parent-info-group {
@@ -7676,13 +7744,19 @@ textarea.form-control {
 
 .parent-info {
     display: flex;
-
-    text-align: left;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 .parent-info .parent-name {
     font-weight: 600;
     text-transform: uppercase;
+    font-size: 1rem;
+    line-height: 1.3;
+    word-break: break-word;
+    margin-top: 5px;
 }
 
 .parent-title {
