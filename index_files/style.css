@@ -7673,12 +7673,20 @@ textarea.form-control {
         margin-bottom: 10px;
     }
     
-    .parent-info span {
-        display: block;
-        margin-bottom: 5px;
+    /* Làm cho "Con ông:" và "Con bà:" hiển thị trên cùng một dòng */
+    .parent-info span:not(.parent-name) {
+        display: inline;
+        margin-right: 3px;
+        margin-bottom: 0;
+    }
+    
+    .parent-info span:not(.parent-name):last-of-type {
+        margin-right: 0;
     }
     
     .parent-name {
+        display: block;
+        margin-top: 5px;
         font-size: 1rem !important;
         font-weight: 700 !important;
         line-height: 1.2;
@@ -7701,9 +7709,17 @@ textarea.form-control {
         margin-bottom: 8px;
     }
     
+    /* Tối ưu cho màn hình rất nhỏ */
+    .parent-info span:not(.parent-name) {
+        display: inline;
+        margin-right: 2px;
+        font-size: 0.7rem;
+    }
+    
     .parent-name {
         font-size: 0.9rem !important;
         line-height: 1.1;
+        margin-top: 3px;
     }
 }
 
@@ -7723,12 +7739,20 @@ textarea.form-control {
         align-items: center;
     }
     
-    .parent-info span {
-        display: block;
-        margin-bottom: 3px;
+    /* Làm cho "Con ông:" và "Con bà:" hiển thị trên cùng một dòng cho tablet */
+    .parent-info span:not(.parent-name) {
+        display: inline;
+        margin-right: 3px;
+        margin-bottom: 0;
+    }
+    
+    .parent-info span:not(.parent-name):last-of-type {
+        margin-right: 0;
     }
     
     .parent-name {
+        display: block;
+        margin-top: 5px;
         font-size: 0.9rem !important;
         font-weight: 600 !important;
         line-height: 1.3;
@@ -7750,13 +7774,25 @@ textarea.form-control {
     margin-bottom: 15px;
 }
 
+/* Làm cho "Con ông:" và "Con bà:" hiển thị trên cùng một dòng cho desktop */
+.parent-info span:not(.parent-name) {
+    display: inline;
+    margin-right: 5px;
+    margin-bottom: 0;
+}
+
+.parent-info span:not(.parent-name):last-of-type {
+    margin-right: 0;
+}
+
 .parent-info .parent-name {
+    display: block;
+    margin-top: 8px;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 1rem;
     line-height: 1.3;
     word-break: break-word;
-    margin-top: 5px;
 }
 
 .parent-title {
