@@ -420,11 +420,16 @@ def get_data():
     """Lấy toàn bộ dữ liệu website"""
     try:
         data = load_data()
-        return jsonify({
+        response = jsonify({
             "success": True,
             "data": data,
             "message": "Dữ liệu đã được tải thành công từ SQLite"
         })
+        # Prevent caching of API data
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
     except Exception as e:
         logger.error(f"Lỗi lấy dữ liệu: {e}")
         return jsonify({
@@ -1235,23 +1240,67 @@ def uploaded_file(filename):
 def admin_files(filename):
     """Serve admin files (CSS, JS, etc.)"""
     admin_dir = os.path.join(BASE_DIR, 'admin')
-    return send_from_directory(admin_dir, filename)
+    response = send_from_directory(admin_dir, filename)
+    # Add cache busting for JS/CSS - short cache with revalidation
+    if filename.endswith(('.js', '.css')):
+        response.headers['Cache-Control'] = 'public, max-age=3600, must-revalidate'
+    else:
+        # HTML files in admin - no cache
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
 
 @app.route('/index_files/<path:filename>')
 def index_files(filename):
     """Serve index_files (CSS, JS, etc.)"""
     index_files_dir = os.path.join(BASE_DIR, 'index_files')
-    return send_from_directory(index_files_dir, filename)
+    response = send_from_directory(index_files_dir, filename)
+    # Short cache for static assets with revalidation
+    if filename.endswith(('.js', '.css', '.woff', '.woff2', '.ttf', '.eot')):
+        response.headers['Cache-Control'] = 'public, max-age=3600, must-revalidate'
+    return response
 
 @app.route('/')
 def index():
     """Serve main website"""
-    return send_from_directory(BASE_DIR, 'index.html')
+    response = send_from_directory(BASE_DIR, 'index.html')
+    # Prevent caching of HTML files
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    # Add ETag based on file modification time
+    index_path = os.path.join(BASE_DIR, 'index.html')
+    if os.path.exists(index_path):
+        mtime = os.path.getmtime(index_path)
+        response.headers['ETag'] = f'"{int(mtime)}"'
+    return response
+
+@app.route('/admin.html')
+def admin():
+    """Serve admin panel"""
+    response = send_from_directory(BASE_DIR, 'admin.html')
+    # Prevent caching of admin HTML
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    # Add ETag
+    admin_path = os.path.join(BASE_DIR, 'admin.html')
+    if os.path.exists(admin_path):
+        mtime = os.path.getmtime(admin_path)
+        response.headers['ETag'] = f'"{int(mtime)}"'
+    return response
 
 @app.route('/<path:filename>')
 def static_files(filename):
     """Serve static files"""
-    return send_from_directory(BASE_DIR, filename)
+    response = send_from_directory(BASE_DIR, filename)
+    # For HTML files, prevent caching
+    if filename.endswith('.html'):
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
 
 # Health check
 @app.route('/api/health', methods=['GET'])

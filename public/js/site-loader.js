@@ -13,7 +13,9 @@ async function loadSiteData() {
     console.log('🔄 Loading site data from SQLite...');
     
     try {
-        const response = await window.apiCall('/data');
+        // Add cache busting timestamp to API call
+        const cacheBuster = '?t=' + Date.now();
+        const response = await window.apiCall('/data' + cacheBuster);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
