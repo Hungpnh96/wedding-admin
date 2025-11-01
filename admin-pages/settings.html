@@ -46,6 +46,16 @@
                     </div>
                 </div>
             </div>
+            <div class="section-footer">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted">
+                        <small><i class="fas fa-info-circle me-1"></i>Thay đổi sẽ được tự động lưu sau 0.5 giây</small>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveSettingsChanges()">
+                        <i class="fas fa-save me-2"></i>Lưu lại
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -84,6 +94,23 @@ function setupSettingsEventListeners() {
         if (field) {
             field.addEventListener("change", function() {
                 updateSiteDataFromSettingsForm();
+                
+                // Trigger auto-save via updateSiteData
+                const sectionKey = fieldId.replace('show', '').toLowerCase();
+                if (sectionKey === 'rsvp') {
+                    // Also update invitation section
+                    if (typeof updateSiteData === 'function') {
+                        updateSiteData('visibility.sections.rsvp', this.checked);
+                    }
+                } else if (sectionKey === 'audio') {
+                    if (typeof updateSiteData === 'function') {
+                        updateSiteData('visibility.sections.audio', this.checked);
+                    }
+                } else {
+                    if (typeof updateSiteData === 'function') {
+                        updateSiteData(`visibility.sections.${sectionKey}`, this.checked);
+                    }
+                }
             });
         }
     });
@@ -118,6 +145,88 @@ function setFieldValue(fieldId, value) {
     }
 }
 
+// Save settings changes (only visibility)
+async function saveSettingsChanges() {
+    console.log('💾 saveSettingsChanges called');
+    
+    // Update form data first
+    updateSiteDataFromSettingsForm();
+    
+    // Ensure window.siteData exists
+    if (!window.siteData) {
+        console.log('⚠️ window.siteData not found, creating...');
+        window.siteData = {};
+    }
+    if (!window.siteData.visibility) {
+        window.siteData.visibility = {};
+    }
+    if (!window.siteData.visibility.sections) {
+        window.siteData.visibility.sections = {};
+    }
+    
+    console.log('💾 Visibility data to save:', window.siteData.visibility);
+    
+    // Save directly via API (more reliable)
+    try {
+        const visibilityData = {
+            visibility: window.siteData.visibility,
+            admin: window.siteData.admin || { lastUpdate: new Date().toISOString() }
+        };
+        
+        if (!visibilityData.admin.lastUpdate) {
+            visibilityData.admin.lastUpdate = new Date().toISOString();
+        }
+        
+        console.log('💾 Sending to API:', visibilityData);
+        
+        const response = await fetch(window.location.origin + '/api/data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(visibilityData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('✅ Visibility settings saved:', result);
+            if (typeof showAlert === 'function') {
+                showAlert('Đã lưu cài đặt hiển thị', 'success');
+            } else if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: 'Đã lưu cài đặt hiển thị',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        } else {
+            const errorText = await response.text();
+            console.error('❌ API save failed:', response.status, errorText);
+            throw new Error(`API error: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('❌ Error saving visibility settings:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('Lỗi khi lưu cài đặt: ' + error.message, 'error');
+        } else if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không thể lưu cài đặt: ' + error.message,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        }
+    }
+}
+
 // Export functions for global access
 window.initializeSettings = initializeSettings;
+window.saveSettingsChanges = saveSettingsChanges;
 </script>

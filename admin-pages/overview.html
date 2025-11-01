@@ -1,49 +1,109 @@
 <div class="tab-content-wrapper">
     <div class="row">
         <div class="col-md-8">
+            <!-- Dashboard Statistics -->
             <div class="section-card">
                 <div class="section-header">
-                    <h5><i class="fas fa-chart-line me-2"></i>Thống kê nhanh</h5>
+                    <h5><i class="fas fa-chart-line me-2"></i>Thống kê Dashboard</h5>
                 </div>
                 <div class="section-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="text-center">
+                    <div class="row g-3">
+                        <!-- Total Images -->
+                        <div class="col-md-3 col-sm-6">
+                            <div class="stat-card text-center p-3 border rounded">
                                 <div class="h3 text-primary mb-1" id="totalImages">0</div>
-                                <div class="text-muted">Hình ảnh</div>
+                                <div class="text-muted small">Tổng ảnh</div>
+                                <div class="text-muted" style="font-size: 0.75rem;" id="imageBreakdown">
+                                    <span id="bannerImages">0</span> banner, 
+                                    <span id="galleryImages">0</span> gallery, 
+                                    <span id="storyImages">0</span> story
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
+                        
+                        <!-- Stories -->
+                        <div class="col-md-3 col-sm-6">
+                            <div class="stat-card text-center p-3 border rounded">
                                 <div class="h3 text-success mb-1" id="totalStories">0</div>
-                                <div class="text-muted">Câu chuyện</div>
+                                <div class="text-muted small">Câu chuyện</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">
+                                    <span id="visibleStories">0</span> hiển thị
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="h3 text-warning mb-1" id="totalSections">0</div>
-                                <div class="text-muted">Phần nội dung</div>
+                        
+                        <!-- Gallery -->
+                        <div class="col-md-3 col-sm-6">
+                            <div class="stat-card text-center p-3 border rounded">
+                                <div class="h3 text-warning mb-1" id="totalGallery">0</div>
+                                <div class="text-muted small">Thư viện ảnh</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">
+                                    <span id="visibleGallery">0</span> hiển thị
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="h3 text-info mb-1" id="lastUpdated">Chưa cập nhật</div>
-                                <div class="text-muted">Lần cuối</div>
+                        
+                        <!-- Blessings -->
+                        <div class="col-md-3 col-sm-6">
+                            <div class="stat-card text-center p-3 border rounded">
+                                <div class="h3 text-info mb-1" id="totalBlessings">-</div>
+                                <div class="text-muted small">Lời chúc</div>
+                                <div class="text-muted" style="font-size: 0.75rem;" id="blessingBreakdown">
+                                    <span id="approvedBlessings">-</span> đã duyệt, 
+                                    <span id="pendingBlessings">-</span> chờ duyệt
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Section Status -->
             <div class="section-card">
                 <div class="section-header">
-                    <h5><i class="fas fa-eye me-2"></i>Xem trước website</h5>
+                    <h5><i class="fas fa-eye me-2"></i>Trạng thái các phần</h5>
                 </div>
                 <div class="section-body">
-                    <p class="text-muted mb-3">Nhấn nút bên dưới để xem trước website với các thay đổi hiện tại.</p>
-                    <button class="btn btn-custom" onclick="previewWebsite()">
-                        <i class="fas fa-external-link-alt me-2"></i>Xem trước website
+                    <div class="row g-2" id="sectionStatusList">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Blessings -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h5><i class="fas fa-heart me-2"></i>Lời chúc mới nhất</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="refreshBlessingsPreview()" id="refreshBlessingsBtn">
+                        <i class="fas fa-sync-alt"></i> Làm mới
                     </button>
+                </div>
+                <div class="section-body">
+                    <div id="recentBlessingsList">
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-spinner fa-spin"></i> Đang tải...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h5><i class="fas fa-bolt me-2"></i>Thao tác nhanh</h5>
+                </div>
+                <div class="section-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-custom" onclick="previewWebsite()">
+                            <i class="fas fa-external-link-alt me-2"></i>Xem trước website
+                        </button>
+                        <button class="btn btn-outline-success" onclick="saveSiteData()">
+                            <i class="fas fa-save me-2"></i>Lưu tất cả thay đổi
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="goToTab('blessings')">
+                            <i class="fas fa-heart me-2"></i>Quản lý lời chúc
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -92,39 +152,326 @@
     </div>
 </div>
 
+<style>
+.stat-card {
+    background: #fff;
+    transition: all 0.3s ease;
+}
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.section-status-item {
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.section-status-item.active {
+    background-color: #d4edda;
+    border-left: 3px solid #28a745;
+}
+.section-status-item.inactive {
+    background-color: #f8d7da;
+    border-left: 3px solid #dc3545;
+}
+.blessing-item {
+    padding: 0.75rem;
+    border-left: 3px solid #007bff;
+    background: #f8f9fa;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+.blessing-item .blessing-name {
+    font-weight: 600;
+    color: #495057;
+}
+.blessing-item .blessing-content {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+.blessing-item .blessing-time {
+    font-size: 0.75rem;
+    color: #adb5bd;
+    margin-top: 0.25rem;
+}
+</style>
+
 <script>
 // Overview Tab JavaScript
 function initializeOverview() {
-    console.log('Initializing overview tab');
+    console.log('📊 Initializing overview tab');
+    
+    // Wait for siteData to be available
+    if (!window.siteData || Object.keys(window.siteData).length === 0) {
+        console.log('⏳ Waiting for siteData to load...');
+        // Retry after a short delay
+        setTimeout(() => {
+            if (window.siteData && Object.keys(window.siteData).length > 0) {
+                initializeOverview();
+            } else {
+                console.warn('⚠️ siteData still not available, loading with default');
+                loadOverviewStats();
+            }
+        }, 500);
+        return;
+    }
     
     // Load overview statistics
     loadOverviewStats();
+    
+    // Load blessings statistics
+    loadBlessingsStats();
+    
+    // Load section status
+    loadSectionStatus();
+    
+    // Load recent blessings
+    loadRecentBlessings();
     
     // Setup event listeners
     setupOverviewEventListeners();
 }
 
 function loadOverviewStats() {
+    console.log('📊 Loading overview statistics...');
+    console.log('📊 Current siteData:', window.siteData);
+    
     // Update statistics from siteData
-    if (window.siteData) {
-        const totalImages = (window.siteData.gallery?.length || 0) + 
-                           (window.siteData.hero?.slides?.length || 0) + 
-                           (window.siteData.story?.length || 0);
-        
-        const totalStories = window.siteData.story?.length || 0;
-        const totalSections = Object.keys(window.siteData.visibility?.sections || {}).length;
-        const lastUpdated = window.siteData.admin?.lastUpdate || 'Chưa cập nhật';
-        
-        const totalImagesEl = document.getElementById('totalImages');
-        const totalStoriesEl = document.getElementById('totalStories');
-        const totalSectionsEl = document.getElementById('totalSections');
-        const lastUpdatedEl = document.getElementById('lastUpdated');
-        
-        if (totalImagesEl) totalImagesEl.textContent = totalImages;
-        if (totalStoriesEl) totalStoriesEl.textContent = totalStories;
-        if (totalSectionsEl) totalSectionsEl.textContent = totalSections;
-        if (lastUpdatedEl) lastUpdatedEl.textContent = lastUpdated;
+    if (!window.siteData || Object.keys(window.siteData).length === 0) {
+        console.warn('⚠️ No siteData available, using defaults');
+        // Show default values
+        updateElement('totalImages', 0);
+        updateElement('bannerImages', 0);
+        updateElement('galleryImages', 0);
+        updateElement('storyImages', 0);
+        updateElement('totalStories', 0);
+        updateElement('visibleStories', 0);
+        updateElement('totalGallery', 0);
+        updateElement('visibleGallery', 0);
+        return;
     }
+    
+    // Calculate image statistics
+    const bannerImages = window.siteData.hero?.slides?.length || 0;
+    const galleryImages = window.siteData.gallery?.length || 0;
+    const storyImages = window.siteData.story?.length || 0;
+    const totalImages = bannerImages + galleryImages + storyImages;
+    
+    console.log('📊 Image breakdown:', {
+        bannerImages,
+        galleryImages,
+        storyImages,
+        totalImages
+    });
+    
+    // Stories
+    const totalStories = window.siteData.story?.length || 0;
+    const visibleStories = window.siteData.story?.filter(s => s.visible !== false).length || 0;
+    
+    console.log('📊 Stories:', {
+        totalStories,
+        visibleStories,
+        storyArray: window.siteData.story
+    });
+    
+    // Gallery
+    const totalGallery = window.siteData.gallery?.length || 0;
+    const visibleGallery = window.siteData.gallery?.filter(g => g.visible !== false).length || 0;
+    
+    console.log('📊 Gallery:', {
+        totalGallery,
+        visibleGallery,
+        galleryArray: window.siteData.gallery
+    });
+    
+    // Update DOM
+    updateElement('totalImages', totalImages);
+    updateElement('bannerImages', bannerImages);
+    updateElement('galleryImages', galleryImages);
+    updateElement('storyImages', storyImages);
+    
+    updateElement('totalStories', totalStories);
+    updateElement('visibleStories', visibleStories);
+    
+    updateElement('totalGallery', totalGallery);
+    updateElement('visibleGallery', visibleGallery);
+    
+    console.log('✅ Overview statistics loaded');
+}
+
+async function loadBlessingsStats() {
+    console.log('💌 Loading blessings statistics...');
+    
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        const response = await fetch(`${window.location.origin}/api/blessing/admin/stats`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const stats = data.data || {};
+            updateElement('totalBlessings', stats.total || 0);
+            updateElement('approvedBlessings', stats.approved || 0);
+            updateElement('pendingBlessings', stats.pending || 0);
+            console.log('✅ Blessings statistics loaded:', stats);
+        } else {
+            console.warn('⚠️ Failed to load blessings stats:', data.message);
+            updateElement('totalBlessings', '0');
+            updateElement('approvedBlessings', '0');
+            updateElement('pendingBlessings', '0');
+        }
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            console.error('❌ Timeout loading blessings stats');
+        } else {
+            console.error('❌ Error loading blessings stats:', error);
+        }
+        // Show 0 instead of ? if API fails
+        updateElement('totalBlessings', '0');
+        updateElement('approvedBlessings', '0');
+        updateElement('pendingBlessings', '0');
+    }
+}
+
+function loadSectionStatus() {
+    console.log('👁️ Loading section status...');
+    
+    if (!window.siteData?.visibility?.sections) {
+        return;
+    }
+    
+    const sections = {
+        'hero': { name: 'Banner chính', icon: 'fa-image' },
+        'couple': { name: 'Cặp đôi', icon: 'fa-heart' },
+        'story': { name: 'Câu chuyện', icon: 'fa-book' },
+        'gallery': { name: 'Thư viện ảnh', icon: 'fa-images' },
+        'rsvp': { name: 'Lời chúc', icon: 'fa-comment-dots' },
+        'donate': { name: 'Quà cưới', icon: 'fa-gift' },
+        'event': { name: 'Sự kiện', icon: 'fa-calendar' },
+        'audio': { name: 'Nhạc nền', icon: 'fa-music' }
+    };
+    
+    const statusListEl = document.getElementById('sectionStatusList');
+    if (!statusListEl) return;
+    
+    let html = '';
+    for (const [key, section] of Object.entries(sections)) {
+        const isVisible = window.siteData.visibility?.sections[key] !== false;
+        html += `
+            <div class="col-md-6 col-sm-12">
+                <div class="section-status-item ${isVisible ? 'active' : 'inactive'}">
+                    <span>
+                        <i class="fas ${section.icon} me-2"></i>
+                        ${section.name}
+                    </span>
+                    <span class="badge ${isVisible ? 'bg-success' : 'bg-danger'}">
+                        ${isVisible ? 'Hiển thị' : 'Ẩn'}
+                    </span>
+                </div>
+            </div>
+        `;
+    }
+    
+    statusListEl.innerHTML = html;
+    console.log('✅ Section status loaded');
+}
+
+async function loadRecentBlessings() {
+    console.log('💌 Loading recent blessings...');
+    
+    const listEl = document.getElementById('recentBlessingsList');
+    if (!listEl) return;
+    
+    listEl.innerHTML = '<div class="text-center text-muted py-3"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
+    
+    try {
+        const response = await fetch(`${window.location.origin}/api/blessing/latest?limit=5`);
+        const data = await response.json();
+        
+        if (data.success && data.data && data.data.length > 0) {
+            let html = '';
+            data.data.forEach(blessing => {
+                const date = new Date(blessing.created_at);
+                const timeStr = date.toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                html += `
+                    <div class="blessing-item">
+                        <div class="blessing-name">${escapeHtml(blessing.name)}</div>
+                        <div class="blessing-content">${escapeHtml(blessing.content)}</div>
+                        <div class="blessing-time">${timeStr} ${blessing.approved ? '<span class="badge bg-success">Đã duyệt</span>' : '<span class="badge bg-warning">Chờ duyệt</span>'}</div>
+                    </div>
+                `;
+            });
+            
+            listEl.innerHTML = html;
+            console.log('✅ Recent blessings loaded');
+        } else {
+            listEl.innerHTML = '<div class="text-center text-muted py-3">Chưa có lời chúc nào</div>';
+        }
+    } catch (error) {
+        console.error('❌ Error loading recent blessings:', error);
+        listEl.innerHTML = '<div class="text-center text-danger py-3">Không thể tải lời chúc</div>';
+    }
+}
+
+function refreshBlessingsPreview() {
+    const btn = document.getElementById('refreshBlessingsBtn');
+    if (btn) {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+    }
+    
+    loadBlessingsStats();
+    loadRecentBlessings();
+    
+    setTimeout(() => {
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i> Làm mới';
+            btn.disabled = false;
+        }
+    }, 1000);
+}
+
+function goToTab(tabName) {
+    const tabButton = document.querySelector(`[data-bs-target="#${tabName}"]`);
+    if (tabButton) {
+        tabButton.click();
+    }
+}
+
+function updateElement(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 function setupOverviewEventListeners() {
@@ -186,4 +533,28 @@ function setupOverviewEventListeners() {
 
 // Export functions for global access
 window.initializeOverview = initializeOverview;
+window.loadOverviewStats = loadOverviewStats;
+window.loadBlessingsStats = loadBlessingsStats;
+window.loadSectionStatus = loadSectionStatus;
+window.loadRecentBlessings = loadRecentBlessings;
+
+// Listen for siteData updates
+document.addEventListener('siteDataUpdated', function() {
+    console.log('📊 siteData updated event received, refreshing overview...');
+    if (typeof window.initializeOverview === 'function') {
+        setTimeout(() => {
+            window.initializeOverview();
+        }, 300);
+    }
+});
+
+// Also listen for custom event when data is loaded
+window.addEventListener('siteDataLoaded', function() {
+    console.log('📊 siteData loaded event received, refreshing overview...');
+    if (typeof window.initializeOverview === 'function') {
+        setTimeout(() => {
+            window.initializeOverview();
+        }, 300);
+    }
+});
 </script>

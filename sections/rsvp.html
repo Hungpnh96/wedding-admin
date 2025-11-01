@@ -329,11 +329,35 @@
    }
    
    function fetchBlessingData() {
+       // Wait for API_CONFIG to be available
+       if (typeof window.API_CONFIG === 'undefined' || !window.API_CONFIG) {
+           console.log('⏳ Waiting for API_CONFIG...');
+           setTimeout(function() {
+               fetchBlessingData();
+           }, 200);
+           return;
+       }
+       
+       // Check if DOM element exists
+       const congratulationsList = document.getElementById('congratulation-list');
+       if (!congratulationsList) {
+           console.log('⏳ Waiting for DOM element...');
+           setTimeout(function() {
+               fetchBlessingData();
+           }, 200);
+           return;
+       }
+       
+       console.log('🔄 Fetching blessing data...');
+       
        // Load latest blessings from new API
        $.ajax({
            url: window.API_CONFIG.getApiUrl('/blessing/latest'),
            method: 'GET',
+           timeout: 10000, // 10 second timeout
            success: function(response) {
+               console.log('✅ Blessing data received:', response);
+               
                if (response.success && response.data) {
                    const data = response.data;
                    
@@ -364,8 +388,9 @@
                    }
                    
                    $('#congratulation-list').html(congratulateHtmlAll);
+                   console.log('✅ Blessings rendered successfully');
                } else {
-                   console.error('Không thể tải lời chúc:', response.message);
+                   console.error('❌ Không thể tải lời chúc:', response.message);
                    $('#congratulation-list').html(`
                        <div class="wish-box-item">
                            <strong>Lỗi tải dữ liệu</strong>
@@ -374,14 +399,28 @@
                    `);
                }
            },
-           error: function() {
-               console.error('Có lỗi xảy ra khi lấy dữ liệu từ API.');
-               $('#congratulation-list').html(`
-                   <div class="wish-box-item">
-                       <strong>Lỗi kết nối</strong>
-                       <p>Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.</p>
-                   </div>
-               `);
+           error: function(xhr, status, error) {
+               console.error('❌ Có lỗi xảy ra khi lấy dữ liệu từ API:', error);
+               
+               // Retry once after 2 seconds
+               if (!window.blessingRetryCount) {
+                   window.blessingRetryCount = 0;
+               }
+               
+               if (window.blessingRetryCount < 2) {
+                   window.blessingRetryCount++;
+                   console.log(`🔄 Retrying blessing fetch (attempt ${window.blessingRetryCount})...`);
+                   setTimeout(function() {
+                       fetchBlessingData();
+                   }, 2000);
+               } else {
+                   $('#congratulation-list').html(`
+                       <div class="wish-box-item">
+                           <strong>Lỗi kết nối</strong>
+                           <p>Không thể kết nối đến server. Vui lòng thử lại sau.</p>
+                       </div>
+                   `);
+               }
            }
        });
    }
@@ -508,7 +547,27 @@ $(document).ready(function() {
       $('.show-autocomplete').show();
    });
 });
-
  
-   fetchBlessingData();
+// Load blessings when page is ready
+$(document).ready(function() {
+    console.log('📋 RSVP section ready, loading blessings...');
+    
+    // Wait a bit for API_CONFIG and other dependencies to load
+    setTimeout(function() {
+        fetchBlessingData();
+    }, 500);
+});
+
+// Also try to load when window loads (fallback)
+window.addEventListener('load', function() {
+    console.log('📋 Window loaded, checking blessings...');
+    
+    const congratulationsList = document.getElementById('congratulation-list');
+    if (congratulationsList && congratulationsList.innerHTML.trim() === '') {
+        console.log('📋 Blessings list is empty, fetching data...');
+        setTimeout(function() {
+            fetchBlessingData();
+        }, 1000);
+    }
+});
 </script>

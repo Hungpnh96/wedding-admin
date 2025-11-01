@@ -244,9 +244,6 @@ function initializeTabContent(tabName) {
     // Initialize tab-specific functionality
     console.log('🔍 Entering switch for tab:', tabName);
     switch(tabName) {
-        case 'overview':
-            loadOverviewData();
-            break;
         case 'hero':
             console.log('🔍 In hero case');
             console.log('🔍 initializeHero function type:', typeof initializeHero);
@@ -335,13 +332,38 @@ function initializeTabContent(tabName) {
             loadWishesData();
             break;
         case 'theme':
-            loadThemeData();
-            break;
-        case 'layout':
-            loadLayoutData();
+            console.log('🔍 Loading theme tab');
+            // Ensure tab content is loaded first
+            if (typeof loadTabContent === 'function') {
+                loadTabContent('theme'); // Remove # prefix
+            }
+            // initializeTheme will be called automatically when theme.html script runs
+            // But also try to call it after a delay as fallback
+            setTimeout(() => {
+                // Call initializeTheme from theme.html
+                if (typeof window.initializeTheme === 'function') {
+                    console.log('🔄 Calling window.initializeTheme() as fallback...');
+                    window.initializeTheme();
+                } else if (typeof initializeTheme === 'function') {
+                    console.log('🔄 Calling initializeTheme() as fallback...');
+                    initializeTheme();
+                } else {
+                    console.warn('⚠️ initializeTheme function not found, falling back to loadThemeData');
+                    if (typeof loadThemeData === 'function') {
+                        loadThemeData();
+                    }
+                }
+            }, 1000); // Increased delay to ensure HTML is loaded
             break;
         case 'settings':
-            loadSettingsData();
+            console.log('🔍 Loading settings tab');
+            // Ensure tab content is loaded first
+            if (typeof loadTabContent === 'function') {
+                loadTabContent('#settings');
+            }
+            setTimeout(() => {
+                loadSettingsData();
+            }, 100);
             break;
     }
 }
@@ -359,6 +381,7 @@ async function loadSiteData() {
         const storedData = localStorage.getItem('siteDataOverride');
         if (storedData) {
             siteData = JSON.parse(storedData);
+            window.siteData = siteData; // Make it globally accessible
             isDataLoaded = true;
             console.log('Site data loaded from localStorage:', siteData);
             
@@ -370,7 +393,14 @@ async function loadSiteData() {
             }
             
             updateAdminInterface();
-            showAlert('Đã tải dữ liệu hiện tại từ localStorage', 'success');
+            
+            // Dispatch event to notify overview tab
+            window.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: siteData }));
+            
+            // Overview tab removed - no need to refresh
+            
+            // Không hiển thị thông báo khi load từ localStorage (silent load)
+            // showAlert('Đã tải dữ liệu hiện tại từ localStorage', 'success');
             return;
         }
         
@@ -399,6 +429,12 @@ async function loadSiteData() {
                 
                 // Update admin interface with loaded data
                 updateAdminInterface();
+                
+                // Dispatch event to notify overview tab
+                window.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: siteData }));
+                
+                // Overview tab removed - no need to refresh
+                
                 showAlert('Đã tải dữ liệu từ API', 'success');
             } else {
                 throw new Error('API response invalid');
@@ -541,8 +577,8 @@ function updateAdminInterface() {
     
     console.log('Updating admin interface with data:', siteData);
     
-    // Update overview statistics
-    updateOverviewStats();
+    // Overview tab removed - updateOverviewStats disabled
+    // updateOverviewStats();
     
     // Update form fields
     updateFormFields();
@@ -576,25 +612,78 @@ function triggerTabDataLoading() {
     }
 }
 
-// Update overview statistics
+// updateOverviewStats function disabled - Overview tab removed
 function updateOverviewStats() {
+    // Function disabled - Overview tab removed
+    return;
+    console.log('📊 Updating overview stats, siteData:', siteData);
+    if (!siteData) {
+        console.warn('⚠️ No siteData available for overview stats');
+        return;
+    }
+    
     const totalImages = (siteData.gallery?.length || 0) + 
                        (siteData.hero?.slides?.length || 0) + 
                        (siteData.story?.length || 0);
     
     const totalStories = siteData.story?.length || 0;
     const totalSections = Object.keys(siteData.visibility?.sections || {}).length;
-    const lastUpdated = siteData.admin?.lastUpdate || 'Chưa cập nhật';
+    let lastUpdated = 'Chưa cập nhật';
+    
+    if (siteData.admin?.lastUpdate) {
+        try {
+            const date = new Date(siteData.admin.lastUpdate);
+            lastUpdated = date.toLocaleString('vi-VN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (e) {
+            lastUpdated = siteData.admin.lastUpdate;
+        }
+    }
     
     const totalImagesEl = document.getElementById('totalImages');
     const totalStoriesEl = document.getElementById('totalStories');
     const totalSectionsEl = document.getElementById('totalSections');
     const lastUpdatedEl = document.getElementById('lastUpdated');
     
-    if (totalImagesEl) totalImagesEl.textContent = totalImages;
-    if (totalStoriesEl) totalStoriesEl.textContent = totalStories;
-    if (totalSectionsEl) totalSectionsEl.textContent = totalSections;
-    if (lastUpdatedEl) lastUpdatedEl.textContent = lastUpdated;
+    console.log('📊 Overview stats:', {
+        totalImages,
+        totalStories,
+        totalSections,
+        lastUpdated
+    });
+    
+    if (totalImagesEl) {
+        totalImagesEl.textContent = totalImages;
+        console.log('✅ Updated totalImages:', totalImages);
+    } else {
+        console.warn('⚠️ totalImages element not found');
+    }
+    
+    if (totalStoriesEl) {
+        totalStoriesEl.textContent = totalStories;
+        console.log('✅ Updated totalStories:', totalStories);
+    } else {
+        console.warn('⚠️ totalStories element not found');
+    }
+    
+    if (totalSectionsEl) {
+        totalSectionsEl.textContent = totalSections;
+        console.log('✅ Updated totalSections:', totalSections);
+    } else {
+        console.warn('⚠️ totalSections element not found');
+    }
+    
+    if (lastUpdatedEl) {
+        lastUpdatedEl.textContent = lastUpdated;
+        console.log('✅ Updated lastUpdated:', lastUpdated);
+    } else {
+        console.warn('⚠️ lastUpdated element not found');
+    }
 }
 
 // Update form fields with loaded data
@@ -924,6 +1013,9 @@ function addFieldListener(fieldId, callback) {
     }
 }
 
+// Auto-save debounce timer
+let autoSaveTimer = null;
+
 // Update site data helper
 function updateSiteData(path, value) {
     const keys = path.split('.');
@@ -943,6 +1035,54 @@ function updateSiteData(path, value) {
     siteData.admin.lastUpdate = new Date().toISOString();
     
     console.log('Updated site data:', path, '=', value);
+    
+    // Auto-save visibility settings changes
+    if (path.startsWith('visibility.sections.')) {
+        // Clear existing timer
+        if (autoSaveTimer) {
+            clearTimeout(autoSaveTimer);
+        }
+        
+        // Set new timer to auto-save after 500ms
+        autoSaveTimer = setTimeout(async () => {
+            console.log('💾 Auto-saving visibility settings...');
+            try {
+                // Save only visibility section, not full data
+                if (typeof saveChanges === 'function') {
+                    await saveChanges(true); // true = only save visibility
+                    console.log('✅ Visibility settings auto-saved via saveChanges (visibility only)');
+                } else if (typeof window.saveChanges === 'function') {
+                    await window.saveChanges(true);
+                    console.log('✅ Visibility settings auto-saved via window.saveChanges (visibility only)');
+                } else {
+                    // Fallback: save only visibility via API call
+                    const visibilityData = {
+                        visibility: siteData.visibility || {},
+                        admin: siteData.admin || {}
+                    };
+                    const response = await fetch(window.location.origin + '/api/data', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(visibilityData)
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('✅ Visibility settings auto-saved via API (visibility only):', result);
+                        if (typeof showAlert === 'function') {
+                            showAlert('Đã lưu cài đặt hiển thị', 'success');
+                        }
+                    } else {
+                        console.error('❌ API save failed with status:', response.status);
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error auto-saving visibility settings:', error);
+            }
+        }, 500);
+    }
 }
 
 // Setup image upload listeners
@@ -951,9 +1091,15 @@ function setupImageUploadListeners() {
     document.addEventListener('click', function(e) {
         const uploadArea = e.target.closest('.image-upload-area[data-upload-type]');
         if (uploadArea) {
+            const type = uploadArea.getAttribute('data-upload-type');
+            
+            // Skip background uploads - they have their own handlers in theme.html
+            if (type === 'story-background' || type === 'bigevent-background' || type === 'giftregistry-background') {
+                return; // Let theme.html handlers handle this
+            }
+            
             e.preventDefault();
             e.stopPropagation();
-            const type = uploadArea.getAttribute('data-upload-type');
             
             // Handle different upload types
             switch(type) {
@@ -1165,7 +1311,7 @@ function hideLoadingOverlay() {
     }
 }
 
-// Show alert
+// Show alert - chỉ hiển thị toast notification ở góc trên bên phải
 function showAlert(message, type = 'info') {
     // Map types to SweetAlert2 icons
     const iconMap = {
@@ -1178,14 +1324,20 @@ function showAlert(message, type = 'info') {
     const icon = iconMap[type] || 'info';
     
     Swal.fire({
-        title: type === 'error' ? 'Lỗi!' : type === 'success' ? 'Thành công!' : type === 'warning' ? 'Cảnh báo!' : 'Thông báo',
-        text: message,
+        text: message, // Bỏ title để toast nhỏ gọn hơn
         icon: icon,
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
-        timer: type === 'error' ? 4000 : 3000,
-        timerProgressBar: true
+        timer: type === 'error' ? 4000 : 2500, // Giảm thời gian cho success/info
+        timerProgressBar: true,
+        width: '350px',
+        padding: '1rem',
+        background: '#fff',
+        backdrop: false,
+        customClass: {
+            popup: 'swal2-toast-custom'
+        }
     });
 }
 
@@ -1334,10 +1486,7 @@ async function saveChanges() {
     }
 }
 
-// Load data functions for each tab
-function loadOverviewData() {
-    updateOverviewStats();
-}
+// loadOverviewData function removed - Overview tab removed
 
 // loadHeroData function moved to hero.html
 
@@ -1389,7 +1538,12 @@ function loadWishesData() {
 }
 
 function loadThemeData() {
-    console.log('🔄 Loading theme data...');
+    console.log('🔄 Loading theme data...', siteData);
+    if (!siteData) {
+        console.warn('⚠️ No siteData available for theme');
+        return;
+    }
+    
     if (siteData.theme) {
         setFieldValue('themePrimaryColor', siteData.theme.primaryColor);
         setFieldValue('themeSecondaryColor', siteData.theme.secondaryColor);
@@ -1401,11 +1555,21 @@ function loadThemeData() {
         setFieldValue('themeHeadingFont', siteData.theme.headingFont);
         setFieldValue('themeBaseFontSize', siteData.theme.baseFontSize);
         setFieldValue('themeHeadingFontSize', siteData.theme.headingFontSize);
+        console.log('✅ Theme data loaded');
+    } else {
+        console.warn('⚠️ No theme data in siteData');
     }
 }
 
+// loadLayoutData function removed - Layout tab removed
 function loadLayoutData() {
-    console.log('🔄 Loading layout data...');
+    // Function disabled - Layout tab removed
+    return;
+    if (!siteData) {
+        console.warn('⚠️ No siteData available for layout');
+        return;
+    }
+    
     if (siteData.layout) {
         setFieldValue('headerStyle', siteData.layout.headerStyle);
         setFieldValue('navStyle', siteData.layout.navStyle);
@@ -1419,11 +1583,19 @@ function loadLayoutData() {
         setFieldValue('touchFriendly', siteData.layout.touchFriendly);
         setFieldValue('fastLoading', siteData.layout.fastLoading);
         setFieldValue('seoOptimized', siteData.layout.seoOptimized);
+        console.log('✅ Layout data loaded');
+    } else {
+        console.warn('⚠️ No layout data in siteData');
     }
 }
 
 function loadSettingsData() {
-    console.log('🔄 Loading settings data...');
+    console.log('🔄 Loading settings data...', siteData);
+    if (!siteData) {
+        console.warn('⚠️ No siteData available for settings');
+        return;
+    }
+    
     if (siteData.visibility?.sections) {
         setFieldValue('showGallery', siteData.visibility.sections.gallery);
         setFieldValue('showStory', siteData.visibility.sections.story);

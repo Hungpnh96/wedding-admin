@@ -44,6 +44,7 @@ os.makedirs(os.path.join(UPLOAD_DIR, 'qr'), exist_ok=True)
 os.makedirs(os.path.join(BASE_DIR, 'public', 'images', 'qr'), exist_ok=True)
 os.makedirs(os.path.join(UPLOAD_DIR, 'banner'), exist_ok=True)
 os.makedirs(os.path.join(UPLOAD_DIR, 'thumbs'), exist_ok=True)
+os.makedirs(os.path.join(UPLOAD_DIR, 'background'), exist_ok=True)
 
 def get_db_connection():
     """Tạo kết nối database"""
@@ -196,6 +197,12 @@ def load_data():
         if 'data' in data and 'story' in data['data']:
             del data['data']['story']
     
+    # Đảm bảo payment có structure đúng
+    if 'payment' not in data or not isinstance(data.get('payment'), dict):
+        data['payment'] = {'global_message': '', 'payments': []}
+    elif 'payments' not in data['payment']:
+        data['payment']['payments'] = []
+    
     return data
 
 def save_data(data):
@@ -238,6 +245,57 @@ def deep_merge(target, source):
         else:
             target[key] = value
     return target
+
+def sync_payment_to_site_data():
+    """Đồng bộ payment data từ payments table vào site_data"""
+    try:
+        conn = get_db_connection()
+        
+        # Lấy thông điệp chung
+        setting = conn.execute(
+            'SELECT value FROM settings WHERE key = ?', ('payment_global_message',)
+        ).fetchone()
+        global_message = setting['value'] if setting else ''
+        
+        # Lấy tất cả payments
+        payments = conn.execute(
+            'SELECT * FROM payments ORDER BY sort_order ASC, created_at DESC'
+        ).fetchall()
+        
+        # Convert to dict và xử lý QR code URL
+        payment_list = []
+        for payment in payments:
+            payment_dict = dict(payment)
+            
+            # Nếu không có QR code từ upload, sử dụng QR mặc định
+            if not payment_dict['qr_code_url']:
+                if payment_dict['sort_order'] == 1 or payment_dict['id'] % 2 == 1:
+                    payment_dict['qr_code_url'] = '/public/images/default/qr/qr_man.webp'
+                else:
+                    payment_dict['qr_code_url'] = '/public/images/default/qr/qr_woman.webp'
+            
+            payment_list.append(payment_dict)
+        
+        # Tạo payment data structure
+        payment_data = {
+            'global_message': global_message,
+            'payments': payment_list
+        }
+        
+        # Lưu vào site_data
+        conn.execute(
+            '''INSERT OR REPLACE INTO site_data (key, value, updated_at) 
+               VALUES (?, ?, CURRENT_TIMESTAMP)''',
+            ('payment', json.dumps(payment_data, ensure_ascii=False))
+        )
+        conn.commit()
+        conn.close()
+        
+        logger.info("Payment data đã được đồng bộ vào site_data")
+        return True
+    except Exception as e:
+        logger.error(f"Lỗi đồng bộ payment vào site_data: {e}")
+        return False
 
 def create_backup():
     """Tạo backup database"""
@@ -388,16 +446,41 @@ def save_all_data():
         # Load dữ liệu hiện có
         current_data = load_data()
         
-        # Merge dữ liệu mới với dữ liệu hiện có (deep merge)
-        # Đặc biệt xử lý cho story section để replace hoàn toàn
-        merged_data = deep_merge(current_data, new_data)
-        
-        # Nếu có story mới, replace hoàn toàn story cũ
-        if 'story' in new_data:
-            merged_data['story'] = new_data['story']
-            # Đảm bảo không có data.story
-            if 'data' in merged_data and 'story' in merged_data['data']:
-                del merged_data['data']['story']
+        # Nếu chỉ có visibility và admin (từ settings page), chỉ merge phần đó
+        if set(new_data.keys()).issubset({'visibility', 'admin'}):
+            logger.info("Saving only visibility settings")
+            # Chỉ merge visibility và admin
+            if 'visibility' in new_data:
+                current_data['visibility'] = new_data['visibility']
+            if 'admin' in new_data:
+                current_data['admin'] = new_data['admin']
+            merged_data = current_data
+        # Nếu chỉ có events và admin (từ event page), chỉ merge phần đó
+        elif set(new_data.keys()).issubset({'events', 'admin'}):
+            logger.info("Saving only events data")
+            # Chỉ merge events và admin
+            if 'events' in new_data:
+                current_data['events'] = new_data['events']
+            if 'admin' in new_data:
+                current_data['admin'] = new_data['admin']
+            merged_data = current_data
+        else:
+            # Merge dữ liệu mới với dữ liệu hiện có (deep merge)
+            # Đặc biệt xử lý cho story section để replace hoàn toàn
+            merged_data = deep_merge(current_data, new_data)
+            
+            # Nếu có story mới, replace hoàn toàn story cũ (KHÔNG merge để tránh duplicate)
+            if 'story' in new_data and isinstance(new_data['story'], list):
+                merged_data['story'] = new_data['story']  # Replace completely
+                # Đảm bảo không có data.story
+                if 'data' in merged_data and 'story' in merged_data['data']:
+                    del merged_data['data']['story']
+            
+            # Xử lý hero slides tương tự - replace hoàn toàn
+            if 'hero' in new_data and 'slides' in new_data['hero']:
+                if 'hero' not in merged_data:
+                    merged_data['hero'] = {}
+                merged_data['hero']['slides'] = new_data['hero']['slides']  # Replace completely
         
         if save_data(merged_data):
             return jsonify({
@@ -592,6 +675,8 @@ def upload_file():
             relative_path = f"./public/images/couple/{unique_filename}"
         elif upload_type in ['qr', 'groomQR', 'brideQR']:
             relative_path = f"./public/images/qr/{unique_filename}"
+        elif upload_type in ['story-background', 'bigevent-background', 'giftregistry-background', 'background']:
+            relative_path = f"./public/images/background/{unique_filename}"
         else:
             relative_path = f"./public/images/general/{unique_filename}"
         
@@ -753,6 +838,120 @@ def export_data():
         return jsonify({
             "success": False,
             "message": f"Lỗi xuất dữ liệu: {str(e)}"
+        }), 500
+
+@app.route('/api/upload/background', methods=['POST'])
+def upload_background():
+    """Upload background image for sections"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({
+                "success": False,
+                "message": "Không có file được chọn"
+            }), 400
+        
+        file = request.files['file']
+        upload_type = request.form.get('type', 'background')  # story-background, bigevent-background
+        old_file = request.form.get('old_file', '')  # Old filename to delete
+        
+        if file.filename == '':
+            return jsonify({
+                "success": False,
+                "message": "Không có file được chọn"
+            }), 400
+        
+        if not allowed_file(file.filename):
+            return jsonify({
+                "success": False,
+                "message": "Định dạng file không được hỗ trợ. Chỉ chấp nhận: PNG, JPG, JPEG, WEBP, GIF"
+            }), 400
+        
+        # Delete old file if provided and exists
+        if old_file:
+            old_file_path = os.path.join(UPLOAD_DIR, 'background', old_file)
+            if os.path.exists(old_file_path):
+                try:
+                    os.remove(old_file_path)
+                    logger.info(f"Deleted old background file: {old_file_path}")
+                except Exception as e:
+                    logger.warning(f"Could not delete old background file: {e}")
+        
+        # Generate unique filename
+        file_ext = file.filename.rsplit('.', 1)[1].lower()
+        unique_filename = f"{upload_type}_{uuid.uuid4().hex[:8]}.{file_ext}"
+        
+        # Save to background directory
+        background_dir = os.path.join(UPLOAD_DIR, 'background')
+        os.makedirs(background_dir, exist_ok=True)
+        file_path = os.path.join(background_dir, unique_filename)
+        file.save(file_path)
+        
+        # Optimize image
+        if file_ext in ['jpg', 'jpeg', 'png', 'webp']:
+            optimize_image(file_path)
+        
+        relative_path = f"./public/images/background/{unique_filename}"
+        
+        return jsonify({
+            "success": True,
+            "message": "Background đã được upload thành công",
+            "data": {
+                "url": relative_path,
+                "filename": unique_filename,
+                "type": upload_type
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"Lỗi upload background: {e}")
+        return jsonify({
+            "success": False,
+            "message": f"Lỗi upload background: {str(e)}"
+        }), 500
+
+@app.route('/api/upload/background', methods=['DELETE'])
+def delete_background_file():
+    """Xóa file background khi chọn ảnh mặc định"""
+    try:
+        data = request.json
+        filename = data.get('filename', '')
+        section = data.get('section', '')
+        
+        if not filename:
+            return jsonify({
+                "success": False,
+                "message": "Không có tên file được cung cấp"
+            }), 400
+        
+        # Đường dẫn file cần xóa
+        file_path = os.path.join(UPLOAD_DIR, 'background', filename)
+        
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                logger.info(f"Deleted background file: {file_path} (section: {section})")
+                return jsonify({
+                    "success": True,
+                    "message": f"Đã xóa file background: {filename}"
+                })
+            except Exception as e:
+                logger.error(f"Error deleting file {file_path}: {e}")
+                return jsonify({
+                    "success": False,
+                    "message": f"Lỗi xóa file: {str(e)}"
+                }), 500
+        else:
+            logger.warning(f"File not found: {file_path}")
+            return jsonify({
+                "success": True,
+                "message": "File không tồn tại (có thể đã được xóa)"
+            })
+            
+    except Exception as e:
+        logger.error(f"Lỗi xóa background file: {e}")
+        return jsonify({
+            "success": False,
+            "message": f"Lỗi xóa file: {str(e)}"
         }), 500
 
 @app.route('/api/upload-image', methods=['POST'])
@@ -1149,18 +1348,33 @@ def send_blessing():
 
 @app.route('/api/blessing/latest', methods=['GET'])
 def get_latest_blessings():
-    """Lấy 5 lời chúc mới nhất"""
+    """Lấy lời chúc mới nhất (cho public frontend - chỉ lấy approved)"""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        cursor.execute('''
-            SELECT id, name, from_person, content, created_at
-            FROM blessings 
-            WHERE is_approved = 1
-            ORDER BY created_at DESC 
-            LIMIT 5
-        ''')
+        # Get limit from query params, default to 5
+        limit = int(request.args.get('limit', 5))
+        
+        # For public API, only get approved
+        # For admin (check via referer or special header), get all
+        is_admin = 'admin' in request.referrer if request.referrer else False
+        
+        if is_admin:
+            cursor.execute('''
+                SELECT id, name, from_person, content, created_at, is_approved
+                FROM blessings 
+                ORDER BY created_at DESC 
+                LIMIT ?
+            ''', (limit,))
+        else:
+            cursor.execute('''
+                SELECT id, name, from_person, content, created_at, is_approved
+                FROM blessings 
+                WHERE is_approved = 1
+                ORDER BY created_at DESC 
+                LIMIT ?
+            ''', (limit,))
         
         blessings = cursor.fetchall()
         conn.close()
@@ -1172,7 +1386,8 @@ def get_latest_blessings():
                 'name': blessing['name'],
                 'from': blessing['from_person'],
                 'content': blessing['content'],
-                'created_at': blessing['created_at']
+                'created_at': blessing['created_at'],
+                'approved': bool(blessing['is_approved']) if blessing['is_approved'] is not None else False
             })
         
         return jsonify({
@@ -1259,6 +1474,43 @@ def get_blessings_admin():
         return jsonify({
             'success': False,
             'message': 'Có lỗi xảy ra khi lấy danh sách lời chúc'
+        }), 500
+
+@app.route('/api/blessing/admin/stats', methods=['GET'])
+def get_blessings_stats():
+    """Lấy thống kê lời chúc"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Đếm tổng số
+        cursor.execute('SELECT COUNT(*) as total FROM blessings')
+        total = cursor.fetchone()['total']
+        
+        # Đếm số đã duyệt
+        cursor.execute('SELECT COUNT(*) as approved FROM blessings WHERE is_approved = 1')
+        approved = cursor.fetchone()['approved']
+        
+        # Đếm số chờ duyệt
+        cursor.execute('SELECT COUNT(*) as pending FROM blessings WHERE is_approved = 0 OR is_approved IS NULL')
+        pending = cursor.fetchone()['pending']
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'total': total,
+                'approved': approved,
+                'pending': pending
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting blessings stats: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Có lỗi xảy ra khi lấy thống kê lời chúc'
         }), 500
 
 @app.route('/api/blessing/admin/<int:blessing_id>/approve', methods=['POST'])
@@ -1497,17 +1749,26 @@ def delete_qr_code(qr_url):
 
 @app.route('/api/payment/list', methods=['GET'])
 def get_payments():
-    """Lấy danh sách thông tin chuyển khoản"""
+    """Lấy danh sách thông tin chuyển khoản từ site_data"""
     try:
-        conn = get_db_connection()
-        payments = conn.execute(
-            'SELECT * FROM payments ORDER BY sort_order ASC, created_at DESC'
-        ).fetchall()
-        conn.close()
+        # Load từ site_data
+        data = load_data()
+        payment_data = data.get('payment', {})
+        payments = payment_data.get('payments', [])
+        
+        # Convert to list format with proper ordering
+        payments_list = []
+        if isinstance(payments, list):
+            # Sort by sort_order, then by created_at
+            payments_sorted = sorted(payments, key=lambda x: (
+                x.get('sort_order', 999),
+                x.get('created_at', '')
+            ))
+            payments_list = payments_sorted
         
         return jsonify({
             'success': True,
-            'data': [dict(payment) for payment in payments]
+            'data': payments_list
         })
     except Exception as e:
         logger.error(f"Error getting payments: {e}")
@@ -1518,7 +1779,7 @@ def get_payments():
 
 @app.route('/api/payment', methods=['POST'])
 def create_payment():
-    """Tạo thông tin chuyển khoản mới"""
+    """Tạo thông tin chuyển khoản mới - lưu vào site_data"""
     try:
         # Handle both JSON and form data
         if request.is_json:
@@ -1557,29 +1818,44 @@ def create_payment():
                     'message': f'Trường {field} là bắt buộc'
                 }), 400
         
-        # Insert into database
-        conn = get_db_connection()
-        conn.execute('''
-            INSERT INTO payments (recipient_name, bank_name, account_number, title, description, qr_code_url, is_active, sort_order, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            data['recipient_name'],
-            data['bank_name'],
-            data['account_number'],
-            data.get('title', ''),
-            data.get('description', ''),
-            qr_url,
-            data.get('is_active', True),
-            data.get('sort_order', 1),
-            datetime.now().isoformat(),
-            datetime.now().isoformat()
-        ))
-        conn.commit()
-        conn.close()
+        # Load current data
+        site_data = load_data()
+        payment_data = site_data.get('payment', {})
+        payments = payment_data.get('payments', [])
+        
+        # Generate new ID
+        max_id = max([p.get('id', 0) for p in payments] + [0])
+        new_id = max_id + 1
+        
+        # Create new payment object
+        new_payment = {
+            'id': new_id,
+            'recipient_name': data['recipient_name'],
+            'bank_name': data['bank_name'],
+            'account_number': data['account_number'],
+            'title': data.get('title', ''),
+            'description': data.get('description', ''),
+            'qr_code_url': qr_url,
+            'is_active': data.get('is_active', True),
+            'sort_order': data.get('sort_order', 1),
+            'created_at': datetime.now().isoformat(),
+            'updated_at': datetime.now().isoformat()
+        }
+        
+        # Add to payments list
+        payments.append(new_payment)
+        
+        # Update payment data
+        payment_data['payments'] = payments
+        
+        # Save to site_data
+        site_data['payment'] = payment_data
+        save_data(site_data)
         
         return jsonify({
             'success': True,
-            'message': 'Thông tin chuyển khoản đã được tạo thành công'
+            'message': 'Thông tin chuyển khoản đã được tạo thành công',
+            'data': new_payment
         })
     except Exception as e:
         logger.error(f"Error creating payment: {e}")
@@ -1590,16 +1866,23 @@ def create_payment():
 
 @app.route('/api/payment/<int:payment_id>', methods=['PUT'])
 def update_payment(payment_id):
-    """Cập nhật thông tin chuyển khoản"""
+    """Cập nhật thông tin chuyển khoản - cập nhật trong site_data"""
     try:
-        # Get existing payment
-        conn = get_db_connection()
-        existing = conn.execute(
-            'SELECT * FROM payments WHERE id = ?', (payment_id,)
-        ).fetchone()
+        # Load current data
+        site_data = load_data()
+        payment_data = site_data.get('payment', {})
+        payments = payment_data.get('payments', [])
+        
+        # Find existing payment
+        existing = None
+        existing_index = -1
+        for i, p in enumerate(payments):
+            if p.get('id') == payment_id:
+                existing = p
+                existing_index = i
+                break
         
         if not existing:
-            conn.close()
             return jsonify({
                 'success': False,
                 'message': 'Không tìm thấy thông tin chuyển khoản'
@@ -1608,7 +1891,7 @@ def update_payment(payment_id):
         # Handle both JSON and form data
         if request.is_json:
             data = request.get_json()
-            new_qr_url = data.get('qr_code_url', existing['qr_code_url'])
+            new_qr_url = data.get('qr_code_url', existing.get('qr_code_url', ''))
         else:
             # Handle form data with file upload
             data = {
@@ -1625,44 +1908,46 @@ def update_payment(payment_id):
             qr_file = request.files.get('qr_code_file')
             if qr_file and qr_file.filename:
                 # Delete old QR code if exists
-                delete_qr_code(existing['qr_code_url'])
+                old_qr_url = existing.get('qr_code_url', '')
+                if old_qr_url:
+                    delete_qr_code(old_qr_url)
                 
                 # Save new QR code
                 new_qr_url = save_qr_code_file(qr_file)
                 if not new_qr_url:
-                    conn.close()
                     return jsonify({
                         'success': False,
                         'message': 'Không thể lưu file QR code mới'
                     }), 500
             else:
-                new_qr_url = existing['qr_code_url']
+                new_qr_url = existing.get('qr_code_url', '')
         
-        # Update database
-        conn.execute('''
-            UPDATE payments SET 
-                recipient_name = ?, bank_name = ?, account_number = ?, 
-                title = ?, description = ?, qr_code_url = ?, 
-                is_active = ?, sort_order = ?, updated_at = ?
-            WHERE id = ?
-        ''', (
-            data['recipient_name'],
-            data['bank_name'],
-            data['account_number'],
-            data.get('title', ''),
-            data.get('description', ''),
-            new_qr_url,
-            data.get('is_active', True),
-            data.get('sort_order', 1),
-            datetime.now().isoformat(),
-            payment_id
-        ))
-        conn.commit()
-        conn.close()
+        # Update payment object
+        updated_payment = {
+            **existing,
+            'recipient_name': data.get('recipient_name', existing.get('recipient_name')),
+            'bank_name': data.get('bank_name', existing.get('bank_name')),
+            'account_number': data.get('account_number', existing.get('account_number')),
+            'title': data.get('title', existing.get('title', '')),
+            'description': data.get('description', existing.get('description', '')),
+            'qr_code_url': new_qr_url,
+            'is_active': data.get('is_active', existing.get('is_active', True)),
+            'sort_order': data.get('sort_order', existing.get('sort_order', 1)),
+            'updated_at': datetime.now().isoformat()
+        }
+        
+        # Update in payments list
+        payments[existing_index] = updated_payment
+        
+        # Save to site_data
+        payment_data['payments'] = payments
+        site_data['payment'] = payment_data
+        save_data(site_data)
         
         return jsonify({
             'success': True,
-            'message': 'Thông tin chuyển khoản đã được cập nhật thành công'
+            'message': 'Thông tin chuyển khoản đã được cập nhật thành công',
+            'data': updated_payment
         })
     except Exception as e:
         logger.error(f"Error updating payment: {e}")
@@ -1673,29 +1958,38 @@ def update_payment(payment_id):
 
 @app.route('/api/payment/<int:payment_id>', methods=['DELETE'])
 def delete_payment(payment_id):
-    """Xóa thông tin chuyển khoản"""
+    """Xóa thông tin chuyển khoản - xóa khỏi site_data"""
     try:
-        conn = get_db_connection()
+        # Load current data
+        site_data = load_data()
+        payment_data = site_data.get('payment', {})
+        payments = payment_data.get('payments', [])
         
-        # Get payment info for QR code deletion
-        payment = conn.execute(
-            'SELECT * FROM payments WHERE id = ?', (payment_id,)
-        ).fetchone()
+        # Find payment to delete
+        payment_to_delete = None
+        for p in payments:
+            if p.get('id') == payment_id:
+                payment_to_delete = p
+                break
         
-        if not payment:
-            conn.close()
+        if not payment_to_delete:
             return jsonify({
                 'success': False,
                 'message': 'Không tìm thấy thông tin chuyển khoản'
             }), 404
         
         # Delete QR code file
-        delete_qr_code(payment['qr_code_url'])
+        qr_url = payment_to_delete.get('qr_code_url', '')
+        if qr_url:
+            delete_qr_code(qr_url)
         
-        # Delete from database
-        conn.execute('DELETE FROM payments WHERE id = ?', (payment_id,))
-        conn.commit()
-        conn.close()
+        # Remove from payments list
+        payments = [p for p in payments if p.get('id') != payment_id]
+        
+        # Save to site_data
+        payment_data['payments'] = payments
+        site_data['payment'] = payment_data
+        save_data(site_data)
         
         return jsonify({
             'success': True,
@@ -1710,15 +2004,12 @@ def delete_payment(payment_id):
 
 @app.route('/api/payment/global-message', methods=['GET'])
 def get_global_message():
-    """Lấy thông điệp chung"""
+    """Lấy thông điệp chung từ site_data"""
     try:
-        conn = get_db_connection()
-        setting = conn.execute(
-            'SELECT value FROM settings WHERE key = ?', ('payment_global_message',)
-        ).fetchone()
-        conn.close()
-        
-        message = setting['value'] if setting else ''
+        # Load from site_data
+        data = load_data()
+        payment_data = data.get('payment', {})
+        message = payment_data.get('global_message', '')
         
         return jsonify({
             'success': True,
@@ -1733,18 +2024,25 @@ def get_global_message():
 
 @app.route('/api/payment/global-message', methods=['POST'])
 def save_global_message():
-    """Lưu thông điệp chung"""
+    """Lưu thông điệp chung vào site_data"""
     try:
-        data = request.get_json()
-        message = data.get('message', '')
+        request_data = request.get_json()
+        message = request_data.get('message', '')
         
-        conn = get_db_connection()
-        conn.execute('''
-            INSERT OR REPLACE INTO settings (key, value, updated_at)
-            VALUES (?, ?, ?)
-        ''', ('payment_global_message', message, datetime.now().isoformat()))
-        conn.commit()
-        conn.close()
+        # Load current data
+        site_data = load_data()
+        payment_data = site_data.get('payment', {})
+        
+        # Update global message
+        payment_data['global_message'] = message
+        
+        # Ensure payments array exists
+        if 'payments' not in payment_data:
+            payment_data['payments'] = []
+        
+        # Save to site_data
+        site_data['payment'] = payment_data
+        save_data(site_data)
         
         return jsonify({
             'success': True,
@@ -1759,25 +2057,24 @@ def save_global_message():
 
 @app.route('/api/payment/frontend', methods=['GET'])
 def get_payment_frontend():
-    """Lấy thông tin chuyển khoản cho frontend"""
+    """Lấy thông tin chuyển khoản cho frontend từ site_data"""
     try:
-        conn = get_db_connection()
+        # Load from site_data
+        data = load_data()
+        payment_data = data.get('payment', {})
+        global_message = payment_data.get('global_message', '')
+        payments = payment_data.get('payments', [])
         
-        # Lấy thông điệp chung
-        setting = conn.execute(
-            'SELECT value FROM settings WHERE key = ?', ('payment_global_message',)
-        ).fetchone()
-        global_message = setting['value'] if setting else ''
-        
-        # Lấy danh sách payment đang active
-        payments = conn.execute(
-            'SELECT * FROM payments WHERE is_active = 1 ORDER BY sort_order ASC, created_at DESC'
-        ).fetchall()
-        conn.close()
+        # Filter only active payments and sort
+        active_payments = [p for p in payments if p.get('is_active', True)]
+        active_payments = sorted(active_payments, key=lambda x: (
+            x.get('sort_order', 999),
+            x.get('created_at', '')
+        ))
         
         # Xử lý QR code URL
         processed_payments = []
-        for payment in payments:
+        for payment in active_payments:
             payment_dict = dict(payment)
             
             # Nếu không có QR code từ upload, sử dụng QR mặc định

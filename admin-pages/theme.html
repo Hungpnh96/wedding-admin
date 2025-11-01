@@ -1,165 +1,252 @@
 <div class="tab-content-wrapper">
+    <!-- Color and Font customization sections removed -->
+
+    <!-- Background Management Section -->
     <div class="section-card">
         <div class="section-header">
-            <h5><i class="fas fa-palette me-2"></i>Tùy chỉnh màu sắc</h5>
+            <h5><i class="fas fa-image me-2"></i>Quản lý Background</h5>
         </div>
         <div class="section-body">
-            <!-- Color Presets -->
-            <div class="form-group mb-4">
-                <label class="form-label">Bộ màu có sẵn</label>
-                <div class="color-presets d-flex flex-wrap gap-2">
-                    <div class="color-preset" data-theme="wedding" onclick="applyColorPreset('wedding')">
-                        <div class="preset-colors">
-                            <div class="preset-color" style="background: #9f5958;"></div>
-                            <div class="preset-color" style="background: #f8f9fa;"></div>
-                            <div class="preset-color" style="background: #2c3e50;"></div>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Tải lên hình ảnh background cho các phần. Nếu không có, hệ thống sẽ sử dụng ảnh mặc định.
+            </div>
+
+            <!-- Story Background -->
+            <div class="mb-5 p-4 border rounded shadow-sm" style="background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);">
+                <h5 class="mb-4 fw-bold">
+                    <i class="fas fa-book text-primary me-2"></i>Background - Chuyện chúng mình
+                </h5>
+                <div class="row g-4">
+                    <!-- Upload Area -->
+                    <div class="col-md-5">
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-semibold mb-2">
+                                <i class="fas fa-upload me-1"></i>Tải ảnh lên
+                            </label>
+                            <label for="storyBackgroundFile" class="image-upload-area d-block position-relative overflow-hidden rounded-3" 
+                                data-upload-type="story-background" 
+                                style="border: 2px dashed #ced4da; padding: 40px 20px; text-align: center; cursor: pointer; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); transition: all 0.3s ease; min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <div id="storyBackgroundPreview" class="w-100 h-100 d-flex align-items-center justify-content-center" style="min-height: 200px;">
+                                    <img id="storyBackgroundImg" src="" alt="Story Background Preview" 
+                                        class="w-100 h-100 rounded-2 shadow-sm" 
+                                        style="object-fit: cover; display: none;">
+                                    <div id="storyBackgroundPlaceholder" class="text-center">
+                                        <div class="mb-3" style="color: #6c757d;">
+                                            <i class="fas fa-cloud-upload-alt" style="font-size: 3.5rem;"></i>
+                                        </div>
+                                        <p class="mb-2 fw-semibold" style="color: #495057;">Click để chọn ảnh</p>
+                                        <small class="text-muted d-block">Hoặc kéo thả ảnh vào đây</small>
+                                        <small class="text-muted d-block mt-1">
+                                            <i class="fas fa-image me-1"></i>JPG, PNG, WEBP (tối đa 10MB)
+                                        </small>
+                                    </div>
+                                </div>
+                                <input type="file" id="storyBackgroundFile" accept="image/*" 
+                                    style="position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip: rect(0,0,0,0);">
+                                <input type="hidden" id="storyBackgroundUrl" value="">
+                            </label>
+                            <button class="btn btn-outline-secondary btn-sm w-100 mt-2" onclick="useDefaultStoryBackground()">
+                                <i class="fas fa-undo me-1"></i>Sử dụng ảnh mặc định
+                            </button>
                         </div>
-                        <small>Wedding Classic</small>
                     </div>
-                    <div class="color-preset" data-theme="romantic" onclick="applyColorPreset('romantic')">
-                        <div class="preset-colors">
-                            <div class="preset-color" style="background: #e74c3c;"></div>
-                            <div class="preset-color" style="background: #fdf2f8;"></div>
-                            <div class="preset-color" style="background: #1f2937;"></div>
+                    <!-- Preview Section -->
+                    <div class="col-md-7">
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-semibold mb-2">
+                                <i class="fas fa-eye me-1"></i>Xem trước trên trang chủ
+                            </label>
+                            <div id="storyPreviewSection" 
+                                class="rounded-3 shadow-sm position-relative overflow-hidden"
+                                style="min-height: 300px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); background-size: cover; background-position: center; background-attachment: scroll;">
+                                <!-- Background Image -->
+                                <div id="storyPreviewBg" class="position-absolute w-100 h-100" 
+                                    style="background-size: cover; background-position: center; opacity: 0; transition: opacity 0.5s ease;">
+                                </div>
+                                <!-- Overlay -->
+                                <div class="position-absolute w-100 h-100 bg-dark" style="opacity: 0.4;"></div>
+                                <!-- Content -->
+                                <div class="position-relative d-flex align-items-center justify-content-center h-100" style="min-height: 300px; padding: 40px;">
+                                    <div class="text-center text-white">
+                                        <h1 class="section-title light mb-0" style="font-size: 2.5rem; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                                            Chuyện chúng mình
+                                        </h1>
+                                        <div class="mt-3" style="opacity: 0.9;">
+                                            <small style="font-size: 0.9rem; letter-spacing: 2px;">
+                                                <i class="fas fa-diamond-ring me-1"></i>Our Story
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted mt-2 d-block">
+                                <i class="fas fa-info-circle me-1"></i>Đây là cách ảnh sẽ hiển thị trên trang chủ
+                            </small>
                         </div>
-                        <small>Romantic Pink</small>
-                    </div>
-                    <div class="color-preset" data-theme="elegant" onclick="applyColorPreset('elegant')">
-                        <div class="preset-colors">
-                            <div class="preset-color" style="background: #2c3e50;"></div>
-                            <div class="preset-color" style="background: #ecf0f1;"></div>
-                            <div class="preset-color" style="background: #34495e;"></div>
-                        </div>
-                        <small>Elegant Blue</small>
-                    </div>
-                    <div class="color-preset" data-theme="golden" onclick="applyColorPreset('golden')">
-                        <div class="preset-colors">
-                            <div class="preset-color" style="background: #f39c12;"></div>
-                            <div class="preset-color" style="background: #fef9e7;"></div>
-                            <div class="preset-color" style="background: #8b4513;"></div>
-                        </div>
-                        <small>Golden Luxury</small>
-                    </div>
-                    <div class="color-preset" data-theme="forest" onclick="applyColorPreset('forest')">
-                        <div class="preset-colors">
-                            <div class="preset-color" style="background: #27ae60;"></div>
-                            <div class="preset-color" style="background: #eafaf1;"></div>
-                            <div class="preset-color" style="background: #1e8449;"></div>
-                        </div>
-                        <small>Forest Green</small>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-circle text-primary me-1"></i>Màu chủ đạo
-                        </label>
-                        <div class="color-input-group">
-                            <input type="color" class="form-control color-picker" id="primaryThemeColor" value="#9f5958">
-                            <input type="text" class="form-control color-text" id="primaryThemeColorText" value="#9f5958" placeholder="#9f5958">
+            <!-- BigEvent Background -->
+            <div class="mb-5 p-4 border rounded shadow-sm" style="background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);">
+                <h5 class="mb-4 fw-bold">
+                    <i class="fas fa-calendar-heart text-primary me-2"></i>Background - The Big Day
+                </h5>
+                <div class="row g-4">
+                    <!-- Upload Area -->
+                    <div class="col-md-5">
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-semibold mb-2">
+                                <i class="fas fa-upload me-1"></i>Tải ảnh lên
+                            </label>
+                            <label for="bigeventBackgroundFile" class="image-upload-area d-block position-relative overflow-hidden rounded-3" 
+                                data-upload-type="bigevent-background" 
+                                style="border: 2px dashed #ced4da; padding: 40px 20px; text-align: center; cursor: pointer; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); transition: all 0.3s ease; min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <div id="bigeventBackgroundPreview" class="w-100 h-100 d-flex align-items-center justify-content-center" style="min-height: 200px;">
+                                    <img id="bigeventBackgroundImg" src="" alt="BigEvent Background Preview" 
+                                        class="w-100 h-100 rounded-2 shadow-sm" 
+                                        style="object-fit: cover; display: none;">
+                                    <div id="bigeventBackgroundPlaceholder" class="text-center">
+                                        <div class="mb-3" style="color: #6c757d;">
+                                            <i class="fas fa-cloud-upload-alt" style="font-size: 3.5rem;"></i>
+                                        </div>
+                                        <p class="mb-2 fw-semibold" style="color: #495057;">Click để chọn ảnh</p>
+                                        <small class="text-muted d-block">Hoặc kéo thả ảnh vào đây</small>
+                                        <small class="text-muted d-block mt-1">
+                                            <i class="fas fa-image me-1"></i>JPG, PNG, WEBP (tối đa 10MB)
+                                        </small>
+                                    </div>
+                                </div>
+                                <input type="file" id="bigeventBackgroundFile" accept="image/*" 
+                                    style="position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip: rect(0,0,0,0);">
+                                <input type="hidden" id="bigeventBackgroundUrl" value="">
+                            </label>
+                            <button class="btn btn-outline-secondary btn-sm w-100 mt-2" onclick="useDefaultBigEventBackground()">
+                                <i class="fas fa-undo me-1"></i>Sử dụng ảnh mặc định
+                            </button>
                         </div>
-                        <small class="form-text text-muted">Màu chính của website</small>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-circle text-secondary me-1"></i>Màu phụ
-                        </label>
-                        <div class="color-input-group">
-                            <input type="color" class="form-control color-picker" id="secondaryThemeColor" value="#f8f9fa">
-                            <input type="text" class="form-control color-text" id="secondaryThemeColorText" value="#f8f9fa" placeholder="#f8f9fa">
+                    <!-- Preview Section -->
+                    <div class="col-md-7">
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-semibold mb-2">
+                                <i class="fas fa-eye me-1"></i>Xem trước trên trang chủ
+                            </label>
+                            <div id="bigeventPreviewSection" 
+                                class="rounded-3 shadow-sm position-relative overflow-hidden"
+                                style="min-height: 300px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); background-size: cover; background-position: center; background-attachment: scroll;">
+                                <!-- Background Image -->
+                                <div id="bigeventPreviewBg" class="position-absolute w-100 h-100" 
+                                    style="background-size: cover; background-position: center; opacity: 0; transition: opacity 0.5s ease;">
+                                </div>
+                                <!-- Overlay -->
+                                <div class="position-absolute w-100 h-100 bg-dark" style="opacity: 0.4;"></div>
+                                <!-- Content -->
+                                <div class="position-relative d-flex align-items-center justify-content-center h-100" style="min-height: 300px; padding: 40px;">
+                                    <div class="text-center text-white">
+                                        <h1 class="section-title light mb-3" style="font-size: 2.5rem; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                                            The Big Day
+                                        </h1>
+                                        <div class="mt-3" style="opacity: 0.9;">
+                                            <small style="font-size: 0.9rem; letter-spacing: 2px;">
+                                                <i class="fas fa-heart me-1"></i>Countdown to Our Wedding
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted mt-2 d-block">
+                                <i class="fas fa-info-circle me-1"></i>Đây là cách ảnh sẽ hiển thị trên trang chủ
+                            </small>
                         </div>
-                        <small class="form-text text-muted">Màu nền và phụ</small>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-font me-1" style="color: #2c3e50;"></i>Màu văn bản
-                        </label>
-                        <div class="color-input-group">
-                            <input type="color" class="form-control color-picker" id="textColor" value="#2c3e50">
-                            <input type="text" class="form-control color-text" id="textColorText" value="#2c3e50" placeholder="#2c3e50">
-                        </div>
-                        <small class="form-text text-muted">Màu chữ chính</small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-square me-1" style="color: #ffffff; border: 1px solid #ccc;"></i>Màu nền
-                        </label>
-                        <div class="color-input-group">
-                            <input type="color" class="form-control color-picker" id="backgroundColor" value="#ffffff">
-                            <input type="text" class="form-control color-text" id="backgroundColorText" value="#ffffff" placeholder="#ffffff">
-                        </div>
-                        <small class="form-text text-muted">Màu nền chính</small>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-square me-1" style="color: #dee2e6;"></i>Màu viền
-                        </label>
-                        <div class="color-input-group">
-                            <input type="color" class="form-control color-picker" id="borderColor" value="#dee2e6">
-                            <input type="text" class="form-control color-text" id="borderColorText" value="#dee2e6" placeholder="#dee2e6">
-                        </div>
-                        <small class="form-text text-muted">Màu viền và phân cách</small>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-star me-1" style="color: #e74c3c;"></i>Màu accent
-                        </label>
-                        <div class="color-input-group">
-                            <input type="color" class="form-control color-picker" id="accentColor" value="#e74c3c">
-                            <input type="text" class="form-control color-text" id="accentColorText" value="#e74c3c" placeholder="#e74c3c">
-                        </div>
-                        <small class="form-text text-muted">Màu nhấn và highlight</small>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="section-card">
-        <div class="section-header">
-            <h5><i class="fas fa-font me-2"></i>Tùy chỉnh font chữ</h5>
-        </div>
-        <div class="section-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Font chính</label>
-                        <select class="form-control" id="primaryFont">
-                            <option value="'Segoe UI', sans-serif">Segoe UI</option>
-                            <option value="'Roboto', sans-serif">Roboto</option>
-                            <option value="'Open Sans', sans-serif">Open Sans</option>
-                            <option value="'Lato', sans-serif">Lato</option>
-                            <option value="'Poppins', sans-serif">Poppins</option>
-                            <option value="'Montserrat', sans-serif">Montserrat</option>
-                        </select>
+            <!-- GiftRegistry Background -->
+            <div class="mb-5 p-4 border rounded shadow-sm" style="background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);">
+                <h5 class="mb-4 fw-bold">
+                    <i class="fas fa-gift text-primary me-2"></i>Background - Sự Kiện Cưới
+                </h5>
+                <div class="row g-4">
+                    <!-- Upload Area -->
+                    <div class="col-md-5">
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-semibold mb-2">
+                                <i class="fas fa-upload me-1"></i>Tải ảnh lên
+                            </label>
+                            <label for="giftregistryBackgroundFile" class="image-upload-area d-block position-relative overflow-hidden rounded-3" 
+                                data-upload-type="giftregistry-background" 
+                                style="border: 2px dashed #ced4da; padding: 40px 20px; text-align: center; cursor: pointer; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); transition: all 0.3s ease; min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <div id="giftregistryBackgroundPreview" class="w-100 h-100 d-flex align-items-center justify-content-center" style="min-height: 200px;">
+                                    <img id="giftregistryBackgroundImg" src="" alt="GiftRegistry Background Preview" 
+                                        class="w-100 h-100 rounded-2 shadow-sm" 
+                                        style="object-fit: cover; display: none;">
+                                    <div id="giftregistryBackgroundPlaceholder" class="text-center">
+                                        <div class="mb-3" style="color: #6c757d;">
+                                            <i class="fas fa-cloud-upload-alt" style="font-size: 3.5rem;"></i>
+                                        </div>
+                                        <p class="mb-2 fw-semibold" style="color: #495057;">Click để chọn ảnh</p>
+                                        <small class="text-muted d-block">Hoặc kéo thả ảnh vào đây</small>
+                                        <small class="text-muted d-block mt-1">
+                                            <i class="fas fa-image me-1"></i>JPG, PNG, WEBP (tối đa 10MB)
+                                        </small>
+                                    </div>
+                                </div>
+                                <input type="file" id="giftregistryBackgroundFile" accept="image/*" 
+                                    style="position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip: rect(0,0,0,0);">
+                                <input type="hidden" id="giftregistryBackgroundUrl" value="">
+                            </label>
+                            <button class="btn btn-outline-secondary btn-sm w-100 mt-2" onclick="useDefaultGiftRegistryBackground()">
+                                <i class="fas fa-undo me-1"></i>Sử dụng ảnh mặc định
+                            </button>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Font tiêu đề</label>
-                        <select class="form-control" id="headingFont">
-                            <option value="'Playfair Display', serif">Playfair Display</option>
-                            <option value="'Merriweather', serif">Merriweather</option>
-                            <option value="'Lora', serif">Lora</option>
-                            <option value="'Source Serif Pro', serif">Source Serif Pro</option>
-                        </select>
+                    <!-- Preview Section -->
+                    <div class="col-md-7">
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-semibold mb-2">
+                                <i class="fas fa-eye me-1"></i>Xem trước trên trang chủ
+                            </label>
+                            <div id="giftregistryPreviewSection" 
+                                class="rounded-3 shadow-sm position-relative overflow-hidden"
+                                style="min-height: 300px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); background-size: cover; background-position: center; background-attachment: scroll;">
+                                <!-- Background Image -->
+                                <div id="giftregistryPreviewBg" class="position-absolute w-100 h-100" 
+                                    style="background-size: cover; background-position: center; opacity: 0; transition: opacity 0.5s ease;">
+                                </div>
+                                <!-- Overlay -->
+                                <div class="position-absolute w-100 h-100 bg-dark" style="opacity: 0.4;"></div>
+                                <!-- Content -->
+                                <div class="position-relative d-flex align-items-center justify-content-center h-100" style="min-height: 300px; padding: 40px;">
+                                    <div class="text-center text-white">
+                                        <h1 class="section-title light mb-3" style="font-size: 2.5rem; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                                            Sự Kiện Cưới
+                                        </h1>
+                                        <div class="mt-3" style="opacity: 0.9;">
+                                            <small style="font-size: 0.9rem; letter-spacing: 2px;">
+                                                <i class="fas fa-gift me-1"></i>Wedding Events
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted mt-2 d-block">
+                                <i class="fas fa-info-circle me-1"></i>Đây là cách ảnh sẽ hiển thị trên trang chủ
+                            </small>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Kích thước font chính</label>
-                        <input type="range" class="form-range" id="baseFontSize" min="12" max="20" value="16">
-                        <small class="form-text text-muted">16px</small>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Kích thước font tiêu đề</label>
-                        <input type="range" class="form-range" id="headingFontSize" min="24" max="48" value="32">
-                        <small class="form-text text-muted">32px</small>
-                    </div>
-                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-custom" onclick="saveBackgroundSettings()">
+                    <i class="fas fa-save me-2"></i>Lưu Background Settings
+                </button>
+                <button class="btn btn-outline-secondary" onclick="resetBackgroundSettings()">
+                    <i class="fas fa-undo me-2"></i>Khôi phục mặc định
+                </button>
             </div>
         </div>
     </div>
@@ -184,18 +271,165 @@
 </div>
 
 <script>// Theme Tab JavaScript
+// Define handleBackgroundUpload early so it's available for inline handlers
+window.handleBackgroundUpload = async function(section, file) {
+    try {
+        console.log(`📤 Uploading ${section} background...`, file);
+        
+        // Get old image URL to delete it later
+        const oldImageUrl = document.getElementById(`${section}BackgroundUrl`)?.value || '';
+        const oldFileName = oldImageUrl ? oldImageUrl.split('/').pop() : null;
+        
+        // Show loading
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Đang tải ảnh...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        }
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('type', `${section}-background`);
+        if (oldFileName) {
+            formData.append('old_file', oldFileName);
+        }
+        
+        const response = await fetch(`${window.location.origin}/api/upload/background`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.data && result.data.url) {
+            const imageUrl = result.data.url;
+            
+            // Update preview using existing function
+            if (typeof updateBackgroundPreview === 'function') {
+                updateBackgroundPreview(section, imageUrl);
+            } else {
+                // Fallback if function doesn't exist yet
+                const imgEl = document.getElementById(`${section}BackgroundImg`);
+                const placeholderEl = document.getElementById(`${section}BackgroundPlaceholder`);
+                if (imgEl && placeholderEl) {
+                    imgEl.src = imageUrl;
+                    imgEl.style.display = 'block';
+                    placeholderEl.style.display = 'none';
+                }
+            }
+            
+            // Update fields using existing function
+            if (typeof setFieldValue === 'function') {
+                setFieldValue(`${section}BackgroundUrl`, imageUrl);
+                const urlDisplayInput = document.getElementById(`${section}BackgroundUrlDisplay`);
+                if (urlDisplayInput) urlDisplayInput.value = imageUrl;
+            } else {
+                // Fallback if function doesn't exist yet
+                const urlInput = document.getElementById(`${section}BackgroundUrl`);
+                const urlDisplayInput = document.getElementById(`${section}BackgroundUrlDisplay`);
+                if (urlInput) urlInput.value = imageUrl;
+                if (urlDisplayInput) urlDisplayInput.value = imageUrl;
+            }
+            
+            // Auto-save to siteData
+            if (!window.siteData) window.siteData = {};
+            if (!window.siteData.backgrounds) window.siteData.backgrounds = {};
+            window.siteData.backgrounds[section] = imageUrl;
+            
+            // Auto-save to server
+            if (typeof saveBackgroundSettings === 'function') {
+                await saveBackgroundSettings();
+            }
+            
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: `Ảnh background ${section === 'story' ? 'Chuyện chúng mình' : section === 'bigevent' ? 'The Big Day' : 'Sự Kiện Cưới'} đã được tải lên`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        } else {
+            throw new Error(result.message || 'Upload failed');
+        }
+    } catch (error) {
+        console.error(`❌ Error uploading ${section} background:`, error);
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: `Không thể tải ảnh background: ${error.message}`
+            });
+        } else {
+            alert(`Lỗi: ${error.message}`);
+        }
+    }
+};
+
+// Auto-initialize when DOM is ready
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+    } else {
+        // DOM already ready, wait a bit for dynamic content to be inserted
+        setTimeout(initializeTheme, 500);
+    }
+})();
+
 function initializeTheme() {
-    console.log("Initializing theme tab");
+    console.log("🎨 Initializing theme tab");
     
     // Load theme data
     loadThemeData();
     
-    // Setup event listeners
-    setupThemeEventListeners();
+    // Setup event listeners with delay to ensure DOM is ready
+    // Try multiple times to ensure elements are found
+    let retryCount = 0;
+    const maxRetries = 10;
+    
+    const setupListeners = () => {
+        const storyArea = document.querySelector('[data-upload-type="story-background"]');
+        const storyInput = document.getElementById('storyBackgroundFile');
+        
+        console.log(`🔍 Checking for elements (attempt ${retryCount + 1}/${maxRetries})...`);
+        console.log('  Story area:', storyArea);
+        console.log('  Story input:', storyInput);
+        
+        if (storyArea && storyInput) {
+            console.log('✅ DOM elements found, setting up listeners...');
+            try {
+                setupThemeEventListeners();
+                setupBackgroundUploadListeners();
+                console.log('✅ All listeners setup successfully!');
+            } catch (error) {
+                console.error('❌ Error setting up listeners:', error);
+            }
+        } else if (retryCount < maxRetries) {
+            retryCount++;
+            console.log(`⏳ Retrying to setup listeners (${retryCount}/${maxRetries})...`);
+            setTimeout(setupListeners, 300);
+        } else {
+            console.error('❌ Failed to find DOM elements after', maxRetries, 'retries');
+            console.error('Available elements with data-upload-type:');
+            document.querySelectorAll('[data-upload-type]').forEach(el => {
+                console.error('  Found:', el.getAttribute('data-upload-type'), el);
+            });
+        }
+    };
+    
+    // Start trying to setup listeners immediately
+    setupListeners();
 }
 
 function loadThemeData() {
-    if (window.siteData  window.siteData.theme) {
+    console.log('🔄 Loading theme data...', window.siteData);
+    
+    if (window.siteData && window.siteData.theme) {
         const theme = window.siteData.theme;
         
         // Update color fields
@@ -212,12 +446,401 @@ function loadThemeData() {
         setFieldValue("accentColor", theme.accentColor);
         setFieldValue("accentColorText", theme.accentColor);
         
-        // Update font fields
-        setFieldValue("primaryFont", theme.primaryFont);
-        setFieldValue("headingFont", theme.headingFont);
-        setFieldValue("baseFontSize", theme.baseFontSize);
-        setFieldValue("headingFontSize", theme.headingFontSize);
+        // Font fields removed - no longer used
+        // setFieldValue("primaryFont", theme.primaryFont);
+        // setFieldValue("headingFont", theme.headingFont);
+        // setFieldValue("baseFontSize", theme.baseFontSize);
+        // setFieldValue("headingFontSize", theme.headingFontSize);
     }
+    
+    // Load background settings
+    loadBackgroundSettings();
+}
+
+function loadBackgroundSettings() {
+    console.log('🖼️ Loading background settings...');
+    
+    if (window.siteData && window.siteData.backgrounds) {
+        const backgrounds = window.siteData.backgrounds;
+        
+        // Story background
+        if (backgrounds.story) {
+            updateBackgroundPreview('story', backgrounds.story);
+            setFieldValue('storyBackgroundUrl', backgrounds.story);
+        }
+        
+        // BigEvent background
+        if (backgrounds.bigevent) {
+            updateBackgroundPreview('bigevent', backgrounds.bigevent);
+            setFieldValue('bigeventBackgroundUrl', backgrounds.bigevent);
+        }
+        
+        // GiftRegistry background
+        if (backgrounds.giftregistry) {
+            updateBackgroundPreview('giftregistry', backgrounds.giftregistry);
+            setFieldValue('giftregistryBackgroundUrl', backgrounds.giftregistry);
+        }
+    } else {
+        console.log('⚠️ No background settings found, using defaults');
+    }
+}
+
+function updateBackgroundPreview(section, imageUrl) {
+    console.log(`🖼️ Updating ${section} background preview:`, imageUrl);
+    
+    // Update small preview image
+    const imgEl = document.getElementById(`${section}BackgroundImg`);
+    const placeholderEl = document.getElementById(`${section}BackgroundPlaceholder`);
+    
+    if (imgEl && placeholderEl && imageUrl) {
+        imgEl.src = imageUrl;
+        imgEl.style.display = 'block';
+        placeholderEl.style.display = 'none';
+    } else if (imgEl && placeholderEl) {
+        imgEl.style.display = 'none';
+        placeholderEl.style.display = 'block';
+    }
+    
+    // Update large preview section (like index page)
+    const previewBgEl = document.getElementById(`${section}PreviewBg`);
+    if (previewBgEl && imageUrl) {
+        // Add cache busting
+        const imageUrlWithCache = imageUrl + (imageUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+        previewBgEl.style.backgroundImage = `url('${imageUrlWithCache}')`;
+        previewBgEl.style.opacity = '1';
+        console.log(`✅ Preview background updated for ${section}`);
+    } else if (previewBgEl) {
+        previewBgEl.style.backgroundImage = 'none';
+        previewBgEl.style.opacity = '0';
+    }
+}
+
+function setupBackgroundUploadListeners() {
+    console.log('🔧 Setting up background upload listeners...');
+    
+    // Story background upload
+    const storyUploadArea = document.querySelector('[data-upload-type="story-background"]');
+    const storyFileInput = document.getElementById('storyBackgroundFile');
+    
+    console.log('📋 Story upload area:', storyUploadArea);
+    console.log('📋 Story file input:', storyFileInput);
+    
+    if (storyUploadArea && storyFileInput) {
+        // Remove any existing click listeners first to prevent loops
+        const newStoryArea = storyUploadArea.cloneNode(true);
+        storyUploadArea.parentNode.replaceChild(newStoryArea, storyUploadArea);
+        
+        // Re-get elements after clone
+        const updatedStoryInput = document.getElementById('storyBackgroundFile');
+        const updatedStoryArea = document.querySelector('[data-upload-type="story-background"]');
+        
+        // Since we're using <label>, click is handled natively - just add change handler
+        if (updatedStoryInput) {
+            updatedStoryInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    console.log('📤 Story file selected:', file.name);
+                    const fn = window.handleBackgroundUpload || handleBackgroundUpload;
+                    if (fn) {
+                        fn('story', file);
+                    } else {
+                        console.error('❌ handleBackgroundUpload function not found!');
+                        alert('Lỗi: Không tìm thấy hàm upload. Vui lòng refresh trang.');
+                    }
+                }
+            });
+        }
+        
+        // Drag and drop handlers for updated area
+        if (updatedStoryArea) {
+            updatedStoryArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updatedStoryArea.style.borderColor = '#007bff';
+            });
+            updatedStoryArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updatedStoryArea.style.borderColor = '#dee2e6';
+            });
+            updatedStoryArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updatedStoryArea.style.borderColor = '#dee2e6';
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    console.log('📤 Story file dropped:', file.name);
+                    handleBackgroundUpload('story', file);
+                }
+            });
+        }
+        console.log('✅ Story background upload listeners attached');
+    } else {
+        console.error('❌ Story upload area or file input not found!');
+    }
+    
+    // BigEvent background upload
+    const bigeventUploadArea = document.querySelector('[data-upload-type="bigevent-background"]');
+    const bigeventFileInput = document.getElementById('bigeventBackgroundFile');
+    
+    console.log('📋 BigEvent upload area:', bigeventUploadArea);
+    console.log('📋 BigEvent file input:', bigeventFileInput);
+    
+    if (bigeventUploadArea && bigeventFileInput) {
+        // Remove any existing listeners
+        const newBigEventArea = bigeventUploadArea.cloneNode(true);
+        bigeventUploadArea.parentNode.replaceChild(newBigEventArea, bigeventUploadArea);
+        
+        const updatedBigEventInput = document.getElementById('bigeventBackgroundFile');
+        const updatedBigEventArea = document.querySelector('[data-upload-type="bigevent-background"]');
+        
+        // Change handler
+        if (updatedBigEventInput) {
+            updatedBigEventInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    console.log('📤 BigEvent file selected:', file.name);
+                    const fn = window.handleBackgroundUpload || handleBackgroundUpload;
+                    if (fn) {
+                        fn('bigevent', file);
+                    } else {
+                        console.error('❌ handleBackgroundUpload function not found!');
+                        alert('Lỗi: Không tìm thấy hàm upload. Vui lòng refresh trang.');
+                    }
+                }
+            });
+        }
+        
+        // Drag and drop handlers
+        if (updatedBigEventArea) {
+            updatedBigEventArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updatedBigEventArea.style.borderColor = '#007bff';
+            });
+            updatedBigEventArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updatedBigEventArea.style.borderColor = '#dee2e6';
+            });
+            updatedBigEventArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updatedBigEventArea.style.borderColor = '#dee2e6';
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    console.log('📤 BigEvent file dropped:', file.name);
+                    handleBackgroundUpload('bigevent', file);
+                }
+            });
+        }
+        console.log('✅ BigEvent background upload listeners attached');
+    } else {
+        console.error('❌ BigEvent upload area or file input not found!');
+    }
+    
+    // GiftRegistry background upload
+    const giftregistryUploadArea = document.querySelector('[data-upload-type="giftregistry-background"]');
+    const giftregistryFileInput = document.getElementById('giftregistryBackgroundFile');
+    
+    console.log('📋 GiftRegistry upload area:', giftregistryUploadArea);
+    console.log('📋 GiftRegistry file input:', giftregistryFileInput);
+    
+    if (giftregistryUploadArea && giftregistryFileInput) {
+        // Remove any existing listeners
+        const newGiftArea = giftregistryUploadArea.cloneNode(true);
+        giftregistryUploadArea.parentNode.replaceChild(newGiftArea, giftregistryUploadArea);
+        
+        const updatedGiftInput = document.getElementById('giftregistryBackgroundFile');
+        const updatedGiftArea = document.querySelector('[data-upload-type="giftregistry-background"]');
+        
+        // Change handler
+        if (updatedGiftInput) {
+            updatedGiftInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    console.log('📤 GiftRegistry file selected:', file.name);
+                    const fn = window.handleBackgroundUpload || handleBackgroundUpload;
+                    if (fn) {
+                        fn('giftregistry', file);
+                    } else {
+                        console.error('❌ handleBackgroundUpload function not found!');
+                        alert('Lỗi: Không tìm thấy hàm upload. Vui lòng refresh trang.');
+                    }
+                }
+            });
+        }
+        
+        // Drag and drop handlers
+        if (updatedGiftArea) {
+            updatedGiftArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updatedGiftArea.style.borderColor = '#007bff';
+            });
+            updatedGiftArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updatedGiftArea.style.borderColor = '#dee2e6';
+            });
+            updatedGiftArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updatedGiftArea.style.borderColor = '#dee2e6';
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    console.log('📤 GiftRegistry file dropped:', file.name);
+                    handleBackgroundUpload('giftregistry', file);
+                }
+            });
+        }
+        console.log('✅ GiftRegistry background upload listeners attached');
+    } else {
+        console.error('❌ GiftRegistry upload area or file input not found!');
+    }
+    
+    console.log('✅ Background upload listeners setup complete');
+}
+
+// handleBackgroundUpload is already defined at the top of the script
+// This ensures it's available for inline handlers
+
+async function deleteBackgroundFile(section) {
+    try {
+        const urlInput = document.getElementById(`${section}BackgroundUrl`);
+        const currentUrl = urlInput?.value || '';
+        
+        // Kiểm tra xem có file trong /public/images/background không
+        if (currentUrl && currentUrl.includes('/public/images/background/')) {
+            const fileName = currentUrl.split('/').pop();
+            
+            // Gọi API để xóa file
+            const response = await fetch(`${window.location.origin}/api/upload/background`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    section: section,
+                    filename: fileName
+                })
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                console.log(`✅ Deleted background file for ${section}: ${fileName}`);
+            } else {
+                console.warn(`⚠️ Could not delete background file: ${result.message}`);
+            }
+        }
+    } catch (error) {
+        console.warn(`⚠️ Error deleting background file for ${section}:`, error);
+        // Không throw error để không ảnh hưởng đến flow chính
+    }
+}
+
+async function useDefaultStoryBackground() {
+    const defaultUrl = './public/images/default/story/default-story-background.svg';
+    
+    // Xóa file hiện tại nếu có
+    await deleteBackgroundFile('story');
+    
+    updateBackgroundPreview('story', defaultUrl);
+    setFieldValue('storyBackgroundUrl', defaultUrl);
+    
+    if (!window.siteData) window.siteData = {};
+    if (!window.siteData.backgrounds) window.siteData.backgrounds = {};
+    window.siteData.backgrounds.story = defaultUrl;
+    
+    // Lưu settings
+    await saveBackgroundSettings();
+}
+
+async function useDefaultBigEventBackground() {
+    const defaultUrl = './public/images/default/story/default-story-background.svg';
+    
+    // Xóa file hiện tại nếu có
+    await deleteBackgroundFile('bigevent');
+    
+    updateBackgroundPreview('bigevent', defaultUrl);
+    setFieldValue('bigeventBackgroundUrl', defaultUrl);
+    
+    if (!window.siteData) window.siteData = {};
+    if (!window.siteData.backgrounds) window.siteData.backgrounds = {};
+    window.siteData.backgrounds.bigevent = defaultUrl;
+    
+    // Lưu settings
+    await saveBackgroundSettings();
+}
+
+async function useDefaultGiftRegistryBackground() {
+    const defaultUrl = './public/images/default/story/default-story-background.svg';
+    
+    // Xóa file hiện tại nếu có
+    await deleteBackgroundFile('giftregistry');
+    
+    updateBackgroundPreview('giftregistry', defaultUrl);
+    setFieldValue('giftregistryBackgroundUrl', defaultUrl);
+    
+    if (!window.siteData) window.siteData = {};
+    if (!window.siteData.backgrounds) window.siteData.backgrounds = {};
+    window.siteData.backgrounds.giftregistry = defaultUrl;
+    
+    // Lưu settings
+    await saveBackgroundSettings();
+}
+
+async function saveBackgroundSettings() {
+    try {
+        if (!window.siteData) window.siteData = {};
+        if (!window.siteData.backgrounds) window.siteData.backgrounds = {};
+        
+        // Get current values
+        const storyBg = document.getElementById('storyBackgroundUrl')?.value || '';
+        const bigeventBg = document.getElementById('bigeventBackgroundUrl')?.value || '';
+        const giftregistryBg = document.getElementById('giftregistryBackgroundUrl')?.value || '';
+        
+        if (storyBg) window.siteData.backgrounds.story = storyBg;
+        if (bigeventBg) window.siteData.backgrounds.bigevent = bigeventBg;
+        if (giftregistryBg) window.siteData.backgrounds.giftregistry = giftregistryBg;
+        
+        // Save to server
+        const response = await fetch(`${window.location.origin}/api/data`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(window.siteData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: 'Cài đặt background đã được lưu',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            throw new Error(result.message || 'Save failed');
+        }
+    } catch (error) {
+        console.error('❌ Error saving background settings:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: `Không thể lưu cài đặt: ${error.message}`
+        });
+    }
+}
+
+function resetBackgroundSettings() {
+    useDefaultStoryBackground();
+    useDefaultBigEventBackground();
+    useDefaultGiftRegistryBackground();
+    saveBackgroundSettings();
 }
 
 function setupThemeEventListeners() {
@@ -238,23 +861,26 @@ function setupThemeEventListeners() {
     colorTexts.forEach(textField => {
         textField.addEventListener("input", function() {
             const picker = document.getElementById(this.id.replace("Text", ""));
-            if (picker  /^#[0-9A-F]{6}$/i.test(this.value)) {
+            if (picker && /^#[0-9A-F]{6}$/i.test(this.value)) {
                 picker.value = this.value;
             }
             updateSiteDataFromThemeForm();
         });
     });
     
-    // Font field listeners
-    const fontFields = ["primaryFont", "headingFont", "baseFontSize", "headingFontSize"];
-    fontFields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-            field.addEventListener("change", function() {
-                updateSiteDataFromThemeForm();
-            });
-        }
-    });
+    // Font field listeners removed - no longer used
+    // const fontFields = ["primaryFont", "headingFont", "baseFontSize", "headingFontSize"];
+    // fontFields.forEach(fieldId => {
+    //     const field = document.getElementById(fieldId);
+    //     if (field) {
+    //         field.addEventListener("change", function() {
+    //             updateSiteDataFromThemeForm();
+    //         });
+    //     }
+    // });
+    
+    // Background upload listeners are now set up in initializeTheme with delay
+    // setupBackgroundUploadListeners(); // Removed to avoid duplicate setup
 }
 
 function updateSiteDataFromThemeForm() {
@@ -268,8 +894,8 @@ function updateSiteDataFromThemeForm() {
     window.siteData.theme.backgroundColor = document.getElementById("backgroundColor")?.value || "#ffffff";
     window.siteData.theme.borderColor = document.getElementById("borderColor")?.value || "#dee2e6";
     window.siteData.theme.accentColor = document.getElementById("accentColor")?.value || "#e74c3c";
-    window.siteData.theme.primaryFont = document.getElementById("primaryFont")?.value || ""Segoe UI", sans-serif";
-    window.siteData.theme.headingFont = document.getElementById("headingFont")?.value || ""Playfair Display", serif";
+    window.siteData.theme.primaryFont = document.getElementById("primaryFont")?.value || "'Segoe UI', sans-serif";
+    window.siteData.theme.headingFont = document.getElementById("headingFont")?.value || "'Playfair Display', serif";
     window.siteData.theme.baseFontSize = parseInt(document.getElementById("baseFontSize")?.value) || 16;
     window.siteData.theme.headingFontSize = parseInt(document.getElementById("headingFontSize")?.value) || 32;
     
@@ -280,11 +906,18 @@ function updateSiteDataFromThemeForm() {
 
 function setFieldValue(fieldId, value) {
     const field = document.getElementById(fieldId);
-    if (field  value !== undefined) {
+    if (field && value !== undefined) {
         field.value = value;
     }
 }
 
 // Export functions for global access
 window.initializeTheme = initializeTheme;
+window.loadBackgroundSettings = loadBackgroundSettings;
+window.saveBackgroundSettings = saveBackgroundSettings;
+window.resetBackgroundSettings = resetBackgroundSettings;
+window.useDefaultStoryBackground = useDefaultStoryBackground;
+window.useDefaultBigEventBackground = useDefaultBigEventBackground;
+window.useDefaultGiftRegistryBackground = useDefaultGiftRegistryBackground;
+window.handleBackgroundUpload = handleBackgroundUpload;
 </script>

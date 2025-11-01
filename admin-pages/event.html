@@ -409,9 +409,15 @@
 <script>
 console.log('🚀 EVENT MANAGEMENT SCRIPT LOADING...');
 
-// Global variables
-let events = [];
-let currentEventId = null;
+// Global variables - use window.eventManager to avoid duplicate declaration errors
+if (typeof window.eventManager === 'undefined') {
+    window.eventManager = {
+        events: [],
+        currentEventId: null
+    };
+}
+
+// Use window.eventManager directly - no local variables to avoid redeclaration issues
 
 // Format date for display
 function formatDate(dateString) {
@@ -491,19 +497,20 @@ async function loadEvents() {
         const data = await response.json();
         
         if (data && data.success && data.data) {
-            events = data.data.events || [];
-            console.log('📋 Loaded events from API:', events);
+            window.eventManager.events = data.data.events || [];
+            console.log('📋 Loaded events from API:', window.eventManager.events);
             
             // Nếu không có sự kiện nào, tạo dữ liệu mặc định
-            if (events.length === 0) {
+            if (window.eventManager.events.length === 0) {
                 console.log('📋 No events found, creating default events...');
-                events = createDefaultEvents();
+                window.eventManager.events = createDefaultEvents();
+                console.log('📋 Created default events:', window.eventManager.events);
                 // Lưu dữ liệu mặc định vào API
                 await saveEventsToAPI();
             }
         } else {
             console.log('📋 No API data, creating default events...');
-            events = createDefaultEvents();
+            window.eventManager.events = createDefaultEvents();
             // Lưu dữ liệu mặc định vào API
             await saveEventsToAPI();
         }
@@ -512,7 +519,7 @@ async function loadEvents() {
     } catch (error) {
         console.error('📋 Error loading events:', error);
         console.log('📋 Creating default events due to error...');
-        events = createDefaultEvents();
+        window.eventManager.events = createDefaultEvents();
         renderEventsList();
     }
 }
@@ -522,7 +529,7 @@ function renderEventsList() {
     const container = document.getElementById('eventsList');
     if (!container) return;
     
-    if (events.length === 0) {
+    if (window.eventManager.events.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-calendar-plus"></i>
@@ -533,7 +540,7 @@ function renderEventsList() {
         return;
     }
     
-    container.innerHTML = events.map((event, index) => `
+    container.innerHTML = window.eventManager.events.map((event, index) => `
         <div class="event-card" data-event-id="${index}">
             <div class="event-header">
                 <div class="event-info">
@@ -571,7 +578,7 @@ function renderEventsList() {
             
             ${event.address ? `<div class="event-detail"><i class="fas fa-home"></i><span>${event.address}</span></div>` : ''}
             
-            ${event.image ? `<img src="${event.image}" alt="Event Image" class="event-image" onerror="this.src='./public/images/default/event-default.webp'">` : ''}
+            ${event.image ? `<img src="${event.image}" alt="Event Image" class="event-image" onerror="if (!this.dataset.errorHandled) { this.dataset.errorHandled = 'true'; if (this.src && this.src.includes('event-default.webp')) { this.style.display = 'none'; } else { const defaultImg = './public/images/default/event-default.webp'; if (this.src !== defaultImg && this.src !== window.location.origin + '/' + defaultImg) { this.src = defaultImg; } else { this.style.display = 'none'; } } }">` : ''}
             
             ${event.description ? `<div class="mt-2"><small class="text-muted">${event.description}</small></div>` : ''}
         </div>
@@ -625,14 +632,15 @@ function setupEventListeners() {
 // Open event modal
 function openEventModal(eventId = null) {
     console.log('📋 Opening event modal, eventId:', eventId);
-    currentEventId = eventId;
+    window.eventManager.currentEventId = eventId;
     const modalElement = document.getElementById('eventModal');
     const modalTitle = document.getElementById('eventModalLabel');
     
-    if (eventId !== null) {
+        if (eventId !== null) {
         // Edit mode
         modalTitle.textContent = 'Chỉnh sửa sự kiện';
-        const event = events[eventId];
+        const event = window.eventManager.events[eventId];
+        window.eventManager.currentEventId = eventId;
         if (event) {
             document.getElementById('eventTitle').value = event.title || '';
             document.getElementById('eventName').value = event.name || '';
@@ -701,9 +709,11 @@ async function saveEvent() {
             console.log('📸 Uploading image...');
             imageUrl = await uploadEventImage(imageFile);
             console.log('📸 Image uploaded:', imageUrl);
-        } else if (currentEventId !== null && events[currentEventId] && events[currentEventId].image) {
+        } else if (window.eventManager.currentEventId !== null && 
+                   window.eventManager.events[window.eventManager.currentEventId] && 
+                   window.eventManager.events[window.eventManager.currentEventId].image) {
             // Keep existing image if no new image selected
-            imageUrl = events[currentEventId].image;
+            imageUrl = window.eventManager.events[window.eventManager.currentEventId].image;
         }
         
         const eventData = {
@@ -719,17 +729,19 @@ async function saveEvent() {
             image: imageUrl
         };
         
-        if (currentEventId !== null) {
+        if (window.eventManager.currentEventId !== null) {
             // Delete old image if updating and new image is different
-            if (events[currentEventId] && events[currentEventId].image && imageUrl !== events[currentEventId].image) {
-                console.log('🗑️ Deleting old image:', events[currentEventId].image);
-                await deleteEventImage(events[currentEventId].image);
+            if (window.eventManager.events[window.eventManager.currentEventId] && 
+                window.eventManager.events[window.eventManager.currentEventId].image && 
+                imageUrl !== window.eventManager.events[window.eventManager.currentEventId].image) {
+                console.log('🗑️ Deleting old image:', window.eventManager.events[window.eventManager.currentEventId].image);
+                await deleteEventImage(window.eventManager.events[window.eventManager.currentEventId].image);
             }
             // Update existing event
-            events[currentEventId] = eventData;
+            window.eventManager.events[window.eventManager.currentEventId] = eventData;
         } else {
             // Add new event
-            events.push(eventData);
+            window.eventManager.events.push(eventData);
         }
         
         // Save to API
@@ -763,9 +775,9 @@ async function saveEvent() {
 // Save events to API
 async function saveEventsToAPI() {
     try {
-        console.log('💾 Saving events to API...');
+        console.log('💾 Saving events to API...', window.eventManager.events);
         
-        // Load current site data
+        // Load current site data to preserve other sections
         const getResponse = await fetch(window.location.origin + '/api/data');
         const currentData = await getResponse.json();
         
@@ -774,18 +786,25 @@ async function saveEventsToAPI() {
             siteData = currentData.data;
         }
         
-        // Update events
-        siteData.events = events;
+        // Update only events section
+        siteData.events = window.eventManager.events;
         
-        console.log('💾 Full site data to save:', siteData);
+        // Update admin timestamp
+        if (!siteData.admin) siteData.admin = {};
+        siteData.admin.lastUpdate = new Date().toISOString();
         
-        // Save to API
+        console.log('💾 Saving events data (preserving other sections)...');
+        
+        // Save to API - only send events and admin to preserve other data
         const response = await fetch(window.location.origin + '/api/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(siteData)
+        body: JSON.stringify({
+            events: window.eventManager.events,
+            admin: siteData.admin
+        })
         });
         
         const result = await response.json();
@@ -824,12 +843,12 @@ async function deleteEvent(eventId) {
     if (result.isConfirmed) {
         try {
             // Delete image file if exists
-            if (events[eventId] && events[eventId].image) {
-                await deleteEventImage(events[eventId].image);
+            if (window.eventManager.events[eventId] && window.eventManager.events[eventId].image) {
+                await deleteEventImage(window.eventManager.events[eventId].image);
             }
             
             // Remove from array
-            events.splice(eventId, 1);
+            window.eventManager.events.splice(eventId, 1);
             
             // Save to API
             await saveEventsToAPI();

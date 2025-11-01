@@ -23,16 +23,77 @@ async function loadSiteData() {
         
         if (result.success && result.data) {
             siteData = result.data;
+            window.siteData = siteData; // Make globally accessible
             isDataLoaded = true;
             
             console.log('✅ Site data loaded from SQLite:', siteData);
+            console.log('📊 DEBUG - API Response data structure:');
+            console.log('   hero:', siteData.hero);
+            console.log('   hero.groomName:', siteData.hero?.groomName);
+            console.log('   hero.brideName:', siteData.hero?.brideName);
+            console.log('   couple:', siteData.couple);
+            console.log('   couple.groom:', siteData.couple?.groom);
+            console.log('   couple.bride:', siteData.couple?.bride);
+            console.log('   visibility:', siteData.visibility);
+            
+            // Check welcome_male-name BEFORE updatePageWithData
+            setTimeout(() => {
+                const welcomeMaleEl = document.getElementById('welcome_male-name');
+                console.log('🔍 DEBUG - BEFORE updatePageWithData():');
+                console.log('   welcome_male-name element:', welcomeMaleEl);
+                console.log('   welcome_male-name current value:', welcomeMaleEl ? welcomeMaleEl.textContent : 'NOT FOUND');
+            }, 100);
+            
+            // Update biicore with backgrounds if available
+            if (window.biicore && siteData.backgrounds) {
+                if (!window.biicore.backgrounds) {
+                    window.biicore.backgrounds = {};
+                }
+                window.biicore.backgrounds = { ...window.biicore.backgrounds, ...siteData.backgrounds };
+                console.log('✅ Backgrounds added to biicore:', window.biicore.backgrounds);
+            }
             
             // Update the page with loaded data
             updatePageWithData();
             
-            // Trigger event for banner slides to update
+            // Apply visibility settings after sections are loaded (multiple attempts)
+            const applyVisibilityWithRetry = (attempts = 0) => {
+                if (attempts > 10) {
+                    console.warn('⚠️ Could not apply visibility settings after 10 attempts');
+                    return;
+                }
+                
+                setTimeout(() => {
+                    // Check if at least one section exists
+                    const hasSections = document.querySelector('#gallery, #story, #couple, #rsvp, #donate');
+                    
+                    if (hasSections || attempts === 0) {
+                        if (typeof applyVisibilitySettings === 'function') {
+                            console.log(`👁️ Applying visibility settings (attempt ${attempts + 1})...`);
+                            applyVisibilitySettings();
+                        }
+                    } else if (attempts < 10) {
+                        applyVisibilityWithRetry(attempts + 1);
+                    }
+                }, attempts === 0 ? 300 : 500);
+            };
+            
+            applyVisibilityWithRetry();
+            
+            // Trigger events for updates
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(new CustomEvent('siteDataUpdated'));
+                window.dispatchEvent(new CustomEvent('siteDataLoaded', { detail: siteData }));
+                
+                // Also trigger biicoreLoaded if backgrounds were updated
+                if (siteData.backgrounds) {
+                    window.dispatchEvent(new CustomEvent('biicoreLoaded'));
+                }
+                
+                // Trigger theme update if theme is available
+                if (siteData.theme) {
+                    window.dispatchEvent(new CustomEvent('themeLoaded'));
+                }
             }
             
             return;
@@ -72,6 +133,64 @@ function updatePageWithData() {
     updateElement('welcome_female-name', brideName);
     updateElement('invitation_male-name', groomName);
     updateElement('invitation_female-name', brideName);
+    
+    // Force update welcome_male-name and welcome_female-name directly (they might be in banner section)
+    // Retry multiple times to ensure banner section is loaded
+    const updateWelcomeNames = () => {
+        const welcomeMaleEl = document.getElementById('welcome_male-name');
+        const welcomeFemaleEl = document.getElementById('welcome_female-name');
+        
+        console.log('🔍 Retry update welcome names:');
+        console.log('   welcome_male-name element:', welcomeMaleEl);
+        console.log('   welcome_female-name element:', welcomeFemaleEl);
+        console.log('   Expected groomName:', groomName);
+        console.log('   Expected brideName:', brideName);
+        
+        if (welcomeMaleEl) {
+            const currentValue = welcomeMaleEl.textContent.trim();
+            console.log('   welcome_male-name current value:', currentValue);
+            if (groomName && groomName !== 'Tên chú rể' && currentValue !== groomName) {
+                welcomeMaleEl.textContent = groomName;
+                console.log(`✅ Updated welcome_male-name: "${currentValue}" -> "${groomName}"`);
+            } else if (currentValue === groomName) {
+                console.log(`✅ welcome_male-name already correct: "${groomName}"`);
+            }
+        } else {
+            console.log('   ⚠️ welcome_male-name element NOT FOUND');
+        }
+        
+        if (welcomeFemaleEl) {
+            const currentValue = welcomeFemaleEl.textContent.trim();
+            console.log('   welcome_female-name current value:', currentValue);
+            if (brideName && brideName !== 'Tên cô dâu' && currentValue !== brideName) {
+                welcomeFemaleEl.textContent = brideName;
+                console.log(`✅ Updated welcome_female-name: "${currentValue}" -> "${brideName}"`);
+            } else if (currentValue === brideName) {
+                console.log(`✅ welcome_female-name already correct: "${brideName}"`);
+            }
+        } else {
+            console.log('   ⚠️ welcome_female-name element NOT FOUND');
+        }
+    };
+    
+    // Retry multiple times
+    let retryCount = 0;
+    const maxRetries = 10;
+    const retryInterval = 500;
+    
+    function retryUpdateWelcomeNames() {
+        updateWelcomeNames();
+        retryCount++;
+        if (retryCount < maxRetries) {
+            setTimeout(retryUpdateWelcomeNames, retryInterval);
+        } else {
+            console.log('🔄 Finished retry attempts');
+        }
+    }
+    
+    // Start retry immediately and then at intervals
+    updateWelcomeNames(); // First attempt immediately
+    setTimeout(retryUpdateWelcomeNames, retryInterval); // Then retry at intervals
     
     // Update couple descriptions with fallback to placeholder text
     const groomDescription = siteData.couple?.groom?.description || 'Mô tả về chú rể';
@@ -179,7 +298,125 @@ function updatePageWithData() {
         }
     }
     
+    // Update backgrounds - trigger background loaders
+    if (siteData.backgrounds) {
+        console.log('🖼️ Backgrounds data available:', siteData.backgrounds);
+        
+        // Trigger background loading functions if they exist
+        if (typeof loadStoryBackground === 'function') {
+            setTimeout(loadStoryBackground, 300);
+        }
+        if (typeof loadBigEventBackground === 'function') {
+            setTimeout(loadBigEventBackground, 300);
+        }
+        if (typeof loadGiftRegistryBackground === 'function') {
+            setTimeout(loadGiftRegistryBackground, 300);
+        }
+    }
+    
+    // Theme colors disabled - use default colors
+    // applyThemeColors(); // Commented out
+    
+    // Apply visibility settings
+    applyVisibilitySettings();
+    
     console.log('✅ Page updated with data');
+}
+
+// Theme colors function disabled
+// function applyThemeColors() {
+//     // Disabled - use default colors
+// }
+
+// Apply visibility settings from admin panel
+function applyVisibilitySettings() {
+    console.log('👁️ Applying visibility settings...');
+    
+    if (!siteData || !siteData.visibility || !siteData.visibility.sections) {
+        console.log('⚠️ No visibility settings found, showing all sections by default');
+        return;
+    }
+    
+    const visibility = siteData.visibility.sections;
+    console.log('👁️ Visibility settings:', visibility);
+    
+    // Map admin settings to section IDs on index page
+    const sectionMap = {
+        gallery: '#gallery',
+        story: '#story',
+        couple: '#couple',
+        rsvp: '#rsvp',
+        donate: '#donate',
+        // invitation is controlled by showRSVP
+        audio: 'audio' // Special handling for audio
+    };
+    
+    // Apply visibility for each section
+    Object.keys(sectionMap).forEach(key => {
+        const sectionId = sectionMap[key];
+        const isVisible = visibility[key] !== false; // Default to true if not set
+        
+        if (key === 'audio') {
+            // Handle audio player visibility
+            const audioElements = document.querySelectorAll('audio');
+            audioElements.forEach(audio => {
+                if (isVisible) {
+                    audio.style.display = 'block';
+                } else {
+                    audio.style.display = 'none';
+                }
+            });
+            
+            // Also hide/show audio control buttons if any
+            const audioControls = document.querySelectorAll('.audio-control, .music-control, .bii-player');
+            audioControls.forEach(control => {
+                if (isVisible) {
+                    control.style.display = 'block';
+                } else {
+                    control.style.display = 'none';
+                }
+            });
+        } else {
+            // Handle regular sections
+            const section = document.querySelector(sectionId);
+            if (section) {
+                if (isVisible) {
+                    section.style.display = '';
+                    section.style.visibility = '';
+                    section.classList.remove('hidden');
+                    section.removeAttribute('hidden');
+                } else {
+                    section.style.display = 'none';
+                    section.style.visibility = 'hidden';
+                    section.classList.add('hidden');
+                    section.setAttribute('hidden', 'true');
+                }
+                console.log(`👁️ Section ${sectionId}: ${isVisible ? 'SHOWN' : 'HIDDEN'}`);
+            } else {
+                console.log(`⚠️ Section ${sectionId} not found on page`);
+            }
+        }
+    });
+    
+    // Handle invitation section (bigevent) - controlled by showRSVP
+    const invitationSection = document.querySelector('#invitation');
+    if (invitationSection) {
+        const showInvitation = visibility.rsvp !== false;
+        if (showInvitation) {
+            invitationSection.style.display = '';
+            invitationSection.style.visibility = '';
+            invitationSection.classList.remove('hidden');
+            invitationSection.removeAttribute('hidden');
+        } else {
+            invitationSection.style.display = 'none';
+            invitationSection.style.visibility = 'hidden';
+            invitationSection.classList.add('hidden');
+            invitationSection.setAttribute('hidden', 'true');
+        }
+        console.log(`👁️ Section #invitation: ${showInvitation ? 'SHOWN' : 'HIDDEN'}`);
+    }
+    
+    console.log('✅ Visibility settings applied');
 }
 
 // Update couple images
@@ -226,24 +463,31 @@ function updateElement(selector, value) {
     if (!value) return;
     
     console.log(`🔍 Looking for element: ${selector}, value: ${value}`);
-    const element = document.querySelector(`[data-field="${selector}"], #${selector}, .${selector}`);
+    
+    // Try getElementById first (most reliable for IDs)
+    let element = document.getElementById(selector);
+    
+    // If not found by ID, try querySelector
+    if (!element) {
+        element = document.querySelector(`[data-field="${selector}"], #${selector}, .${selector}`);
+    }
+    
     if (element) {
         if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
             element.value = value;
         } else {
             element.textContent = value;
         }
-        console.log(`✅ Updated ${selector}: ${value}`);
+        console.log(`✅ Updated ${selector}: ${value} (found by ${element === document.getElementById(selector) ? 'getElementById' : 'querySelector'})`);
     } else {
         console.log(`❌ Element not found: ${selector}`);
-        // Try to find by exact ID
-        const elementById = document.getElementById(selector);
-        if (elementById) {
-            elementById.textContent = value;
-            console.log(`✅ Updated by ID ${selector}: ${value}`);
-        } else {
-            console.log(`❌ Element by ID not found: ${selector}`);
-        }
+        // Debug: Try to find similar elements
+        const allWithName = document.querySelectorAll('[id*="name"], [id*="Name"]');
+        console.log(`   Similar elements found:`, Array.from(allWithName).map(el => ({
+            id: el.id,
+            tagName: el.tagName,
+            text: el.textContent?.substring(0, 30)
+        })));
     }
 }
 
@@ -362,9 +606,28 @@ window.addEventListener('load', function() {
     }
 });
 
+// Listen for theme updates - disabled
+window.addEventListener('siteDataLoaded', function() {
+    // setTimeout(applyThemeColors, 200); // Disabled
+    setTimeout(updatePageWithData, 500);
+});
+
+window.addEventListener('themeLoaded', function() {
+    // setTimeout(applyThemeColors, 200); // Disabled
+});
+
+// Also update when window loads to catch any late-loading sections
+window.addEventListener('load', function() {
+    if (isDataLoaded && siteData) {
+        setTimeout(updatePageWithData, 1000);
+    }
+});
+
+
 // Make functions globally available
 window.loadSiteData = loadSiteData;
 window.updatePageWithData = updatePageWithData;
+// window.applyThemeColors = applyThemeColors; // Disabled
 // Normalize image path to ensure it's a full URL
 function normalizeImagePath(src) {
     if (!src) return '';

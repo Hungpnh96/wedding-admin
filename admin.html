@@ -1176,11 +1176,6 @@
         <!-- Navigation -->
         <ul class="nav nav-pills admin-nav" id="adminTabs" role="tablist">
                    <li class="nav-item" role="presentation">
-                       <button class="nav-link" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview" type="button" role="tab">
-                           <i class="fas fa-tachometer-alt me-2"></i>Tổng quan
-                       </button>
-                   </li>
-                   <li class="nav-item" role="presentation">
                        <button class="nav-link active" id="hero-tab" data-bs-toggle="pill" data-bs-target="#hero" type="button" role="tab">
                            <i class="fas fa-star me-2"></i>Trang chủ
                        </button>
@@ -1226,18 +1221,8 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="layout-tab" data-bs-toggle="pill" data-bs-target="#layout" type="button" role="tab">
-                    <i class="fas fa-th-large me-2"></i>Bố cục
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
                 <button class="nav-link" id="backup-tab" data-bs-toggle="pill" data-bs-target="#backup" type="button" role="tab">
                     <i class="fas fa-database me-2"></i>Backup
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab">
-                    <i class="fas fa-cog me-2"></i>Cài đặt
                 </button>
             </li>
         </ul>
@@ -1630,15 +1615,38 @@
                     contentContainer.innerHTML = html;
                     
                     // Execute JavaScript from loaded content
+                    // Remove old scripts first to avoid duplicate declarations
+                    const oldScripts = document.querySelectorAll(`script[data-dynamic-tab="${tabName}"]`);
+                    oldScripts.forEach(oldScript => oldScript.remove());
+                    
                     const scripts = contentContainer.querySelectorAll('script');
-                    scripts.forEach(script => {
-                        const newScript = document.createElement('script');
+                    scripts.forEach((script, index) => {
+                        // Only execute inline scripts, skip if src (external scripts handle their own cleanup)
                         if (script.src) {
-                            newScript.src = script.src;
+                            // For external scripts, check if already loaded
+                            const existingScript = document.querySelector(`script[src="${script.src}"]`);
+                            if (!existingScript) {
+                                const newScript = document.createElement('script');
+                                newScript.setAttribute('data-dynamic-tab', tabName);
+                                newScript.src = script.src;
+                                document.head.appendChild(newScript);
+                            }
                         } else {
-                            newScript.textContent = script.textContent;
+                            // For inline scripts, wrap in IIFE and check execution flag
+                            const scriptId = `inline-${tabName}-${index}`;
+                            const existingScript = document.querySelector(`script[id="${scriptId}"]`);
+                            
+                            if (!existingScript) {
+                                const newScript = document.createElement('script');
+                                newScript.id = scriptId;
+                                newScript.setAttribute('data-dynamic-tab', tabName);
+                                
+                                // For inline scripts, use as-is (let script handle its own duplicate prevention)
+                                newScript.textContent = script.textContent;
+                                
+                                document.head.appendChild(newScript);
+                            }
                         }
-                        document.head.appendChild(newScript);
                     });
                     
                     initializeTabContent(tabName);

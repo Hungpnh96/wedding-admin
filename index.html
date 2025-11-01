@@ -622,38 +622,44 @@
                 z-index: 9999;
               }
               
-              /* Giới hạn phạm vi hiệu ứng snowfall */
+              /* Giới hạn phạm vi hiệu ứng snowfall/hearts - không tràn trang */
               .snowfall-flakes {
-                max-height: 100vh !important;
-                pointer-events: none;
-                overflow: hidden;
+                pointer-events: none !important;
+                position: fixed !important;
+                z-index: 999 !important;
+                max-height: calc(100vh - 100px) !important; /* Trừ đi khoảng cho footer */
               }
               
-              /* Đảm bảo ảnh không tràn ra ngoài viewport */
-              .snowfall-flakes[style*="top"] {
-                max-height: calc(100vh - 50px) !important;
-              }
-              
-              /* Chỉ ẩn overflow cho container chứa snowfall */
+              /* Container để giới hạn hearts không vượt quá viewport */
               body:has(.snowfall-flakes) {
-                overflow-x: hidden;
+                overflow-x: hidden !important;
+                position: relative !important;
               }
               
-              /* Đảm bảo footer hiển thị đúng */
+              /* Đảm bảo footer hiển thị đúng và không bị che */
               #footer-onepage {
                 position: relative !important;
-                z-index: 1 !important;
+                
                 clear: both !important;
+                margin-top: 0 !important;
               }
               
-              /* Đảm bảo snowfall không che footer */
+              /* Đảm bảo hearts không vượt quá viewport height */
               .snowfall-flakes {
-                z-index: 999 !important;
+                will-change: transform !important;
               }
               
-              /* Đảm bảo footer luôn ở trên cùng */
-              #footer-onepage {
-                z-index: 1000 !important;
+              /* Ẩn hearts khi vượt quá viewport */
+              .snowfall-flakes[style*="top"] {
+                transition: opacity 0.3s ease-out !important;
+              }
+              
+              
+              
+              /* Đảm bảo menu-access luôn ở trên footer */
+              #menu-access {
+                z-index: 10001 !important;
+                position: fixed !important;
               }
   
               .spinner {
@@ -1686,24 +1692,77 @@ setInterval(function() {
     }
 }, 3000); // Check every 3 seconds
 
-// Giới hạn phạm vi hiệu ứng snowfall
+// Remove duplicate audio players and bii-player elements
+window.addEventListener('load', function() {
+    // Remove duplicate audio elements (keep only the first one with id="backgroundAudio")
+    setTimeout(function() {
+        const allAudios = document.querySelectorAll('audio');
+        let foundBackgroundAudio = false;
+        
+        allAudios.forEach((audio, index) => {
+            if (audio.id === 'backgroundAudio') {
+                if (foundBackgroundAudio) {
+                    // Duplicate - remove it
+                    console.log('🗑️ Removing duplicate audio with id="backgroundAudio"');
+                    audio.remove();
+                } else {
+                    foundBackgroundAudio = true;
+                }
+            } else if (!audio.id) {
+                // Audio without ID - likely duplicate from biiiiiiiiiiiiii.js
+                if (foundBackgroundAudio || index > 0) {
+                    console.log('🗑️ Removing duplicate audio element (no ID)');
+                    audio.remove();
+                } else {
+                    // First audio without ID - set ID for reference
+                    audio.id = 'backgroundAudio';
+                    foundBackgroundAudio = true;
+                }
+            }
+        });
+        
+        // Remove duplicate bii-player elements (keep only the first one)
+        const allBiiPlayers = document.querySelectorAll('.bii-player');
+        if (allBiiPlayers.length > 1) {
+            console.log(`🗑️ Found ${allBiiPlayers.length} bii-player elements, removing duplicates`);
+            for (let i = 1; i < allBiiPlayers.length; i++) {
+                allBiiPlayers[i].remove();
+                console.log(`🗑️ Removed duplicate bii-player #${i + 1}`);
+            }
+        }
+        
+        // Ensure only one audio element exists and has correct ID
+        const remainingAudios = document.querySelectorAll('audio');
+        if (remainingAudios.length > 1) {
+            console.log(`🗑️ Still ${remainingAudios.length} audio elements, removing all except first`);
+            for (let i = 1; i < remainingAudios.length; i++) {
+                remainingAudios[i].remove();
+            }
+        }
+        
+        // Set ID for first audio if it doesn't have one
+        const firstAudio = document.querySelector('audio');
+        if (firstAudio && !firstAudio.id) {
+            firstAudio.id = 'backgroundAudio';
+            console.log('✅ Set id="backgroundAudio" for audio element');
+        }
+    }, 1500); // Wait after biiiiiiiiiiiiii.js creates audio player
+});
+
+// Giới hạn phạm vi hiệu ứng snowfall/hearts - không tràn trang
 window.addEventListener('load', function() {
     // Đợi hiệu ứng snowfall được khởi tạo
     setTimeout(function() {
         const flakes = document.querySelectorAll('.snowfall-flakes');
         if (flakes.length === 0) return; // Không có flakes thì thoát
         
+        const maxHeight = window.innerHeight - 100; // Trừ đi khoảng cho footer
+        const footer = document.getElementById('footer-onepage');
+        const footerHeight = footer ? footer.offsetHeight : 100;
         const viewportHeight = window.innerHeight;
+        const safeHeight = viewportHeight - footerHeight - 50; // An toàn hơn
         
-        flakes.forEach(function(flake) {
-            // Giới hạn vị trí top không vượt quá viewport
-            const currentTop = parseInt(flake.style.top) || 0;
-            if (currentTop > viewportHeight) {
-                flake.style.top = (viewportHeight - 100) + 'px';
-            }
-        });
-        
-        // Kiểm tra và cập nhật định kỳ - chỉ khi có flakes
+        // Kiểm tra và cập nhật định kỳ để đảm bảo hearts không tràn
         const snowfallInterval = setInterval(function() {
             const flakes = document.querySelectorAll('.snowfall-flakes');
             if (flakes.length === 0) {
@@ -1711,16 +1770,43 @@ window.addEventListener('load', function() {
                 return;
             }
             
-            const viewportHeight = window.innerHeight;
+            // Tính lại viewport height khi resize
+            const currentViewportHeight = window.innerHeight;
+            const currentSafeHeight = currentViewportHeight - (footer ? footer.offsetHeight : 100) - 50;
             
             flakes.forEach(function(flake) {
-                const currentTop = parseInt(flake.style.top) || 0;
-                if (currentTop > viewportHeight - 50) {
+                // Lấy vị trí top hiện tại
+                const computedStyle = window.getComputedStyle(flake);
+                let currentTop = parseInt(flake.style.top) || parseInt(computedStyle.top) || 0;
+                
+                // Nếu flake vượt quá safe height, ẩn nó
+                if (currentTop > currentSafeHeight) {
                     flake.style.opacity = '0';
-                    flake.style.transition = 'opacity 0.3s ease-out';
+                    flake.style.visibility = 'hidden';
+                    flake.style.pointerEvents = 'none';
+                } else if (currentTop > currentSafeHeight - 50) {
+                    // Bắt đầu fade out khi gần đến giới hạn
+                    const opacity = 1 - ((currentTop - (currentSafeHeight - 50)) / 50);
+                    flake.style.opacity = Math.max(0, opacity);
+                } else {
+                    // Đảm bảo opacity bình thường khi còn trong vùng an toàn
+                    if (parseFloat(flake.style.opacity) < 1) {
+                        flake.style.opacity = '1';
+                        flake.style.visibility = 'visible';
+                    }
+                }
+                
+                // Đảm bảo flake không vượt quá max height
+                if (currentTop > currentSafeHeight) {
+                    flake.style.top = (currentSafeHeight - 10) + 'px';
                 }
             });
-        }, 1000);
+        }, 200); // Kiểm tra thường xuyên hơn để mượt hơn
+        
+        // Cleanup khi page unload
+        window.addEventListener('beforeunload', function() {
+            clearInterval(snowfallInterval);
+        });
         
     }, 2000); // Đợi 2 giây để hiệu ứng khởi tạo
 });

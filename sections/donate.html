@@ -160,51 +160,126 @@
       </section>
 
 <script>
-// Load payment data from API
-async function loadPaymentData() {
+// Load payment data from site_data (biicore) or API with retry mechanism
+async function loadPaymentData(retryCount = 0) {
+    const MAX_RETRIES = 10;
+    const RETRY_DELAY = 500;
+    
     try {
-        console.log('🔄 Loading payment data from API...');
-        const response = await window.apiCall('/payment/frontend');
-        const data = await response.json();
+        console.log(`🔄 Loading payment data (attempt ${retryCount + 1}/${MAX_RETRIES})...`);
         
-        if (data.success) {
-            console.log('✅ Payment data loaded successfully:', data.data);
-            renderPaymentData(data.data);
-        } else {
-            console.error('❌ Failed to load payment data:', data.message);
+        // Ưu tiên load từ biicore (site_data)
+        let paymentData = null;
+        
+        if (window.biicore && window.biicore.payment) {
+            console.log('✅ Loading payment from biicore:', window.biicore.payment);
+            paymentData = {
+                global_message: window.biicore.payment.global_message || '',
+                payments: window.biicore.payment.payments || []
+            };
+        } else if (window.siteData && window.siteData.payment) {
+            console.log('✅ Loading payment from siteData:', window.siteData.payment);
+            paymentData = {
+                global_message: window.siteData.payment.global_message || '',
+                payments: window.siteData.payment.payments || []
+            };
+        }
+        
+        // Nếu có data từ site_data, sử dụng nó
+        if (paymentData && paymentData.payments && Array.isArray(paymentData.payments)) {
+            // Kiểm tra xem có payments không (có thể là empty array - vẫn OK)
+            console.log(`✅ Payment data loaded from site_data: ${paymentData.payments.length} payments`);
+            renderPaymentData(paymentData);
+            return;
+        }
+        
+        // Nếu chưa có biicore/siteData và chưa retry hết, đợi và retry
+        if (retryCount < MAX_RETRIES && (!window.biicore || !window.siteData)) {
+            console.log(`⏳ Waiting for biicore/siteData to load... (${retryCount + 1}/${MAX_RETRIES})`);
+            setTimeout(() => {
+                loadPaymentData(retryCount + 1);
+            }, RETRY_DELAY);
+            return;
+        }
+        
+        // Fallback: load từ API nếu không có trong site_data
+        console.log('🔄 No payment data in site_data, trying API...');
+        try {
+            const response = await window.apiCall('/payment/frontend');
+            const data = await response.json();
+            
+            if (data.success && data.data) {
+                console.log('✅ Payment data loaded from API:', data.data);
+                renderPaymentData(data.data);
+            } else {
+                console.warn('⚠️ API returned no data');
+                renderDefaultPaymentData();
+            }
+        } catch (apiError) {
+            console.error('❌ Error loading payment data from API:', apiError);
             renderDefaultPaymentData();
         }
     } catch (error) {
         console.error('❌ Error loading payment data:', error);
-        renderDefaultPaymentData();
+        
+        // Retry nếu chưa retry hết
+        if (retryCount < MAX_RETRIES) {
+            setTimeout(() => {
+                loadPaymentData(retryCount + 1);
+            }, RETRY_DELAY);
+        } else {
+            renderDefaultPaymentData();
+        }
     }
 }
 
-// Render payment data from API
+// Render payment data from site_data or API
 function renderPaymentData(paymentData) {
     const globalMessageEl = document.getElementById('payment-global-message');
     const cardsContainer = document.getElementById('payment-cards-container');
     
+    if (!paymentData) {
+        console.warn('⚠️ No payment data provided');
+        renderDefaultPaymentData();
+        return;
+    }
+    
     // Show global message if exists
     if (paymentData.global_message && paymentData.global_message.trim()) {
-        globalMessageEl.innerHTML = paymentData.global_message;
-        globalMessageEl.style.display = 'block';
+        if (globalMessageEl) {
+            globalMessageEl.innerHTML = paymentData.global_message;
+            globalMessageEl.style.display = 'block';
+        }
     } else {
-        globalMessageEl.style.display = 'none';
+        if (globalMessageEl) {
+            globalMessageEl.style.display = 'none';
+        }
+    }
+    
+    if (!cardsContainer) {
+        console.error('❌ Payment cards container not found');
+        return;
     }
     
     // Clear existing cards
     cardsContainer.innerHTML = '';
     
+    // Lọc chỉ hiển thị payments đang active
+    const activePayments = (paymentData.payments || []).filter(p => p.is_active !== false);
+    
     // Render payment cards
-    if (paymentData.payments && paymentData.payments.length > 0) {
-        paymentData.payments.forEach((payment, index) => {
+    if (activePayments.length > 0) {
+        activePayments.forEach((payment, index) => {
             const cardHtml = createPaymentCard(payment, index);
             cardsContainer.innerHTML += cardHtml;
         });
+        console.log(`✅ Rendered ${activePayments.length} payment cards`);
+        paymentDataLoaded = true; // Mark as loaded successfully
     } else {
         // No payment data, show default
+        console.warn('⚠️ No active payments found');
         renderDefaultPaymentData();
+        paymentDataLoaded = true; // Still mark as loaded (empty state is valid)
     }
 }
 
@@ -282,19 +357,46 @@ function renderDefaultPaymentData() {
     });
 }
 
+// Track if data has been loaded successfully
+let paymentDataLoaded = false;
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔄 DOM loaded, initializing payment data...');
-    loadPaymentData();
+    
+    // Start loading immediately with retry mechanism
+    loadPaymentData(0);
 });
 
 // Also initialize when window loads (fallback)
 window.addEventListener('load', function() {
     console.log('🔄 Window loaded, checking payment data...');
     const cardsContainer = document.getElementById('payment-cards-container');
-    if (cardsContainer && cardsContainer.children.length === 0) {
-        console.log('🔄 No payment cards found, loading data...');
-        loadPaymentData();
+    
+    // Only retry if data hasn't been loaded and container is empty
+    if (!paymentDataLoaded && cardsContainer && cardsContainer.children.length === 0) {
+        console.log('🔄 No payment cards found after window load, retrying...');
+        setTimeout(() => {
+            loadPaymentData(0);
+        }, 500);
     }
 });
+
+// Listen for biicore update events
+if (typeof window !== 'undefined') {
+    window.addEventListener('biicoreLoaded', function() {
+        console.log('🔄 biicore loaded event, refreshing payment data...');
+        if (!paymentDataLoaded) {
+            loadPaymentData(0);
+        }
+    });
+    
+    // Also listen for siteDataLoaded event
+    window.addEventListener('siteDataLoaded', function() {
+        console.log('🔄 siteData loaded event, refreshing payment data...');
+        if (!paymentDataLoaded) {
+            loadPaymentData(0);
+        }
+    });
+}
 </script>

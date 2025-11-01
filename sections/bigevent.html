@@ -115,7 +115,7 @@
    }
 </style>
 
-<section id="invitation" class="editable-parent parallax-background bg-color-overlay padding-divider-top section-divider-bottom-1" style="background-image: url(&quot;https://thiepcuoionline.huythanhjewelry.vn/images/large.webp&quot;); background-position: center -488px;">
+<section id="invitation" class="editable-parent parallax-background bg-color-overlay padding-divider-top section-divider-bottom-1" style="background-position: center -488px;">
     <div class="children" style="display: block">
        <div>
           <div class="container">
@@ -355,4 +355,40 @@ window.bigEventCountdown = {
         }
     }
 };
+
+// Load BigEvent Background
+function loadBigEventBackground() {
+    const invitationEl = document.getElementById('invitation');
+    if (!invitationEl) return;
+    
+    const defaultBackground = './public/images/default/story/default-story-background.svg';
+    let backgroundUrl = defaultBackground;
+    
+    // Load from biicore or siteData
+    if (window.biicore && window.biicore.backgrounds && window.biicore.backgrounds.bigevent) {
+        backgroundUrl = window.biicore.backgrounds.bigevent;
+        console.log('✅ BigEvent background from biicore:', backgroundUrl);
+    } else if (window.siteData && window.siteData.backgrounds && window.siteData.backgrounds.bigevent) {
+        backgroundUrl = window.siteData.backgrounds.bigevent;
+        console.log('✅ BigEvent background from siteData:', backgroundUrl);
+    } else {
+        console.log('📷 Using default bigevent background');
+    }
+    
+    // Apply background
+    invitationEl.style.backgroundImage = `url('${backgroundUrl}')`;
+}
+
+// Initialize background when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(loadBigEventBackground, 500);
+    });
+} else {
+    setTimeout(loadBigEventBackground, 500);
+}
+
+// Listen for data loaded events
+window.addEventListener('biicoreLoaded', loadBigEventBackground);
+window.addEventListener('siteDataLoaded', loadBigEventBackground);
 </script>

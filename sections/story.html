@@ -40,7 +40,7 @@
 <!-- Story Section -->
 <section id="story" class="editable-parent">
     <div class="children" style="display: block">
-        <section id="storysub" class="editable-parent parallax-background bg-color-overlay section-divider-bottom-2 padding-divider-top" style="background-image: url('./public/images/default/story/default-story-background.svg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh;">
+        <section id="storysub" class="editable-parent parallax-background bg-color-overlay section-divider-bottom-2 padding-divider-top" style="background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh;">
             <div class="children" style="display: block">
                 <div class="section-divider-top-1 off-section"></div>
                 <div class="container">
@@ -535,4 +535,43 @@ window.createSampleStories = async function() {
         console.error('Error creating sample stories:', error);
     }
 };
+
+// Load Story Background
+function loadStoryBackground() {
+    const storySubEl = document.getElementById('storysub');
+    if (!storySubEl) {
+        console.warn('⚠️ storysub element not found');
+        return;
+    }
+    
+    const defaultBackground = './public/images/default/story/default-story-background.svg';
+    let backgroundUrl = defaultBackground;
+    
+    // Load from biicore or siteData
+    if (window.biicore && window.biicore.backgrounds && window.biicore.backgrounds.story) {
+        backgroundUrl = window.biicore.backgrounds.story;
+        console.log('✅ Story background from biicore:', backgroundUrl);
+    } else if (window.siteData && window.siteData.backgrounds && window.siteData.backgrounds.story) {
+        backgroundUrl = window.siteData.backgrounds.story;
+        console.log('✅ Story background from siteData:', backgroundUrl);
+    } else {
+        console.log('📷 Using default story background');
+    }
+    
+    // Apply background
+    storySubEl.style.backgroundImage = `url('${backgroundUrl}')`;
+}
+
+// Initialize background when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(loadStoryBackground, 500);
+    });
+} else {
+    setTimeout(loadStoryBackground, 500);
+}
+
+// Listen for data loaded events
+window.addEventListener('biicoreLoaded', loadStoryBackground);
+window.addEventListener('siteDataLoaded', loadStoryBackground);
 </script>

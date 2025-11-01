@@ -9,10 +9,19 @@ let heroData = {};
 // Initialize hero tab
 function initializeHero() {
     console.log('🚀 Initializing hero tab');
+    console.log('📊 Current window.siteData:', window.siteData);
     
-    // Load data from API
+    // First check if window.siteData exists and has data
+    if (window.siteData && Object.keys(window.siteData).length > 0) {
+        console.log('📊 Using existing window.siteData');
+        heroData = window.siteData;
+    }
+    
+    // Load data from API (will update heroData and window.siteData)
     loadHeroDataFromAPI().then(() => {
         console.log('✅ Hero data loaded from API, filling fields...');
+        console.log('📊 Final heroData:', heroData);
+        console.log('📊 Final window.siteData:', window.siteData);
         
         // IMPORTANT: Fill form fields FIRST
         fillHeroFormFields();
@@ -26,7 +35,8 @@ function initializeHero() {
         initializeHeroBannerManagement();
     }).catch(error => {
         console.error('❌ Error loading hero data:', error);
-        if (typeof window.siteData !== 'undefined' && window.siteData) {
+        // Use window.siteData as fallback
+        if (typeof window.siteData !== 'undefined' && window.siteData && Object.keys(window.siteData).length > 0) {
             console.log('📊 Using global siteData as fallback:', window.siteData);
             heroData = window.siteData;
             fillHeroFormFields();
@@ -34,6 +44,16 @@ function initializeHero() {
                 setupHeroEventListeners();
             }, 700);
             initializeHeroBannerManagement();
+        } else {
+            console.error('❌ No data available from API or window.siteData');
+            // Still try to fill fields in case window.siteData gets loaded later
+            setTimeout(() => {
+                fillHeroFormFields();
+                setTimeout(() => {
+                    setupHeroEventListeners();
+                }, 700);
+                initializeHeroBannerManagement();
+            }, 1000);
         }
     });
 }
@@ -98,9 +118,12 @@ async function loadHeroDataFromAPI() {
 function fillHeroFormFields() {
     console.log('🔄 Filling hero form fields...');
     console.log('📊 Hero data:', heroData);
+    console.log('📊 Window siteData:', window.siteData);
     console.log('📊 Hero data keys:', Object.keys(heroData));
-    console.log('📊 heroData.hero exists:', !!heroData.hero);
-    console.log('📊 heroData.hero value:', heroData.hero);
+    
+    // Use heroData or fallback to window.siteData
+    const dataSource = heroData && Object.keys(heroData).length > 0 ? heroData : (window.siteData || {});
+    console.log('📊 Using dataSource:', dataSource);
     
     setTimeout(() => {
         const fields = ['groomName', 'brideName', 'weddingDate', 'weddingTime', 'weddingLocation', 'mainTitle', 'description', 'primaryColor'];
@@ -110,43 +133,105 @@ function fillHeroFormFields() {
             console.log(`  ${fieldId}: ${field ? 'EXISTS' : 'NOT FOUND'}`);
         });
         
-        if (heroData.hero) {
-            console.log('📊 Hero section data:', heroData.hero);
-            console.log('   - groomName:', heroData.hero.groomName);
-            console.log('   - brideName:', heroData.hero.brideName);
-            console.log('   - weddingDate:', heroData.hero.weddingDate);
-            console.log('   - weddingLocation:', heroData.hero.weddingLocation);
-            console.log('   - slides:', heroData.hero.slides);
+        // Try multiple data sources for groom/bride names
+        let groomName = '';
+        let brideName = '';
+        
+        // Priority 1: heroData.hero or dataSource.hero
+        if (dataSource.hero) {
+            groomName = dataSource.hero.groomName || '';
+            brideName = dataSource.hero.brideName || '';
+            console.log('📊 From hero section:', { groomName, brideName });
+        }
+        
+        // Priority 2: couple section (if hero doesn't have names)
+        if ((!groomName || !brideName) && dataSource.couple) {
+            if (!groomName && dataSource.couple.groom) {
+                groomName = dataSource.couple.groom.name || dataSource.couple.groomName || '';
+            }
+            if (!brideName && dataSource.couple.bride) {
+                brideName = dataSource.couple.bride.name || dataSource.couple.brideName || '';
+            }
+            console.log('📊 From couple section:', { groomName, brideName });
+        }
+        
+        // Priority 3: Root level (legacy structure)
+        if (!groomName && dataSource.groomName) {
+            groomName = dataSource.groomName;
+        }
+        if (!brideName && dataSource.brideName) {
+            brideName = dataSource.brideName;
+        }
+        console.log('📊 Final names:', { groomName, brideName });
+        
+        // Fill names
+        if (groomName) {
+            setHeroFieldValue('groomName', groomName);
+            console.log('✅ Set groomName:', groomName);
+        } else {
+            console.warn('⚠️ groomName not found in any data source');
+        }
+        
+        if (brideName) {
+            setHeroFieldValue('brideName', brideName);
+            console.log('✅ Set brideName:', brideName);
+        } else {
+            console.warn('⚠️ brideName not found in any data source');
+        }
+        
+        // Fill hero section data
+        if (dataSource.hero) {
+            console.log('📊 Hero section data:', dataSource.hero);
             
-            setHeroFieldValue('groomName', heroData.hero.groomName);
-            setHeroFieldValue('brideName', heroData.hero.brideName);
-            setHeroFieldValue('weddingDate', heroData.hero.weddingDate);
-            setHeroFieldValue('weddingTime', heroData.hero.weddingTime || '11:00');
-            setHeroFieldValue('weddingLocation', heroData.hero.weddingLocation);
+            setHeroFieldValue('weddingDate', dataSource.hero.weddingDate);
+            setHeroFieldValue('weddingTime', dataSource.hero.weddingTime || '11:00');
+            setHeroFieldValue('weddingLocation', dataSource.hero.weddingLocation);
             
             // Load banner slides
-            if (heroData.hero.slides && heroData.hero.slides.length > 0) {
-                console.log('🖼️ Loading banner slides:', heroData.hero.slides);
-                window.bannerSlides = heroData.hero.slides;
+            if (dataSource.hero.slides && dataSource.hero.slides.length > 0) {
+                console.log('🖼️ Loading banner slides:', dataSource.hero.slides);
+                window.bannerSlides = dataSource.hero.slides;
+                heroData.hero = heroData.hero || {};
+                heroData.hero.slides = dataSource.hero.slides;
                 renderHeroBannerSlides();
             } else {
                 console.log('⚠️ No banner slides found');
             }
         } else {
-            console.log('❌ heroData.hero is missing!');
-            console.log('📊 Full heroData:', heroData);
+            console.log('⚠️ hero section not found in dataSource');
             
-            // Try to get data from API directly
+            // Try direct API call as last resort
             fetch(window.location.origin + '/api/data')
                 .then(response => response.json())
                 .then(data => {
                     console.log('🔄 Direct API call result:', data);
-                    if (data.data?.hero) {
-                        console.log('📊 Found hero data in API:', data.data.hero);
-                        setHeroFieldValue('groomName', data.data.hero.groomName);
-                        setHeroFieldValue('brideName', data.data.hero.brideName);
-                        setHeroFieldValue('weddingDate', data.data.hero.weddingDate);
-                        setHeroFieldValue('weddingLocation', data.data.hero.weddingLocation);
+                    if (data.success && data.data) {
+                        const apiData = data.data;
+                        
+                        // Try to get names from API response
+                        const apiGroomName = apiData.hero?.groomName || 
+                                            apiData.couple?.groom?.name || 
+                                            apiData.couple?.groomName || 
+                                            apiData.groomName || '';
+                        const apiBrideName = apiData.hero?.brideName || 
+                                           apiData.couple?.bride?.name || 
+                                           apiData.couple?.brideName || 
+                                           apiData.brideName || '';
+                        
+                        if (apiGroomName) {
+                            setHeroFieldValue('groomName', apiGroomName);
+                            console.log('✅ Set groomName from API:', apiGroomName);
+                        }
+                        if (apiBrideName) {
+                            setHeroFieldValue('brideName', apiBrideName);
+                            console.log('✅ Set brideName from API:', apiBrideName);
+                        }
+                        
+                        if (apiData.hero) {
+                            setHeroFieldValue('weddingDate', apiData.hero.weddingDate);
+                            setHeroFieldValue('weddingLocation', apiData.hero.weddingLocation);
+                        }
+                        
                         console.log('✅ Hero fields filled from direct API call!');
                     }
                 })
@@ -155,15 +240,16 @@ function fillHeroFormFields() {
                 });
         }
         
-        if (heroData.meta) {
-            console.log('📊 Meta section data:', heroData.meta);
-            setHeroFieldValue('mainTitle', heroData.meta.title);
-            setHeroFieldValue('description', heroData.meta.description);
-            setHeroFieldValue('primaryColor', heroData.meta.primaryColor || '#9f5958');
+        // Fill meta data
+        if (dataSource.meta) {
+            console.log('📊 Meta section data:', dataSource.meta);
+            setHeroFieldValue('mainTitle', dataSource.meta.title);
+            setHeroFieldValue('description', dataSource.meta.description);
+            setHeroFieldValue('primaryColor', dataSource.meta.primaryColor || '#9f5958');
         }
         
         console.log('✅ Hero form fields filled');
-    }, 500); // Tăng delay lên 500ms
+    }, 500);
 }
 
 // Set field value

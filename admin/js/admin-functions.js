@@ -650,7 +650,7 @@ function refreshBannerPreview() {
 }
 
 // Save changes to site data
-async function saveChanges() {
+async function saveChanges(onlyVisibility = false) {
     try {
         showAlert('Đang lưu thay đổi...', 'info');
         
@@ -669,13 +669,45 @@ async function saveChanges() {
             Object.assign(window.embeddedSiteData, siteData);
         }
         
+        // Save to API
+        try {
+            let dataToSave = siteData;
+            
+            // If only saving visibility settings, only send visibility section
+            if (onlyVisibility && siteData.visibility) {
+                dataToSave = {
+                    visibility: siteData.visibility,
+                    admin: siteData.admin || {}
+                };
+                console.log('💾 Saving only visibility settings:', dataToSave);
+            }
+            
+            const response = await fetch(window.location.origin + '/api/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSave)
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('✅ Data saved to API:', result);
+            } else {
+                console.warn('⚠️ API save returned non-ok status:', response.status);
+            }
+        } catch (apiError) {
+            console.error('❌ Error saving to API:', apiError);
+            // Don't fail the whole operation if API save fails
+        }
+        
         // Trigger real-time update on index page
         triggerIndexUpdate();
         
         // Show success message
         showAlert('Đã lưu thành công! Website sẽ cập nhật ngay lập tức.', 'success');
         
-        console.log('Changes saved to localStorage:', siteData);
+        console.log('✅ Changes saved:', onlyVisibility ? 'visibility only' : 'full data');
         
     } catch (error) {
         console.error('Error saving changes:', error);
@@ -769,15 +801,44 @@ function handleFileUpload(input) {
 }
 
 // Apply theme
-function applyTheme() {
+async function applyTheme() {
     try {
-        // Update embedded data
-        if (window.embeddedSiteData) {
-            window.embeddedSiteData.theme = siteData.theme;
-            window.embeddedSiteData.layout = siteData.layout;
-        }
+        // Save theme to server
+        if (!window.siteData) window.siteData = {};
         
-        showAlert('Đã áp dụng theme!', 'success');
+        // Get theme values from form
+        window.siteData.theme = {
+            primaryColor: document.getElementById('primaryThemeColor')?.value || window.siteData.theme?.primaryColor || '#9f5958',
+            secondaryColor: document.getElementById('secondaryThemeColor')?.value || window.siteData.theme?.secondaryColor || '#f8f9fa',
+            textColor: document.getElementById('textColor')?.value || window.siteData.theme?.textColor || '#2c3e50',
+            backgroundColor: document.getElementById('backgroundColor')?.value || window.siteData.theme?.backgroundColor || '#ffffff',
+            borderColor: document.getElementById('borderColor')?.value || window.siteData.theme?.borderColor || '#dee2e6',
+            accentColor: document.getElementById('accentColor')?.value || window.siteData.theme?.accentColor || '#e74c3c',
+            customCSS: document.getElementById('customCSS')?.value || window.siteData.theme?.customCSS || ''
+        };
+        
+        // Save to server
+        const response = await fetch(`${window.location.origin}/api/data`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(window.siteData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Update embedded data
+            if (window.embeddedSiteData) {
+                window.embeddedSiteData.theme = window.siteData.theme;
+                window.embeddedSiteData.layout = window.siteData.layout;
+            }
+            
+            showAlert('Đã áp dụng theme! Refresh trang index để xem thay đổi.', 'success');
+        } else {
+            throw new Error(result.message || 'Failed to save theme');
+        }
         
     } catch (error) {
         console.error('Error applying theme:', error);
