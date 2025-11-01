@@ -1241,9 +1241,11 @@ def admin_files(filename):
     """Serve admin files (CSS, JS, etc.)"""
     admin_dir = os.path.join(BASE_DIR, 'admin')
     response = send_from_directory(admin_dir, filename)
-    # Add cache busting for JS/CSS - short cache with revalidation
+    # For JS/CSS - no cache to force fresh load on deploy
     if filename.endswith(('.js', '.css')):
-        response.headers['Cache-Control'] = 'public, max-age=3600, must-revalidate'
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
     else:
         # HTML files in admin - no cache
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
@@ -1256,39 +1258,152 @@ def index_files(filename):
     """Serve index_files (CSS, JS, etc.)"""
     index_files_dir = os.path.join(BASE_DIR, 'index_files')
     response = send_from_directory(index_files_dir, filename)
-    # Short cache for static assets with revalidation
+    # No cache for JS/CSS to force fresh load
     if filename.endswith(('.js', '.css', '.woff', '.woff2', '.ttf', '.eot')):
-        response.headers['Cache-Control'] = 'public, max-age=3600, must-revalidate'
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
     return response
+
+def inject_cache_busting(html_content):
+    """Inject cache busting version into all JS/CSS resources"""
+    import re
+    # Generate version based on current timestamp (changes every deploy)
+    version = int(time.time())
+    
+    # Replace all existing ?v= parameters with new version (do this first)
+    html_content = re.sub(r'\?v=\d+', f'?v={version}', html_content)
+    
+    # Add version to CSS/font files that don't have it (and aren't external URLs)
+    def add_version_to_css(match):
+        quote = match.group(1)
+        url = match.group(2)
+        # Skip external URLs and files that already have version
+        if url.startswith('http') or url.startswith('//') or '?v=' in url:
+            return match.group(0)
+        return f'href={quote}{url}?v={version}{quote}'
+    
+    html_content = re.sub(
+        r'href=(["\'])([^"\']+\.(css|woff|woff2|ttf|eot))(["\'])',
+        add_version_to_css,
+        html_content
+    )
+    
+    # Add version to JS files that don't have it (and aren't external URLs)
+    def add_version_to_js(match):
+        quote = match.group(1)
+        url = match.group(2)
+        # Skip external URLs and files that already have version
+        if url.startswith('http') or url.startswith('//') or '?v=' in url:
+            return match.group(0)
+        return f'src={quote}{url}?v={version}{quote}'
+    
+    html_content = re.sub(
+        r'src=(["\'])([^"\']+\.(js|mjs))(["\'])',
+        add_version_to_js,
+        html_content
+    )
+    
+    # Inject force reload script at the beginning of <head>
+    force_reload_script = f'''
+    <script>
+    // Force cache busting - reload if version mismatch
+    (function() {{
+        const currentVersion = '{version}';
+        const storedVersion = localStorage.getItem('app_version');
+        
+        if (storedVersion && storedVersion !== currentVersion) {{
+            console.log('🔄 New version detected, clearing cache and reloading...');
+            localStorage.clear();
+            sessionStorage.clear();
+            // Clear all caches
+            if ('caches' in window) {{
+                caches.keys().then(function(names) {{
+                    for (let name of names) {{
+                        caches.delete(name);
+                    }}
+                }});
+            }}
+            localStorage.setItem('app_version', currentVersion);
+            // Force reload with cache bypass
+            if (location.reload) {{
+                location.reload(true);
+            }} else {{
+                location.href = location.href.split('#')[0] + '?v=' + Date.now() + '#' + (location.hash || '');
+            }}
+        }} else {{
+            localStorage.setItem('app_version', currentVersion);
+        }}
+    }})();
+    </script>
+    '''
+    
+    # Insert after <head> tag
+    html_content = html_content.replace('<head>', '<head>' + force_reload_script, 1)
+    
+    return html_content
 
 @app.route('/')
 def index():
     """Serve main website"""
-    response = send_from_directory(BASE_DIR, 'index.html')
+    index_path = os.path.join(BASE_DIR, 'index.html')
+    if not os.path.exists(index_path):
+        return "index.html not found", 404
+    
+    # Read and inject cache busting
+    with open(index_path, 'r', encoding='utf-8') as f:
+        html_content = f.read()
+    
+    html_content = inject_cache_busting(html_content)
+    
+    from flask import Response
+    response = Response(html_content, mimetype='text/html')
     # Prevent caching of HTML files
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
     # Add ETag based on file modification time
-    index_path = os.path.join(BASE_DIR, 'index.html')
-    if os.path.exists(index_path):
-        mtime = os.path.getmtime(index_path)
-        response.headers['ETag'] = f'"{int(mtime)}"'
+    mtime = os.path.getmtime(index_path)
+    response.headers['ETag'] = f'"{int(mtime)}"'
     return response
 
 @app.route('/admin.html')
 def admin():
     """Serve admin panel"""
-    response = send_from_directory(BASE_DIR, 'admin.html')
+    admin_path = os.path.join(BASE_DIR, 'admin.html')
+    if not os.path.exists(admin_path):
+        return "admin.html not found", 404
+    
+    # Read and inject cache busting
+    with open(admin_path, 'r', encoding='utf-8') as f:
+        html_content = f.read()
+    
+    html_content = inject_cache_busting(html_content)
+    
+    from flask import Response
+    response = Response(html_content, mimetype='text/html')
     # Prevent caching of admin HTML
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
     # Add ETag
-    admin_path = os.path.join(BASE_DIR, 'admin.html')
-    if os.path.exists(admin_path):
-        mtime = os.path.getmtime(admin_path)
-        response.headers['ETag'] = f'"{int(mtime)}"'
+    mtime = os.path.getmtime(admin_path)
+    response.headers['ETag'] = f'"{int(mtime)}"'
+    return response
+
+@app.route('/public/<path:filename>')
+def public_files(filename):
+    """Serve public files (JS, CSS, images, etc.)"""
+    public_dir = os.path.join(BASE_DIR, 'public')
+    response = send_from_directory(public_dir, filename)
+    # No cache for JS/CSS to force fresh load
+    if filename.endswith(('.js', '.css')):
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    # Images can be cached longer but with revalidation
+    elif filename.endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg')):
+        response.headers['Cache-Control'] = 'public, max-age=86400, must-revalidate'  # 1 day
     return response
 
 @app.route('/<path:filename>')
