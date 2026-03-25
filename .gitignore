@@ -57,3 +57,8 @@ webfonts
 
 # Old uploads directory (migrated to public/images)
 public/uploads/
+
+#Claude kit
+.mcp.json
+CLAUDE.md 
+.Claude
