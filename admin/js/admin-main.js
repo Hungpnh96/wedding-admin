@@ -1441,7 +1441,12 @@ async function saveChanges() {
             });
             return;
         }
-        
+
+        // Sync window.siteData → siteData nếu tab khác đã fetch data mới hơn
+        if (window.siteData && window.siteData !== siteData) {
+            siteData = window.siteData;
+        }
+
         // Update siteData from form
         console.log('Before updateSiteDataFromForm - bannerSlides:', bannerSlides);
         console.log('Before updateSiteDataFromForm - siteData:', siteData);

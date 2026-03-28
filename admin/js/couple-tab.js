@@ -55,6 +55,7 @@ async function loadCoupleDataFromAPI() {
             
             if (typeof window !== 'undefined') {
                 window.siteData = coupleData;
+                siteData = coupleData; // Keep local variable in sync
                 console.log('✅ Updated global siteData');
             }
         } else {
