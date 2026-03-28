@@ -162,13 +162,15 @@ async function handleMultipleUpload(event) {
     
     let successCount = 0;
     let errorCount = 0;
-    
+    const errorMessages = [];
+
     for (const file of files) {
         try {
             await uploadSingleImage(file);
             successCount++;
         } catch (error) {
             console.error('Upload error for', file.name, ':', error);
+            errorMessages.push(`${file.name}: ${error.message}`);
             errorCount++;
         }
     }
@@ -176,21 +178,21 @@ async function handleMultipleUpload(event) {
     Swal.close();
     
     if (successCount > 0) {
+        const errorNote = errorMessages.length > 0
+            ? `<br><small style="color:#856404">⚠️ ${errorCount} ảnh lỗi:<br>${errorMessages.join('<br>')}</small>`
+            : '';
         Swal.fire({
-            icon: 'success',
-            title: 'Thành công!',
-            text: `Đã tải ${successCount} ảnh thành công${errorCount > 0 ? `, ${errorCount} ảnh lỗi` : ''}`,
-            timer: 2000,
-            showConfirmButton: false
+            icon: errorMessages.length > 0 ? 'warning' : 'success',
+            title: 'Hoàn thành',
+            html: `Đã tải <b>${successCount}</b> ảnh thành công${errorNote}`,
+            confirmButtonText: 'OK'
         });
-        
-        // Refresh gallery
-        setTimeout(loadGalleryImages, 1000);
+        setTimeout(loadGalleryImages, 500);
     } else {
         Swal.fire({
             icon: 'error',
             title: 'Lỗi!',
-            text: 'Không thể tải ảnh nào',
+            html: `Không thể tải ảnh nào:<br><small style="color:#666">${errorMessages.join('<br>')}</small>`,
             confirmButtonText: 'OK'
         });
     }
@@ -218,11 +220,23 @@ async function uploadSingleImage(file) {
         method: 'POST',
         body: formData
     });
-    
+
+    if (response.status === 413) {
+        throw new Error('File quá lớn, server từ chối. Kiểm tra client_max_body_size trong Nginx');
+    }
+    if (!response.ok) {
+        throw new Error(`Lỗi server (${response.status}). Vui lòng thử lại`);
+    }
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+        throw new Error('Server trả về lỗi không xác định. Kiểm tra Nginx config');
+    }
+
     const result = await response.json();
-    
+
     if (!result.success) {
-        throw new Error(result.message || 'Upload failed');
+        throw new Error(result.message || 'Upload thất bại');
     }
     
     // Add to gallery
