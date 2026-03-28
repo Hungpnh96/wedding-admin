@@ -86,6 +86,18 @@ class ImageUploadComponent {
                 body: formData
             });
 
+            // Check if response is JSON before parsing
+            const contentType = response.headers.get('content-type');
+            if (!response.ok) {
+                if (response.status === 413) {
+                    throw new Error('File quá lớn. Vui lòng chọn file nhỏ hơn 5MB');
+                }
+                throw new Error(`Lỗi server (${response.status}). Vui lòng thử lại`);
+            }
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Server trả về response không hợp lệ. Kiểm tra cấu hình server');
+            }
+
             const result = await response.json();
             console.log('📡 Upload result:', result);
 

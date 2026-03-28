@@ -14,7 +14,7 @@ import time
 import sqlite3
 from datetime import datetime
 from werkzeug.utils import secure_filename
-from PIL import Image
+from PIL import Image, ImageOps
 import uuid
 import logging
 
@@ -359,6 +359,9 @@ def optimize_image(image_path, max_width=1920, quality=85):
     """Tối ưu hóa hình ảnh"""
     try:
         with Image.open(image_path) as img:
+            # Fix EXIF orientation (ảnh từ điện thoại bị xoay)
+            img = ImageOps.exif_transpose(img)
+
             # Chuyển đổi RGBA sang RGB nếu cần
             if img.mode in ('RGBA', 'LA', 'P'):
                 background = Image.new('RGB', img.size, (255, 255, 255))
@@ -384,6 +387,9 @@ def create_thumbnail(image_path, thumb_path, size=(300, 300)):
     """Tạo thumbnail cho hình ảnh"""
     try:
         with Image.open(image_path) as img:
+            # Fix EXIF orientation (ảnh từ điện thoại bị xoay)
+            img = ImageOps.exif_transpose(img)
+
             # Chuyển đổi sang RGB nếu cần
             if img.mode in ('RGBA', 'LA', 'P'):
                 background = Image.new('RGB', img.size, (255, 255, 255))
