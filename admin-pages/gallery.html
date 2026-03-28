@@ -161,36 +161,36 @@ async function handleMultipleUpload(event) {
     });
     
     let successCount = 0;
-    const errors = [];
-
+    let errorCount = 0;
+    
     for (const file of files) {
         try {
             await uploadSingleImage(file);
             successCount++;
-            // Delay nhỏ giữa các lần upload để tránh rate limiting
-            if (files.length > 1) await new Promise(r => setTimeout(r, 600));
         } catch (error) {
             console.error('Upload error for', file.name, ':', error);
-            errors.push(`${file.name}: ${error.message}`);
+            errorCount++;
         }
     }
-
+    
     Swal.close();
-
+    
     if (successCount > 0) {
-        const errorNote = errors.length > 0 ? `\n⚠️ ${errors.length} ảnh lỗi:\n${errors.join('\n')}` : '';
         Swal.fire({
-            icon: errors.length > 0 ? 'warning' : 'success',
+            icon: 'success',
             title: 'Thành công!',
-            text: `Đã tải ${successCount} ảnh thành công${errorNote}`,
-            confirmButtonText: 'OK'
+            text: `Đã tải ${successCount} ảnh thành công${errorCount > 0 ? `, ${errorCount} ảnh lỗi` : ''}`,
+            timer: 2000,
+            showConfirmButton: false
         });
+        
+        // Refresh gallery
         setTimeout(loadGalleryImages, 1000);
     } else {
         Swal.fire({
             icon: 'error',
             title: 'Lỗi!',
-            html: `Không thể tải ảnh nào:<br><small>${errors.join('<br>')}</small>`,
+            text: 'Không thể tải ảnh nào',
             confirmButtonText: 'OK'
         });
     }
@@ -218,24 +218,9 @@ async function uploadSingleImage(file) {
         method: 'POST',
         body: formData
     });
-
-    if (!response.ok) {
-        if (response.status === 413) {
-            throw new Error(`File quá lớn, server từ chối (413). Vui lòng chọn ảnh nhỏ hơn 5MB`);
-        }
-        if (response.status === 503 || response.status === 429) {
-            throw new Error(`Server bận, vui lòng thử lại sau vài giây (${response.status})`);
-        }
-        throw new Error(`Lỗi server (${response.status})`);
-    }
-
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('Server không phản hồi đúng định dạng. Kiểm tra cấu hình Nginx (client_max_body_size)');
-    }
-
+    
     const result = await response.json();
-
+    
     if (!result.success) {
         throw new Error(result.message || 'Upload failed');
     }
@@ -266,17 +251,9 @@ async function saveGalleryToServer() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ gallery: galleryImages })
         });
-
+        
         if (!response.ok) {
             throw new Error('Failed to save gallery');
-        }
-
-        // Sync gallery vào global siteData để các tab khác không overwrite khi save
-        if (window.siteData) {
-            window.siteData.gallery = galleryImages;
-        }
-        if (typeof siteData !== 'undefined') {
-            siteData.gallery = galleryImages;
         }
     } catch (error) {
         console.error('Error saving gallery:', error);

@@ -475,14 +475,6 @@ def save_all_data():
             if 'admin' in new_data:
                 current_data['admin'] = new_data['admin']
             merged_data = current_data
-        # Nếu chỉ có gallery (từ gallery page), chỉ replace gallery
-        elif set(new_data.keys()).issubset({'gallery', 'admin'}):
-            logger.info("Saving only gallery data")
-            if 'gallery' in new_data:
-                current_data['gallery'] = new_data['gallery']
-            if 'admin' in new_data:
-                current_data['admin'] = new_data['admin']
-            merged_data = current_data
         else:
             # Merge dữ liệu mới với dữ liệu hiện có (deep merge)
             # Đặc biệt xử lý cho story section để replace hoàn toàn

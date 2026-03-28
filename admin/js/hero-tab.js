@@ -88,7 +88,6 @@ async function loadHeroDataFromAPI() {
             
             if (typeof window !== 'undefined') {
                 window.siteData = heroData;
-                siteData = heroData; // Keep local variable in sync
                 console.log('✅ Updated global siteData');
             }
         } else {

@@ -653,12 +653,7 @@ function refreshBannerPreview() {
 async function saveChanges(onlyVisibility = false) {
     try {
         showAlert('Đang lưu thay đổi...', 'info');
-
-        // Sync window.siteData → siteData nếu tab khác đã fetch data mới hơn
-        if (window.siteData && window.siteData !== siteData) {
-            siteData = window.siteData;
-        }
-
+        
         // Update last modified time
         if (!siteData.admin) siteData.admin = {};
         siteData.admin.lastUpdate = new Date().toISOString();
