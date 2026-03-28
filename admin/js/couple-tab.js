@@ -324,14 +324,17 @@ function selectCoupleImage(type) {
                 // Update image preview
                 const previewId = type === 'groom' ? 'groom-image-preview' : 'bride-image-preview';
                 uploader.updateImagePreview(previewId, result.url);
-                
+
+                // Đảm bảo coupleData.couple tồn tại
+                if (!coupleData.couple) coupleData.couple = {};
+
                 // Update data
                 if (type === 'groom') {
                     coupleData.couple.groomImage = result.url;
                 } else {
                     coupleData.couple.brideImage = result.url;
                 }
-                
+
                 console.log('✅ Couple image uploaded successfully');
             },
             onError: (error) => {
@@ -406,6 +409,7 @@ async function uploadCoupleImage(type, file) {
         
         if (result.success) {
             // Update data first
+            if (!coupleData.couple) coupleData.couple = {};
             if (type === 'groom') {
                 coupleData.couple.groomImage = result.url;
             } else {
