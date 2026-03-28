@@ -7,7 +7,7 @@ class ImageUploadComponent {
     constructor(options = {}) {
         this.options = {
             uploadUrl: window.location.origin + '/api/upload',
-            maxFileSize: 5 * 1024 * 1024, // 5MB
+            maxFileSize: 10 * 1024 * 1024, // 10MB
             allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'],
             onSuccess: null,
             onError: null,
@@ -67,7 +67,7 @@ class ImageUploadComponent {
 
         // Validate file size
         if (file.size > this.options.maxFileSize) {
-            const error = 'File quá lớn. Vui lòng chọn file nhỏ hơn 5MB';
+            const error = 'File quá lớn. Vui lòng chọn file nhỏ hơn 10MB';
             this.showError(error);
             if (callback) callback({ success: false, error });
             return;
@@ -90,7 +90,7 @@ class ImageUploadComponent {
             const contentType = response.headers.get('content-type');
             if (!response.ok) {
                 if (response.status === 413) {
-                    throw new Error('File quá lớn. Vui lòng chọn file nhỏ hơn 5MB');
+                    throw new Error('File quá lớn. Vui lòng chọn file nhỏ hơn 10MB');
                 }
                 throw new Error(`Lỗi server (${response.status}). Vui lòng thử lại`);
             }

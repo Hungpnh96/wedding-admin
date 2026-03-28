@@ -31,7 +31,7 @@ DB_FILE = os.path.join(BASE_DIR, 'data', 'wedding.db')
 BACKUP_DIR = os.path.join(BASE_DIR, 'data', 'backups')
 UPLOAD_DIR = os.path.join(BASE_DIR, 'public', 'images')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 
 # Tạo thư mục cần thiết
 os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
@@ -787,6 +787,22 @@ def cleanup_backups():
             "success": False,
             "message": f"Lỗi dọn dẹp backup: {str(e)}"
         }), 500
+
+@app.route('/api/download/database', methods=['GET'])
+def download_database():
+    """Download file SQLite database"""
+    try:
+        if not os.path.exists(DB_FILE):
+            return jsonify({"success": False, "message": "Database không tồn tại"}), 404
+        return send_from_directory(
+            os.path.dirname(DB_FILE),
+            os.path.basename(DB_FILE),
+            as_attachment=True,
+            download_name='wedding.db'
+        )
+    except Exception as e:
+        logger.error(f"Lỗi download database: {e}")
+        return jsonify({"success": False, "message": str(e)}), 500
 
 @app.route('/api/backup/stats', methods=['GET'])
 def backup_stats():

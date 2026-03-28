@@ -371,7 +371,7 @@ async function uploadCoupleImage(type, file) {
     }
     
     // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
         Swal.fire({
             icon: 'error',
             title: 'Lỗi',

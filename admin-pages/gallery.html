@@ -206,8 +206,8 @@ async function uploadSingleImage(file) {
         throw new Error('File không phải là ảnh');
     }
     
-    if (file.size > 5 * 1024 * 1024) {
-        throw new Error('File quá lớn (tối đa 5MB)');
+    if (file.size > 10 * 1024 * 1024) {
+        throw new Error('File quá lớn (tối đa 10MB)');
     }
     
     const formData = new FormData();

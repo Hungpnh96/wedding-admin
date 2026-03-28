@@ -92,7 +92,7 @@
                                         <div class="upload-placeholder" id="uploadPlaceholder">
                                             <i class="fas fa-cloud-upload-alt"></i>
                                             <p>Nhấn để chọn ảnh</p>
-                                            <small class="text-muted">JPG, PNG, WebP (tối đa 5MB)</small>
+                                            <small class="text-muted">JPG, PNG, WebP (tối đa 10MB)</small>
                                         </div>
                                         <div class="image-preview" id="eventImagePreview" style="display: none;">
                                             <img id="previewImg" src="" alt="Preview" class="uploaded-image">
@@ -940,11 +940,11 @@ function handleImagePreview(event) {
         }
         
         // Validate file size (5MB max)
-        if (file.size > 5 * 1024 * 1024) {
+        if (file.size > 10 * 1024 * 1024) {
             Swal.fire({
                 icon: 'error',
                 title: 'Lỗi!',
-                text: 'File ảnh quá lớn! Vui lòng chọn file nhỏ hơn 5MB.'
+                text: 'File ảnh quá lớn! Vui lòng chọn file nhỏ hơn 10MB.'
             });
             return;
         }

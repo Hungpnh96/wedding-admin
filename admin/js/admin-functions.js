@@ -257,7 +257,7 @@ function uploadSlideFile(slideId, file) {
     }
     
     // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
         Swal.fire({
             icon: 'error',
             title: 'Lỗi',
@@ -348,7 +348,7 @@ function uploadBannerFile(file) {
     }
     
     // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
         Swal.fire({
             icon: 'error',
             title: 'Lỗi',
@@ -1167,7 +1167,7 @@ async function handleImageUpload(file, type) {
     }
     
     // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
         console.log('File too large:', file.size);
         showAlert('File ảnh quá lớn. Vui lòng chọn file nhỏ hơn 5MB', 'error');
         return;

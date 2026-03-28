@@ -707,7 +707,7 @@ async function handleStoryImageSelect(event) {
     }
     
     // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
         showAlert('Kích thước file không được vượt quá 5MB!', 'warning');
         return;
     }
@@ -803,7 +803,7 @@ async function uploadImageFile(file) {
         console.log('📤 Uploading image file:', file.name);
         
         // Validate file size (5MB max)
-        if (file.size > 5 * 1024 * 1024) {
+        if (file.size > 10 * 1024 * 1024) {
             return {
                 success: false,
                 message: 'Kích thước file quá lớn (tối đa 5MB)'
