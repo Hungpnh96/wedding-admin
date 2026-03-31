@@ -844,7 +844,15 @@ function renderEventsList(events) {
     if (countElement) {
         countElement.textContent = events.length;
     }
-    
+
+    // Gán hàm openMap động theo mapsLink từng sự kiện
+    events.forEach((event, index) => {
+        const mapUrl = event.mapsLink || 'https://maps.google.com/';
+        window['openMap' + index] = function() {
+            window.open(mapUrl, '_blank');
+        };
+    });
+
     console.log('📋 Events rendered successfully');
 }
 
