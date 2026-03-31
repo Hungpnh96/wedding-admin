@@ -823,7 +823,7 @@ function renderEventsList(events) {
                             </div>
                         </div>
                         <div class="info">
-                            <a href="javascript:openMap${index}()" id="openMap" class="btn btn-primary reverse" style="width: 220px;">
+                            <a href="javascript:void(0)" onclick="window.open(this.dataset.mapUrl,'_blank')" data-map-url="${event.mapsLink || ''}" class="btn btn-primary reverse" style="width: 220px;">
                                 <span class="h-lines"></span>
                                 <span class="v-lines"></span>
                                 <span class="h-lines"></span>
@@ -844,14 +844,6 @@ function renderEventsList(events) {
     if (countElement) {
         countElement.textContent = events.length;
     }
-
-    // Gán hàm openMap động theo mapsLink từng sự kiện
-    events.forEach((event, index) => {
-        const mapUrl = event.mapsLink || 'https://maps.google.com/';
-        window['openMap' + index] = function() {
-            window.open(mapUrl, '_blank');
-        };
-    });
 
     console.log('📋 Events rendered successfully');
 }

@@ -72,7 +72,7 @@ function initializeSettings() {
 }
 
 function loadSettingsData() {
-    if (window.siteData  window.siteData.visibility?.sections) {
+    if (window.siteData && window.siteData.visibility?.sections) {
         const sections = window.siteData.visibility.sections;
         
         // Update form fields
@@ -136,7 +136,7 @@ function updateSiteDataFromSettingsForm() {
 
 function setFieldValue(fieldId, value) {
     const field = document.getElementById(fieldId);
-    if (field  value !== undefined) {
+    if (field && value !== undefined) {
         if (field.type === "checkbox") {
             field.checked = !!value;
         } else {
