@@ -211,19 +211,63 @@ async function handleMultipleUpload(event) {
     event.target.value = '';
 }
 
+// Compress image on browser before upload (max 1600px, JPEG quality 0.82)
+async function compressImage(file, maxWidth = 1600, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let { width, height } = img;
+                if (width > maxWidth) {
+                    height = Math.round(height * maxWidth / width);
+                    width = maxWidth;
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob(
+                    (blob) => {
+                        if (!blob) { reject(new Error('Không thể nén ảnh')); return; }
+                        const compressed = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
+                        console.log(`🗜️ ${file.name}: ${(file.size/1024/1024).toFixed(1)}MB → ${(compressed.size/1024/1024).toFixed(1)}MB`);
+                        resolve(compressed);
+                    },
+                    'image/jpeg',
+                    quality
+                );
+            };
+            img.onerror = () => reject(new Error('Không thể đọc file ảnh'));
+            img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Không thể đọc file'));
+        reader.readAsDataURL(file);
+    });
+}
+
 // Upload single image
 async function uploadSingleImage(file) {
     // Validate file
     if (!file.type.startsWith('image/')) {
         throw new Error('File không phải là ảnh');
     }
-    
-    if (file.size > 10 * 1024 * 1024) {
-        throw new Error('File quá lớn (tối đa 10MB)');
+
+    // Compress trước khi upload (giảm dung lượng, tránh lỗi Nginx 413)
+    let uploadFile = file;
+    try {
+        uploadFile = await compressImage(file);
+    } catch (compressErr) {
+        console.warn('⚠️ Không thể nén ảnh, dùng file gốc:', compressErr.message);
     }
-    
+
+    if (uploadFile.size > 10 * 1024 * 1024) {
+        throw new Error(`File vẫn quá lớn sau khi nén (${(uploadFile.size/1024/1024).toFixed(1)}MB, tối đa 10MB)`);
+    }
+
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', uploadFile);
     formData.append('type', 'gallery');
     
     const response = await fetch(window.location.origin + '/api/upload', {
@@ -254,7 +298,7 @@ async function uploadSingleImage(file) {
         id: Date.now().toString(),
         src: result.url,
         name: file.name,
-        size: file.size,
+        size: uploadFile.size,
         uploadedAt: new Date().toISOString(),
         visible: true
     };

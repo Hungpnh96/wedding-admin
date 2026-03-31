@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB - Flask trả JSON 413 thay vì HTML
 
 # Cấu hình
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -1458,6 +1459,13 @@ def not_found(error):
         "success": False,
         "message": "API endpoint không tồn tại"
     }), 404
+
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    return jsonify({
+        "success": False,
+        "message": "File quá lớn (tối đa 10MB). Vui lòng chọn ảnh nhỏ hơn."
+    }), 413
 
 @app.errorhandler(500)
 def internal_error(error):
