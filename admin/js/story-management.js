@@ -47,13 +47,21 @@ function initializeStoryManagement() {
     
     // Load stories from data
     loadStories();
-    
+
     // Setup form event listeners
     setupStoryFormListeners();
-    
+
     // Setup drag and drop
     setupDragAndDrop();
-    
+
+    // Set section visibility toggle state
+    const toggle = document.getElementById('storyVisibilityToggle');
+    if (toggle) {
+        const siteData = window.siteData || {};
+        const isVisible = siteData.visibility?.sections?.story !== false;
+        toggle.checked = isVisible;
+    }
+
     console.log('✅ Story Management initialized');
 }
 
@@ -1046,11 +1054,49 @@ function normalizeStoryImagePath(src) {
     return src;
 }
 
+/**
+ * Toggle story section visibility on the index page
+ */
+async function toggleStorySectionVisibility(isVisible) {
+    console.log('👁️ Toggling story section visibility:', isVisible);
+
+    try {
+        // Update siteData visibility
+        const siteData = window.siteData || {};
+        if (!siteData.visibility) siteData.visibility = {};
+        if (!siteData.visibility.sections) siteData.visibility.sections = {};
+        siteData.visibility.sections.story = isVisible;
+        window.siteData = siteData;
+
+        // Save to server
+        const response = await fetch(window.location.origin + '/api/data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(siteData)
+        });
+
+        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+        const result = await response.json();
+
+        if (!result.success) throw new Error(result.message || 'Lưu thất bại');
+
+        const status = isVisible ? 'hiển thị' : 'ẩn';
+        showAlert(`Đã ${status} mục câu chuyện!`, 'success');
+    } catch (error) {
+        console.error('❌ Error toggling story section visibility:', error);
+        showAlert('Lỗi khi thay đổi trạng thái hiển thị!', 'error');
+        // Revert checkbox
+        const toggle = document.getElementById('storyVisibilityToggle');
+        if (toggle) toggle.checked = !isVisible;
+    }
+}
+
 // Export functions for global access
 window.addStory = addStory;
 window.editStory = editStory;
 window.deleteStory = deleteStory;
 window.toggleStoryVisibility = toggleStoryVisibility;
+window.toggleStorySectionVisibility = toggleStorySectionVisibility;
 window.closeStoryForm = closeStoryForm;
 window.uploadStoryImage = uploadStoryImage;
 window.loadStoryData = loadStoryData;

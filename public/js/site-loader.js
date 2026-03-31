@@ -345,7 +345,7 @@ function applyVisibilitySettings() {
     // Map admin settings to section IDs on index page
     const sectionMap = {
         gallery: '#gallery',
-        story: '#story',
+        story: '#story-section',
         couple: '#couple',
         rsvp: '#rsvp',
         donate: '#donate',
