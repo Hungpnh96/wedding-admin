@@ -1201,6 +1201,11 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
+                <button class="nav-link" id="rsvp-tab" data-bs-toggle="pill" data-bs-target="#rsvp-admin" type="button" role="tab">
+                    <i class="fas fa-clipboard-check me-2"></i>Tham dự
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
                 <button class="nav-link" id="telegram-tab" data-bs-toggle="pill" data-bs-target="#telegram" type="button" role="tab">
                     <i class="fas fa-paper-plane me-2"></i>Telegram
                 </button>
@@ -1836,6 +1841,17 @@
                     } else {
                         console.error('❌ initializeBackup function not found');
                     }
+                    break;
+                case 'rsvp-admin':
+                    console.log('🔍 In rsvp-admin case');
+                    setTimeout(function() {
+                        if (typeof window.initializeRsvpAdmin === 'function') {
+                            console.log('🔄 Calling window.initializeRsvpAdmin()...');
+                            window.initializeRsvpAdmin();
+                        } else {
+                            console.error('❌ initializeRsvpAdmin function not found');
+                        }
+                    }, 500);
                     break;
                 // Add other tabs as needed
             }

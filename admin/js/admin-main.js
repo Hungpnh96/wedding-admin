@@ -90,9 +90,9 @@ function loadTabContent(tabName) {
     // Show loading
     showLoadingOverlay();
     
-    // For blessings and telegram, use external files instead of dynamic content
+    // For blessings, telegram, and rsvp-admin, use external files instead of dynamic content
     console.log('🔍 Checking tab name:', tabName, 'Type:', typeof tabName);
-    if (tabName === 'blessings' || tabName === 'telegram') {
+    if (tabName === 'blessings' || tabName === 'telegram' || tabName === 'rsvp-admin') {
         console.log('🔄 Using external file for:', tabName);
         // Don't use dynamic content, go to external file loading
     } else {
@@ -152,9 +152,9 @@ function loadTabContent(tabName) {
                 setTimeout(() => {
                     console.log('🔄 About to call initializeTabContent for:', tabName);
                     
-                    // Don't call initializeTabContent for telegram and blessings when loading external files
+                    // Don't call initializeTabContent for telegram, blessings, and rsvp-admin when loading external files
                     // because it will conflict with the external HTML content
-                    if (tabName !== 'telegram' && tabName !== 'blessings') {
+                    if (tabName !== 'telegram' && tabName !== 'blessings' && tabName !== 'rsvp-admin') {
                         initializeTabContent(tabName);
                         console.log('✅ initializeTabContent completed for:', tabName);
                     } else {

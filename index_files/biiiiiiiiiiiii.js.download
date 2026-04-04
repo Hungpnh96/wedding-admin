@@ -127,18 +127,24 @@ if(biicore.bgMusic){
 	}, 200);
 
 	function playPause() {
-		document.getElementsByClassName("bii-player")[0].classList.remove("show-sec");
-	    if (audioPlayer.paused) {
+		const onEl = document.getElementById("playerVolumeOn");
+		const offEl = document.getElementById("playerVolumeOff");
+
+		if (audioPlayer.paused) {
 			audioPlayer.play();
-			document.getElementById("playerVolumeOff").style.display = "none";
-			document.getElementById("playerVolumeOn").style.display = "block";
-			console.log('calling 1', document.getElementById("playerVolumeOn"), document.getElementById("playerVolumeOff"))
+			console.log('play');
+
+			onEl.style.setProperty("display", "block", "important");
+			offEl.style.setProperty("display", "none", "important");
+
 		} else {
-			audioPlayer.pause(); 
-			document.getElementById("playerVolumeOff").style.display = "block";
-			document.getElementById("playerVolumeOn").style.display = "none";
-			console.log('calling 2', document.getElementById("playerVolumeOn"), document.getElementById("playerVolumeOff"))
+			audioPlayer.pause();
+			console.log('stop');
+
+			onEl.style.setProperty("display", "none", "important");
+			offEl.style.setProperty("display", "block", "important");
 		}
+		console.log(onEl, offEl);
 	}
 
 	if(biicore.isAutoPlay) {

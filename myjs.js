@@ -83,17 +83,24 @@
 
 let isPlaying = false; // Biến trạng thái âm thanh
 
-function playPause() {
+function playmPause() {
 	let volumeOffIcon = document.getElementById("playerVolumeOff");
 	let volumeOnIcon = document.getElementById("playerVolumeOn");
+	if (!volumeOffIcon || !volumeOnIcon) return;
 
-	if (isPlaying) {
-		volumeOffIcon.style.display = "block";
-		volumeOnIcon.style.display = "none";
-	} else {
-		volumeOffIcon.style.display = "none";
-		volumeOnIcon.style.display = "block";
+	// Sync isPlaying with actual audio state
+	var audios = document.querySelectorAll('audio');
+	if (audios.length > 0) {
+		isPlaying = !audios[0].paused;
 	}
 
-	isPlaying = !isPlaying; // Đảo trạng thái
+	if (isPlaying) {
+		// Currently playing → show volume-on icon
+		volumeOffIcon.style.display = "none";
+		volumeOnIcon.style.display = "block";
+	} else {
+		// Currently paused → show mute icon
+		volumeOffIcon.style.display = "block";
+		volumeOnIcon.style.display = "none";
+	}
 }

@@ -1,0 +1,260 @@
+<style>
+.wishes-form-group {
+    margin-bottom: 14px;
+}
+.wishes-form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #7a3e3e;
+    font-size: 13px;
+}
+.wishes-form-group .form-control,
+.wishes-form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid #e8b4b8;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #fff;
+    color: #4a2c2c;
+    transition: border-color 0.2s;
+    outline: none;
+    box-sizing: border-box;
+}
+.wishes-form-group .form-control:focus,
+.wishes-form-group select:focus {
+    border-color: #c97b7b;
+    box-shadow: 0 0 0 3px rgba(201,123,123,0.15);
+}
+.wishes-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.wishes-list {
+    margin-top: 28px;
+    border-top: 1px solid #f0d0d0;
+    padding-top: 20px;
+}
+.wishes-list-title {
+    text-align: center;
+    color: #c97b7b;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+.wish-card {
+    background: #fff9f9;
+    border: 1px solid #f0d0d0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.wish-card .wish-name {
+    font-weight: 600;
+    color: #7a3e3e;
+    font-size: 13px;
+}
+.wish-card .wish-from {
+    font-size: 12px;
+    color: #b07070;
+    margin-left: 6px;
+}
+.wish-card .wish-content {
+    color: #4a2c2c;
+    font-size: 14px;
+    margin-top: 6px;
+    line-height: 1.5;
+}
+.wish-card .wish-time {
+    font-size: 11px;
+    color: #c0a0a0;
+    margin-top: 6px;
+}
+.wishes-thankyou {
+    text-align: center;
+    padding: 20px 10px;
+    animation: wishesFadeIn 0.5s ease;
+}
+.wishes-thankyou .wishes-thankyou-icon { font-size: 40px; margin-bottom: 10px; }
+.wishes-thankyou h3 { color: #c97b7b; font-size: 20px; margin-bottom: 8px; }
+.wishes-thankyou p { color: #7a3e3e; font-size: 14px; }
+@keyframes wishesFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 480px) {
+    .wishes-grid-2 { grid-template-columns: 1fr; gap: 0; }
+}
+</style>
+
+<section id="wishes" class="section-bg-color extra-padding-section editable-parent scroll-to">
+    <div class="children" style="display: block">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 col-xxl-6 offset-xxl-3">
+                    <div class="form-wrapper flowers neela-style">
+                        <span class="h-lines"></span><span class="v-lines"></span><span class="h-lines"></span><span class="v-lines"></span>
+
+                        <h1 class="section-title">Gửi Lời Chúc</h1>
+
+                        <div id="wishes-form-container">
+                            <form id="wishes-send-form" novalidate>
+
+                                <div class="wishes-grid-2">
+                                    <div class="wishes-form-group">
+                                        <label for="wishes-name">Họ và Tên <span style="color:#e05454">*</span></label>
+                                        <input type="text" id="wishes-name" class="form-control" placeholder="Tên của bạn">
+                                    </div>
+                                    <div class="wishes-form-group">
+                                        <label for="wishes-from">Quan hệ</label>
+                                        <select id="wishes-from" class="form-control">
+                                            <option value="Người thân của chú rể">Người thân của chú rể</option>
+                                            <option value="Người thân của cô dâu">Người thân của cô dâu</option>
+                                            <option value="Bạn bè của chú rể">Bạn bè của chú rể</option>
+                                            <option value="Bạn bè của cô dâu">Bạn bè của cô dâu</option>
+                                            <option value="Đồng nghiệp">Đồng nghiệp</option>
+                                            <option value="Khác">Khác</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="wishes-form-group">
+                                    <label for="wishes-content">Lời chúc <span style="color:#e05454">*</span></label>
+                                    <textarea id="wishes-content" class="form-control" rows="3" placeholder="Gửi lời chúc tốt đẹp đến cặp đôi..."></textarea>
+                                </div>
+
+                                <div class="center" style="margin-top: 18px;">
+                                    <button type="submit" id="wishes-submit-btn" class="btn-blessing btn btn-primary submit_form" style="width: 229px;">
+                                        <span class="h-lines"></span><span class="v-lines"></span><span class="h-lines"></span><span class="v-lines"></span>
+                                        Gửi lời chúc
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div id="wishes-thankyou" class="wishes-thankyou" style="display: none;">
+                                <div class="wishes-thankyou-icon">&#127881;</div>
+                                <h3>Cảm ơn bạn!</h3>
+                                <p>Lời chúc của bạn đã được gửi. Chúc mừng hạnh phúc!</p>
+                                <button onclick="document.getElementById('wishes-thankyou').style.display='none';document.getElementById('wishes-send-form').style.display='block';document.getElementById('wishes-send-form').reset();"
+                                    class="btn btn-outline-secondary btn-sm" style="margin-top:12px;border-radius:8px;">
+                                    Gửi thêm lời chúc
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="wishes-list">
+                            <div class="wishes-list-title">Lời chúc từ mọi người</div>
+                            <div id="wishes-items-list">
+                                <p style="text-align:center;color:#c0a0a0;font-size:13px;">Đang tải...</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    function formatWishTime(dateStr) {
+        if (!dateStr) return '';
+        var d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function loadWishes() {
+        fetch('/api/blessing/latest?limit=20')
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                var container = document.getElementById('wishes-items-list');
+                if (!container) return;
+                if (!data.success || !data.blessings || data.blessings.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:#c0a0a0;font-size:13px;">Chưa có lời chúc nào. Hãy là người đầu tiên!</p>';
+                    return;
+                }
+                container.innerHTML = data.blessings.map(function(b) {
+                    return '<div class="wish-card">' +
+                        '<span class="wish-name">' + escapeHtml(b.name) + '</span>' +
+                        '<span class="wish-from">· ' + escapeHtml(b.from) + '</span>' +
+                        '<div class="wish-content">' + escapeHtml(b.content) + '</div>' +
+                        '<div class="wish-time">' + formatWishTime(b.created_at) + '</div>' +
+                        '</div>';
+                }).join('');
+            })
+            .catch(function() {
+                var container = document.getElementById('wishes-items-list');
+                if (container) container.innerHTML = '<p style="text-align:center;color:#c0a0a0;font-size:13px;">Không thể tải lời chúc.</p>';
+            });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function initWishesForm() {
+        var form = document.getElementById('wishes-send-form');
+        if (!form) return;
+
+        loadWishes();
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var name = (document.getElementById('wishes-name').value || '').trim();
+            var content = (document.getElementById('wishes-content').value || '').trim();
+            var from = document.getElementById('wishes-from').value;
+
+            if (!name) {
+                alert('Vui lòng nhập họ và tên!');
+                document.getElementById('wishes-name').focus();
+                return;
+            }
+            if (!content) {
+                alert('Vui lòng nhập lời chúc!');
+                document.getElementById('wishes-content').focus();
+                return;
+            }
+
+            var submitBtn = document.getElementById('wishes-submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Đang gửi...';
+
+            fetch('/api/blessing/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: name, from: from, content: content })
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    form.style.display = 'none';
+                    document.getElementById('wishes-thankyou').style.display = 'block';
+                    setTimeout(loadWishes, 800);
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại!');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Gửi lời chúc';
+                }
+            })
+            .catch(function() {
+                alert('Không thể kết nối đến server, vui lòng thử lại!');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Gửi lời chúc';
+            });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initWishesForm);
+    } else {
+        initWishesForm();
+    }
+})();
+</script>
