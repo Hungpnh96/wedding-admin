@@ -1668,6 +1668,22 @@ if __name__ == '__main__':
     
 # ==================== BLESSING SYSTEM ====================
 
+def ensure_blessings_table(conn):
+    """Đảm bảo bảng blessings tồn tại trước khi thao tác"""
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS blessings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            from_person TEXT NOT NULL,
+            content TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            is_approved BOOLEAN DEFAULT 1
+        )
+    ''')
+    return cursor
+
+
 @app.route('/api/blessing/send', methods=['POST'])
 def send_blessing():
     """Gửi lời chúc và lưu vào database"""
@@ -1685,19 +1701,7 @@ def send_blessing():
         
         # Lưu vào database
         conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        # Tạo bảng blessings nếu chưa có
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS blessings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                from_person TEXT NOT NULL,
-                content TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                is_approved BOOLEAN DEFAULT 1
-            )
-        ''')
+        cursor = ensure_blessings_table(conn)
         
         # Insert blessing
         cursor.execute('''
@@ -1733,11 +1737,10 @@ def get_latest_blessings():
     """Lấy lời chúc mới nhất (cho public frontend - chỉ lấy approved)"""
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = ensure_blessings_table(conn)
         
-        # Get limit from query params, default to 5
-        limit = int(request.args.get('limit', 5))
-        
+        limit = int(request.args.get('limit', 10))
+        is_admin = request.args.get('admin', '').lower() == 'true'
         # For public API, only get approved
         # For admin (check via referer or special header), get all
         is_admin = 'admin' in request.referrer if request.referrer else False
@@ -1796,7 +1799,7 @@ def get_blessings_admin():
         offset = (page - 1) * per_page
         
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = ensure_blessings_table(conn)
         
         # Build query
         where_conditions = []
@@ -1863,7 +1866,7 @@ def get_blessings_stats():
     """Lấy thống kê lời chúc"""
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = ensure_blessings_table(conn)
         
         # Đếm tổng số
         cursor.execute('SELECT COUNT(*) as total FROM blessings')
@@ -1903,7 +1906,7 @@ def approve_blessing(blessing_id):
         is_approved = data.get('approved', True)
         
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = ensure_blessings_table(conn)
         
         cursor.execute('''
             UPDATE blessings 
@@ -1931,7 +1934,7 @@ def delete_blessing(blessing_id):
     """Xóa lời chúc"""
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = ensure_blessings_table(conn)
         
         cursor.execute('DELETE FROM blessings WHERE id = ?', (blessing_id,))
         conn.commit()
