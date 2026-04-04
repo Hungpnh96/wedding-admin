@@ -122,6 +122,18 @@
                display: none;
            }
            
+           .music-btn {
+               cursor: pointer;
+           }
+           
+           #playerVolumeOff {
+               display: block;
+           }
+           
+           #playerVolumeOn {
+               display: none;
+           }
+           
            /* Hero Fullscreen Responsive */
            .hero-fullscreen {
               min-height: 100vh !important;
@@ -747,24 +759,6 @@
     <script src="./index_files/variables.js.download?v=20250119"></script>
     <script src="./index_files/scripts.js.download?v=20250119"></script>
     <script src="./index_files/template.settings.js.download?v=20250119"></script>
-    <!-- biicore must be defined before biiiiiiiiiiiii.js loads -->
-    <script>
-    var slidehow_images = ["/images/album1.png"];
-    var custom_color = "#ee8584";
-    const biicore = {
-        bgMusic: './index_files/audio/wedding-music.mp3',
-        isPremium: ('1' === '1'),
-        templatePremium: ('1' === '1'),
-        alert: JSON.parse('[]'),
-        effect: JSON.parse('{\"type\":\"custom\",\"setting\":{\"icon\":\".\\/index_files\\/TraiTimNen.png\",\"number\":\"20\",\"speed\":\"2\",\"minSize\":\"20\",\"maxSize\":\"40\"}}'),
-        couple: {
-            groom_name: 'Tên chú rể',
-            bride_name: 'Tên cô dâu',
-            wedding_date: '01/01/2025',
-            contact_email: 'hungpnh96@gmail.com'
-        }
-    };
-    </script>
     <script src="./index_files/biiiiiiiiiiiii.js.download?v=20250119"></script>
     <script src="./index_files/insertTextAtCursor.js.download?v=20250119"></script>
     <script src="./index_files/init.js.download?v=20250119"></script>
@@ -1002,11 +996,33 @@
         $('#confirmDeletePopup').fadeIn();
     });
  </script>
+ <script>
+    var slidehow_images = [
+        "/images/album1.png",
+    ];
+    var custom_color = "#ee8584";
+    const biicore = {
+    bgMusic: './index_files/audio/wedding-music.mp3',
+    isPremium: ('1' === '1'),
+    templatePremium: ('1' === '1'),
+    alert: JSON.parse('[]'),
+    effect: JSON.parse(
+    '{\"type\":\"custom\",\"setting\":{\"icon\":\".\\/index_files\\/TraiTimNen.png\",\"number\":\"20\",\"speed\":\"2\",\"minSize\":\"20\",\"maxSize\":\"40\"}}'
+    ),
+    couple: {
+        groom_name: 'Tên chú rể',
+        bride_name: 'Tên cô dâu',
+        wedding_date: '01/01/2025',
+        contact_email: 'hungpnh96@gmail.com'
+    }
+    };
+    
+ </script>
  <script src="./index_files/jquery-plugin-collection.js.download"></script>
  <script src="./index_files/variables.js.download"></script>
  <script src="./index_files/scripts.js.download"></script>
  <script src="./index_files/template.settings.js.download?v=20250119"></script>
- <!-- biiiiiiiiiiiii.js already loaded above with versioning, do not load twice -->
+ <script src="./index_files/biiiiiiiiiiiii.js.download"></script>
 
 
     <style type="text/css">
@@ -1540,9 +1556,141 @@ function initializeMenuAndMusic() {
         });
     }
     
-    // Music handled by biiiiiiiiiiiii.js playPause() - no duplicate handlers needed
+    // Music functionality - Global variable
+    window.isPlaying = false;
+    
+    function toggleMusic() {
+        const audio = document.getElementById('backgroundAudio');
+        const muteIcon = document.getElementById('playerVolumeOff');
+        const playIcon = document.getElementById('playerVolumeOn');
+        
+        console.log('🎵 Toggle music clicked, current state:', window.isPlaying);
+        console.log('🎵 Audio elements found:', {
+            audio: !!audio,
+            muteIcon: !!muteIcon,
+            playIcon: !!playIcon
+        });
+        
+        if (!audio) {
+            console.error('❌ Audio element not found!');
+            return;
+        }
+        
+        if (window.isPlaying) {
+            // Stop music
+            audio.pause();
+            audio.currentTime = 0;
+            if (muteIcon) muteIcon.style.display = 'block';
+            if (playIcon) playIcon.style.display = 'none';
+            window.isPlaying = false;
+            console.log('🔇 Music stopped');
+        } else {
+            // Play music
+            audio.play().then(() => {
+                if (muteIcon) muteIcon.style.display = 'none';
+                if (playIcon) playIcon.style.display = 'block';
+                window.isPlaying = true;
+                console.log('🔊 Music started');
+            }).catch(error => {
+                console.error('❌ Error playing music:', error);
+                // Show user-friendly error
+                alert('Không thể phát nhạc. Vui lòng thử lại sau.');
+            });
+        }
+    }
+    
+    // Handle audio events
+    function setupAudioEvents() {
+        const audio = document.getElementById('backgroundAudio');
+        if (audio) {
+            audio.addEventListener('ended', function() {
+                console.log('🎵 Music ended, resetting to mute state');
+                window.isPlaying = false;
+                const muteIcon = document.getElementById('playerVolumeOff');
+                const playIcon = document.getElementById('playerVolumeOn');
+                if (muteIcon) muteIcon.style.display = 'block';
+                if (playIcon) playIcon.style.display = 'none';
+            });
+            
+            audio.addEventListener('error', function(e) {
+                console.error('❌ Audio error:', e);
+                window.isPlaying = false;
+            });
+        }
+    }
+    
+    // Add click handlers to music buttons
+    const muteBtn = document.getElementById('playerVolumeOff');
+    const playBtn = document.getElementById('playerVolumeOn');
+    
+    console.log('🎵 Music buttons found:', {
+        muteBtn: !!muteBtn,
+        playBtn: !!playBtn
+    });
+    
+    if (muteBtn) {
+        muteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleMusic();
+        });
+    }
+    if (playBtn) {
+        playBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleMusic();
+        });
+    }
+    
+    // Setup audio event listeners
+    setupAudioEvents();
+    
+    // Force check current audio state
+    checkAudioState();
 }
 
+// Function to check and sync audio state with icons
+function checkAudioState() {
+    const audio = document.getElementById('backgroundAudio');
+    const muteIcon = document.getElementById('playerVolumeOff');
+    const playIcon = document.getElementById('playerVolumeOn');
+    
+    if (!audio || !muteIcon || !playIcon) {
+        console.log('🎵 Audio elements not ready yet');
+        return;
+    }
+    
+    console.log('🎵 Checking audio state:', {
+        paused: audio.paused,
+        currentTime: audio.currentTime,
+        duration: audio.duration
+    });
+    
+    // If audio is playing, show play icon
+    if (!audio.paused && audio.currentTime > 0) {
+        console.log('🎵 Audio is playing, updating icons');
+        muteIcon.style.display = 'none';
+        playIcon.style.display = 'block';
+        window.isPlaying = true;
+    } else {
+        console.log('🎵 Audio is not playing, showing mute icon');
+        muteIcon.style.display = 'block';
+        playIcon.style.display = 'none';
+        window.isPlaying = false;
+    }
+}
+
+// Global function to force sync music icons (for debugging)
+window.syncMusicIcons = function() {
+    console.log('🎵 Force syncing music icons...');
+    checkAudioState();
+};
+
+// Add periodic check to ensure icons stay in sync
+setInterval(function() {
+    if (typeof window.isPlaying !== 'undefined') {
+        checkAudioState();
+    }
+}, 3000); // Check every 3 seconds
 
 // Remove duplicate audio players and bii-player elements
 window.addEventListener('load', function() {
