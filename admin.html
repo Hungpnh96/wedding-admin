@@ -1201,6 +1201,11 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
+                <button class="nav-link" id="rsvp-tab" data-bs-toggle="pill" data-bs-target="#rsvp-admin" type="button" role="tab">
+                    <i class="fas fa-clipboard-check me-2"></i>Tham dự
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
                 <button class="nav-link" id="telegram-tab" data-bs-toggle="pill" data-bs-target="#telegram" type="button" role="tab">
                     <i class="fas fa-paper-plane me-2"></i>Telegram
                 </button>
@@ -1777,6 +1782,13 @@
                             console.error('❌ applyBlessingFilters function not found for blessings');
                         }
                     }, 1000);
+                    break;
+                case 'rsvp-admin':
+                    setTimeout(function() {
+                        if (typeof window.initializeRsvpAdmin === 'function') {
+                            window.initializeRsvpAdmin();
+                        }
+                    }, 500);
                     break;
                 case 'payment':
                     console.log('🔍 In payment case - calling initializePayment');

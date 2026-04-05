@@ -5,7 +5,9 @@ Wedding Website API với SQLite Database
 Chuyên nghiệp quản lý dữ liệu website cưới động
 """
 
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, Response
+import csv
+import io
 from flask_cors import CORS
 import json
 import os
@@ -121,6 +123,21 @@ def init_database():
         )
     ''')
     
+    # Tạo bảng rsvp
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS rsvp (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT,
+            attending INTEGER DEFAULT 1,
+            side TEXT DEFAULT 'groom',
+            guest_count INTEGER DEFAULT 1,
+            message TEXT,
+            event_name TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
     # Tạo dữ liệu mặc định
     default_data = {
         "meta": {
@@ -2342,10 +2359,154 @@ def get_couple_info():
             'message': str(e)
         }), 500
 
+@app.route('/api/rsvp', methods=['POST'])
+def submit_rsvp():
+    """Gửi xác nhận tham dự"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'message': 'Dữ liệu không hợp lệ'}), 400
+
+        name = (data.get('name') or '').strip()
+        if not name:
+            return jsonify({'success': False, 'message': 'Họ tên không được để trống'}), 400
+
+        phone = (data.get('phone') or '').strip()
+        attending = 1 if data.get('attending', True) else 0
+        side = (data.get('side') or 'groom').strip()
+        guest_count = int(data.get('guest_count', 1))
+        message = (data.get('message') or '').strip()
+        event_name = (data.get('event_name') or '').strip()
+
+        if not event_name:
+            return jsonify({'success': False, 'message': 'Vui lòng chọn ít nhất một sự kiện'}), 400
+
+        conn = get_db_connection()
+        cursor = conn.execute(
+            '''INSERT INTO rsvp (name, phone, attending, side, guest_count, message, event_name)
+               VALUES (?, ?, ?, ?, ?, ?, ?)''',
+            (name, phone, attending, side, guest_count, message, event_name)
+        )
+        new_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+
+        try:
+            send_telegram_notification({
+                'name': name,
+                'from': phone,
+                'content': f"[RSVP] {'Sẽ đến' if attending else 'Không đến'} - {event_name} ({guest_count} người)"
+            })
+        except Exception as e:
+            logger.error(f"Telegram RSVP notification failed: {e}")
+
+        return jsonify({'success': True, 'message': 'Xác nhận tham dự thành công!', 'id': new_id})
+
+    except Exception as e:
+        logger.error(f"Error submitting RSVP: {e}")
+        return jsonify({'success': False, 'message': 'Có lỗi xảy ra khi gửi xác nhận'}), 500
+
+
+@app.route('/api/rsvp', methods=['GET'])
+def get_rsvp_list():
+    """Lấy danh sách RSVP (admin)"""
+    try:
+        side_filter = request.args.get('side', '').strip()
+        attending_filter = request.args.get('attending', '').strip()
+
+        conn = get_db_connection()
+        query = 'SELECT * FROM rsvp WHERE 1=1'
+        params = []
+
+        if side_filter:
+            query += ' AND side = ?'
+            params.append(side_filter)
+        if attending_filter != '':
+            query += ' AND attending = ?'
+            params.append(int(attending_filter))
+
+        query += ' ORDER BY created_at DESC'
+        rows = conn.execute(query, params).fetchall()
+
+        stats_row = conn.execute('''
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN attending = 1 THEN 1 ELSE 0 END) as attending,
+                SUM(CASE WHEN attending = 0 THEN 1 ELSE 0 END) as not_attending,
+                SUM(CASE WHEN side = "groom" THEN 1 ELSE 0 END) as groom_side,
+                SUM(CASE WHEN side = "bride" THEN 1 ELSE 0 END) as bride_side
+            FROM rsvp
+        ''').fetchone()
+        conn.close()
+
+        data = [dict(r) for r in rows]
+        return jsonify({
+            'success': True,
+            'data': data,
+            'stats': {
+                'total': stats_row['total'] or 0,
+                'attending': stats_row['attending'] or 0,
+                'not_attending': stats_row['not_attending'] or 0,
+                'by_side': {
+                    'groom': stats_row['groom_side'] or 0,
+                    'bride': stats_row['bride_side'] or 0
+                }
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting RSVP list: {e}")
+        return jsonify({'success': False, 'message': 'Có lỗi xảy ra khi tải danh sách'}), 500
+
+
+@app.route('/api/rsvp/export', methods=['GET'])
+def export_rsvp():
+    """Xuất danh sách RSVP ra CSV"""
+    try:
+        conn = get_db_connection()
+        rows = conn.execute('SELECT * FROM rsvp ORDER BY created_at DESC').fetchall()
+        conn.close()
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['STT', 'Họ tên', 'SĐT', 'Tham dự', 'Bên', 'Số người', 'Sự kiện', 'Lời nhắn', 'Thời gian'])
+        for idx, row in enumerate(rows, 1):
+            writer.writerow([
+                idx, row['name'], row['phone'],
+                'Có' if row['attending'] else 'Không',
+                'Nhà trai' if row['side'] == 'groom' else 'Nhà gái',
+                row['guest_count'], row['event_name'], row['message'], row['created_at']
+            ])
+
+        csv_content = '\ufeff' + output.getvalue()
+        return Response(csv_content, mimetype='text/csv; charset=utf-8',
+                        headers={'Content-Disposition': 'attachment; filename=rsvp_danh_sach.csv'})
+    except Exception as e:
+        logger.error(f"Error exporting RSVP: {e}")
+        return jsonify({'success': False, 'message': 'Có lỗi xảy ra khi xuất file'}), 500
+
+
+@app.route('/api/rsvp/<int:rsvp_id>', methods=['DELETE'])
+def delete_rsvp(rsvp_id):
+    """Xóa RSVP"""
+    try:
+        conn = get_db_connection()
+        if not conn.execute('SELECT id FROM rsvp WHERE id = ?', (rsvp_id,)).fetchone():
+            conn.close()
+            return jsonify({'success': False, 'message': 'Không tìm thấy RSVP'}), 404
+        conn.execute('DELETE FROM rsvp WHERE id = ?', (rsvp_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'Đã xóa xác nhận tham dự'})
+    except Exception as e:
+        logger.error(f"Error deleting RSVP: {e}")
+        return jsonify({'success': False, 'message': 'Có lỗi xảy ra khi xóa'}), 500
+
+
 if __name__ == '__main__':
     # Khởi tạo database
     init_database()
-    
+
     # Lấy port từ environment variable hoặc mặc định
     port = int(os.environ.get('PORT', 5001))
     debug = os.environ.get('FLASK_ENV', 'development') == 'development'
