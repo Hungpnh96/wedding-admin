@@ -170,12 +170,12 @@
                             <div class="inv-card" id="inv-card">
                                 <div class="inv-header">
                                     <div class="inv-header-box">
-                                        <strong>Nhà Trai</strong>
+                                        <strong>Nhà Gái</strong>
                                         <span id="inv-groom-parents">Đang tải...</span>
                                     </div>
                                     <div class="inv-divider-v"></div>
                                     <div class="inv-header-box">
-                                        <strong>Nhà Gái</strong>
+                                        <strong>Nhà Trai</strong>
                                         <span id="inv-bride-parents">Đang tải...</span>
                                     </div>
                                 </div>
@@ -407,12 +407,27 @@
         }
     }
 
+    function clearCardEvent() {
+        setText('inv-time', '--');
+        setText('inv-venue', 'Địa điểm');
+        setText('inv-address', 'Đang tải...');
+        setText('inv-dow', '');
+        var dayEl = document.getElementById('inv-day');
+        if (dayEl) dayEl.textContent = '';
+        setText('inv-month', '');
+        setText('inv-year', '');
+        var lunarEl = document.getElementById('inv-lunar');
+        if (lunarEl) lunarEl.textContent = '';
+    }
+
     // Update card with the first checked event in list order (global for inline handlers)
     window.updateCardByFirstChecked = function() {
         for (var i = 0; i < _weddingEvents.length; i++) {
             var cb = document.getElementById('ev-cb-' + i);
             if (cb && cb.checked) { updateCardEvent(_weddingEvents[i]); return; }
         }
+        // No event selected — clear card event info
+        clearCardEvent();
     };
 
     window.toggleEventItem = function(idx) {
