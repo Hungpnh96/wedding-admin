@@ -130,32 +130,21 @@
 .inv-location { font-size: 11px; color: #4A5A40; line-height: 1.5; }
 .inv-location strong { color: #2C3A28; font-size: 12px; }
 
-/* ===== EVENT SELECTOR ===== */
-.rsvp-event-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.rsvp-event-btn {
-    padding: 7px 14px; border-radius: 20px; border: 1.5px solid #C0CDB8;
-    background: #fff; color: #4A5A40; font-size: 12px; font-weight: 600;
-    cursor: pointer; transition: all 0.15s;
+/* ===== EVENT SELECTOR (multi-checkbox) ===== */
+.rsvp-event-list { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.rsvp-event-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 11px; border-radius: 9px; border: 1.5px solid #C0CDB8;
+    background: #fff; cursor: pointer; transition: all 0.15s; user-select: none;
 }
-.rsvp-event-btn:hover { border-color: #8E9D84; background: #EEF2EA; }
-.rsvp-event-btn.selected { background: #8E9D84; color: #fff; border-color: #8E9D84; }
-
-/* ===== ATTEND + SIDE BUTTONS ===== */
-.rsvp-attend-btns {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;
+.rsvp-event-item:hover { border-color: #8E9D84; background: #F2F5EF; }
+.rsvp-event-item.selected { border-color: #8E9D84; background: #EEF2EA; }
+.rsvp-event-item input[type="checkbox"] {
+    accent-color: #8E9D84; width: 15px; height: 15px; margin-top: 2px; cursor: pointer; flex-shrink: 0;
 }
-.rsvp-attend-btn {
-    padding: 9px 8px; border-radius: 8px; border: 1.5px solid #C0CDB8;
-    background: #fff; color: #4A5A40; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all 0.15s; text-align: center;
-}
-.rsvp-attend-btn:hover { border-color: #8E9D84; }
-.rsvp-attend-btn.selected-yes { background: #8E9D84; color: #fff; border-color: #8E9D84; }
-.rsvp-attend-btn.selected-no  { background: #8a8a8a; color: #fff; border-color: #8a8a8a; }
-.rsvp-attend-btn.selected-groom { background: #3A5030; color: #fff; border-color: #3A5030; }
-.rsvp-attend-btn.selected-bride { background: #8E9D84; color: #fff; border-color: #8E9D84; }
-
-.rsvp-divider { border: none; border-top: 1px dashed #C8D6C0; margin: 10px 0; }
+.rsvp-event-item-body { flex: 1; }
+.rsvp-event-item-name { font-weight: 700; font-size: 13px; color: #2C3A28; }
+.rsvp-event-item-detail { font-size: 11px; color: #7A8A70; margin-top: 3px; line-height: 1.5; }
 
 @media (max-width: 600px) {
     .wedding-dual-wrap { grid-template-columns: 1fr; }
@@ -217,39 +206,19 @@
                             <div id="rsvp-form-container">
                                 <form id="rsvp-attend-form" novalidate>
 
-                                    <!-- Event selection -->
+                                    <!-- Event multi-select -->
                                     <div class="wf-field" id="rsvp-event-section" style="display:none;">
                                         <label>Sự kiện tham dự <span style="color:#e05454">*</span></label>
-                                        <div class="rsvp-event-btns" id="rsvp-event-btns"></div>
+                                        <div class="rsvp-event-list" id="rsvp-event-list"></div>
                                     </div>
-                                    <input type="hidden" id="rsvp-event" value="">
-
-                                    <hr class="rsvp-divider">
-
-                                    <!-- Side selection -->
-                                    <div class="wf-field">
-                                        <label>Bạn được mời từ <span style="color:#e05454">*</span></label>
-                                        <div class="rsvp-attend-btns">
-                                            <button type="button" class="rsvp-attend-btn" id="btn-groom-side" onclick="selectSide('groom')">Nhà Trai</button>
-                                            <button type="button" class="rsvp-attend-btn" id="btn-bride-side" onclick="selectSide('bride')">Nhà Gái</button>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" id="rsvp-side" value="">
 
                                     <!-- Name -->
-                                    <div class="wf-field">
+                                    <div class="wf-field" style="margin-top:8px;">
                                         <label>Họ và Tên <span style="color:#e05454">*</span></label>
                                         <input type="text" id="rsvp-name" class="form-control" placeholder="Họ và tên của bạn">
                                     </div>
 
-                                    <!-- Attend -->
-                                    <input type="hidden" id="rsvp-attending" value="">
-                                    <div class="rsvp-attend-btns">
-                                        <button type="button" class="rsvp-attend-btn" id="btn-yes" onclick="selectAttend('yes')">&#10003; Sẽ đến</button>
-                                        <button type="button" class="rsvp-attend-btn" id="btn-no" onclick="selectAttend('no')">&#10007; Không đến</button>
-                                    </div>
-
-                                    <button type="submit" id="rsvp-submit-btn" class="wf-submit-btn" style="margin-top:10px;">Xác nhận</button>
+                                    <button type="submit" id="rsvp-submit-btn" class="wf-submit-btn">Xác nhận tham dự</button>
                                 </form>
                             </div>
 
@@ -438,31 +407,15 @@
         }
     }
 
-    window.selectEvent = function(idx) {
-        document.querySelectorAll('.rsvp-event-btn').forEach(function(btn, i) {
-            btn.className = 'rsvp-event-btn' + (i === idx ? ' selected' : '');
-        });
-        var ev = _weddingEvents[idx];
-        if (!ev) return;
-        var hidden = document.getElementById('rsvp-event');
-        if (hidden) hidden.value = ev.name || ev.title || '';
-        updateCardEvent(ev);
-    };
-
-    window.selectSide = function(val) {
-        document.getElementById('rsvp-side').value = val;
-        var btnG = document.getElementById('btn-groom-side');
-        var btnB = document.getElementById('btn-bride-side');
-        if (btnG) btnG.className = 'rsvp-attend-btn' + (val === 'groom' ? ' selected-groom' : '');
-        if (btnB) btnB.className = 'rsvp-attend-btn' + (val === 'bride' ? ' selected-bride' : '');
-    };
-
-    window.selectAttend = function(val) {
-        document.getElementById('rsvp-attending').value = val;
-        var btnY = document.getElementById('btn-yes');
-        var btnN = document.getElementById('btn-no');
-        if (btnY) btnY.className = 'rsvp-attend-btn' + (val === 'yes' ? ' selected-yes' : '');
-        if (btnN) btnN.className = 'rsvp-attend-btn' + (val === 'no' ? ' selected-no' : '');
+    // Toggle event item UI (called on label click via JS)
+    window.toggleEventItem = function(idx) {
+        var item = document.getElementById('ev-item-' + idx);
+        var cb = document.getElementById('ev-cb-' + idx);
+        if (!item || !cb) return;
+        cb.checked = !cb.checked;
+        item.className = 'rsvp-event-item' + (cb.checked ? ' selected' : '');
+        // Update card to show last clicked event
+        if (cb.checked) updateCardEvent(_weddingEvents[idx]);
     };
 
     function loadInvitationCard() {
@@ -480,7 +433,7 @@
             setText('inv-groom-name', (couple.groom && couple.groom.name) || hero.groomName || 'Chú Rể');
             setText('inv-bride-name', (couple.bride && couple.bride.name) || hero.brideName || 'Cô Dâu');
 
-            // Parents with line break
+            // Parents
             var gParts = [];
             if (groomParents.father) gParts.push(groomParents.father);
             if (groomParents.mother) gParts.push(groomParents.mother);
@@ -491,8 +444,8 @@
             if (brideParents.mother) bParts.push(brideParents.mother);
             setHtml('inv-bride-parents', bParts.length ? bParts.join('<br>') : 'Gia đình nhà gái');
 
-            // Default date from hero (when no events)
-            if (hero.weddingDate && _weddingEvents.length === 0) {
+            // Default date from hero
+            if (hero.weddingDate) {
                 var dt = new Date(hero.weddingDate);
                 if (!isNaN(dt.getTime())) {
                     var days = ['CN','T2','T3','T4','T5','T6','T7'];
@@ -505,16 +458,35 @@
                 if (hero.weddingTime) setText('inv-time', formatHHMM(hero.weddingTime));
             }
 
-            // Build event selector
+            // Build multi-select event list
             var eventSection = document.getElementById('rsvp-event-section');
-            var eventBtns = document.getElementById('rsvp-event-btns');
-            if (_weddingEvents.length > 0 && eventSection && eventBtns) {
+            var eventList = document.getElementById('rsvp-event-list');
+            if (_weddingEvents.length > 0 && eventSection && eventList) {
                 eventSection.style.display = 'block';
-                eventBtns.innerHTML = _weddingEvents.map(function(ev, i) {
-                    return '<button type="button" class="rsvp-event-btn" onclick="selectEvent(' + i + ')">' +
-                           esc(ev.name || ev.title || ('Sự kiện ' + (i + 1))) + '</button>';
+                eventList.innerHTML = _weddingEvents.map(function(ev, i) {
+                    var name = ev.name || ev.title || ('Sự kiện ' + (i + 1));
+                    var detail = [];
+                    if (ev.date) {
+                        var d2 = new Date(ev.date);
+                        if (!isNaN(d2.getTime())) {
+                            var ds2 = ['CN','T2','T3','T4','T5','T6','T7'];
+                            detail.push(ds2[d2.getDay()] + ' ' + d2.getDate() + '/' + (d2.getMonth()+1) + '/' + d2.getFullYear());
+                        }
+                    }
+                    if (ev.time) detail.push(formatHHMM(ev.time));
+                    if (ev.venue) detail.push(ev.venue);
+                    if (ev.address) detail.push(ev.address);
+                    return '<div class="rsvp-event-item" id="ev-item-' + i + '" onclick="toggleEventItem(' + i + ')">' +
+                        '<input type="checkbox" id="ev-cb-' + i + '" name="rsvp_event" value="' + esc(name) + '" onclick="event.stopPropagation();" onchange="(function(cb,item,idx){cb.checked?(item.className=\'rsvp-event-item selected\',updateCardEvent(_weddingEvents[idx])):(item.className=\'rsvp-event-item\')})(this,document.getElementById(\'ev-item-\'+' + i + '),' + i + ')">' +
+                        '<div class="rsvp-event-item-body">' +
+                        '<div class="rsvp-event-item-name">' + esc(name) + '</div>' +
+                        (detail.length ? '<div class="rsvp-event-item-detail">' + esc(detail.join(' · ')) + '</div>' : '') +
+                        '</div></div>';
                 }).join('');
-                selectEvent(0);
+                // Auto-check + update card for first event
+                var cb0 = document.getElementById('ev-cb-0');
+                var it0 = document.getElementById('ev-item-0');
+                if (cb0 && it0) { cb0.checked = true; it0.className = 'rsvp-event-item selected'; updateCardEvent(_weddingEvents[0]); }
             }
         }).catch(function(){});
     }
@@ -528,23 +500,20 @@
             e.preventDefault();
             e.stopPropagation();
             var name = (document.getElementById('rsvp-name').value || '').trim();
-            var side = (document.getElementById('rsvp-side').value || '').trim();
-            var attending = document.getElementById('rsvp-attending').value;
-            var eventVal = (document.getElementById('rsvp-event').value || '').trim();
+            var checkedEvents = Array.from(document.querySelectorAll('input[name="rsvp_event"]:checked')).map(function(c){ return c.value; });
             var eventSection = document.getElementById('rsvp-event-section');
             var hasEvents = eventSection && eventSection.style.display !== 'none';
 
             if (!name) { showToast('Vui lòng nhập họ và tên!', 'warning'); document.getElementById('rsvp-name').focus(); return; }
-            if (!side) { showToast('Vui lòng chọn Nhà Trai hoặc Nhà Gái!', 'warning'); return; }
-            if (hasEvents && !eventVal) { showToast('Vui lòng chọn sự kiện tham dự!', 'warning'); return; }
-            if (!attending) { showToast('Vui lòng chọn Sẽ đến hoặc Không đến!', 'warning'); return; }
+            if (hasEvents && checkedEvents.length === 0) { showToast('Vui lòng chọn ít nhất một sự kiện!', 'warning'); return; }
 
+            var eventVal = checkedEvents.join(', ') || 'Tiệc Cưới';
             var btn = document.getElementById('rsvp-submit-btn');
             btn.disabled = true; btn.textContent = 'Đang gửi...';
             fetch('/api/rsvp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name, phone: '', attending: attending === 'yes', side: side, guest_count: 1, message: '', event_name: eventVal || 'Tiệc Cưới' })
+                body: JSON.stringify({ name: name, phone: '', attending: true, side: 'groom', guest_count: 1, message: '', event_name: eventVal })
             })
             .then(function(r){ return r.json(); })
             .then(function(data) {
@@ -553,11 +522,9 @@
                     document.getElementById('rsvp-form-container').style.display = 'none';
                     var ty = document.getElementById('rsvp-thankyou');
                     ty.style.display = 'block';
-                    document.getElementById('rsvp-ty-icon').textContent = attending === 'yes' ? '\u2764\uFE0F' : '\uD83D\uDE4F';
-                    document.getElementById('rsvp-ty-title').textContent = attending === 'yes' ? 'Cảm ơn bạn!' : 'Đã nhận được!';
-                    document.getElementById('rsvp-ty-msg').textContent = attending === 'yes'
-                        ? 'Chúng tôi rất vui khi bạn sẽ tham dự!'
-                        : 'Cảm ơn bạn đã thông báo. Chúc bạn mọi điều tốt lành!';
+                    document.getElementById('rsvp-ty-icon').textContent = '\u2764\uFE0F';
+                    document.getElementById('rsvp-ty-title').textContent = 'Cảm ơn bạn!';
+                    document.getElementById('rsvp-ty-msg').textContent = 'Chúng tôi rất vui khi bạn sẽ tham dự!';
                     var wn = document.getElementById('wishes-name');
                     if (wn && !wn.value) wn.value = name;
                 } else {

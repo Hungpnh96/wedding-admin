@@ -62,3 +62,5 @@ public/uploads/
 .mcp.json
 CLAUDE.md 
 .Claude
+
+/data/wedding.db
