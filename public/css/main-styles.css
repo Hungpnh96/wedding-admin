@@ -45,7 +45,7 @@ section#hero.hero-fullscreen::before,
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    background-color: rgba(74, 90, 82, 0.7) !important;
+    background-color: rgba(120, 85, 50, 0.65) !important;
     z-index: 1 !important;
     pointer-events: none !important;
 }
