@@ -1,129 +1,161 @@
 <style>
+/* ===== BASE FIELDS ===== */
 .wf-field { margin-bottom: 10px; }
 .wf-field label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 3px;
-    color: #7a3e3e;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+    display: block; font-weight: 600; margin-bottom: 3px;
+    color: #3A5030; font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px;
 }
 .wf-field .form-control,
 .wf-field select {
-    width: 100%;
-    padding: 7px 11px;
-    border: 1.5px solid #e8b4b8;
-    border-radius: 7px;
-    font-size: 13px;
-    background: #fff;
-    color: #4a2c2c;
-    transition: border-color 0.2s;
-    outline: none;
-    box-sizing: border-box;
+    width: 100%; padding: 7px 11px; border: 1.5px solid #C0CDB8;
+    border-radius: 7px; font-size: 13px; background: #fff;
+    color: #2C3A28; transition: border-color 0.2s; outline: none; box-sizing: border-box;
 }
 .wf-field .form-control:focus,
 .wf-field select:focus {
-    border-color: #c97b7b;
-    box-shadow: 0 0 0 2px rgba(201,123,123,0.15);
+    border-color: #8E9D84;
+    box-shadow: 0 0 0 2px rgba(142,174,186,0.18);
 }
 .wf-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.rsvp-radio-row {
-    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 3px;
-}
-.rsvp-radio-row label {
-    display: flex; align-items: center; gap: 5px;
-    font-weight: 500; color: #4a2c2c; cursor: pointer;
-    font-size: 13px; margin-bottom: 0; text-transform: none; letter-spacing: 0;
-}
-.rsvp-radio-row input[type="radio"] { accent-color: #c97b7b; width: 14px; height: 14px; cursor: pointer; }
-.rsvp-event-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 3px; }
-.rsvp-event-pills label {
-    display: flex; align-items: center; gap: 4px;
-    font-weight: 500; color: #4a2c2c; cursor: pointer;
-    font-size: 12px; margin-bottom: 0;
-    text-transform: none; letter-spacing: 0;
-    background: #fff5f5; border: 1.5px solid #e8b4b8;
-    border-radius: 16px; padding: 3px 10px; transition: all 0.15s;
-}
-.rsvp-event-pills label:hover { border-color: #c97b7b; background: #fff0f0; }
-.rsvp-event-pills input[type="checkbox"] { accent-color: #c97b7b; width: 13px; height: 13px; cursor: pointer; }
 
-/* Wishes suggest */
+/* ===== WISHES SUGGEST ===== */
 .ws-textarea-wrap { position: relative; }
 .ws-suggest-btn {
     position: absolute; right: 8px; bottom: 8px;
     background: none; border: none; cursor: pointer;
-    color: #c97b7b; padding: 0; opacity: 0.65; transition: opacity 0.15s;
+    color: #8E9D84; padding: 0; opacity: 0.65; transition: opacity 0.15s;
 }
 .ws-suggest-btn:hover { opacity: 1; }
 .ws-suggest-panel {
     display: none; position: absolute; bottom: 34px; right: 0;
-    width: 280px; background: #fff; border: 1.5px solid #e8b4b8;
+    width: 280px; background: #fff; border: 1.5px solid #C0CDB8;
     border-radius: 9px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
     z-index: 99; overflow: hidden;
 }
 .ws-suggest-panel input {
-    width: 100%; border: none; border-bottom: 1px solid #f0d0d0;
-    padding: 7px 10px; font-size: 12px; outline: none; box-sizing: border-box; color: #4a2c2c;
+    width: 100%; border: none; border-bottom: 1px solid #D0DBC8;
+    padding: 7px 10px; font-size: 12px; outline: none; box-sizing: border-box; color: #2C3A28;
 }
 .ws-suggest-list { max-height: 180px; overflow-y: auto; list-style: none; margin: 0; padding: 0; }
 .ws-suggest-list li a {
-    display: block; padding: 7px 10px; font-size: 12px; color: #4a2c2c;
-    cursor: pointer; border-bottom: 1px solid #fdf0f0; transition: background 0.1s; text-decoration: none;
+    display: block; padding: 7px 10px; font-size: 12px; color: #2C3A28;
+    cursor: pointer; border-bottom: 1px solid #EEF2EA; transition: background 0.1s; text-decoration: none;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.ws-suggest-list li a:hover { background: #fff5f5; color: #c97b7b; }
+.ws-suggest-list li a:hover { background: #EEF2EA; color: #8E9D84; }
 
-/* Thank you */
+/* ===== THANK YOU ===== */
 .wf-thankyou { text-align: center; padding: 16px 8px; animation: wfFadeIn 0.4s ease; }
 .wf-thankyou .ty-icon { font-size: 32px; margin-bottom: 8px; }
-.wf-thankyou h4 { color: #c97b7b; font-size: 16px; margin-bottom: 6px; font-family: inherit; }
-.wf-thankyou p { color: #7a3e3e; font-size: 13px; margin: 0; }
+.wf-thankyou h4 { color: #8E9D84; font-size: 16px; margin-bottom: 6px; font-family: inherit; }
+.wf-thankyou p { color: #3A5030; font-size: 13px; margin: 0; }
 @keyframes wfFadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 
-/* Wishes list */
-.wishes-feed { margin-top: 16px; border-top: 1px dashed #f0c0c0; padding-top: 14px; max-height: 340px; overflow-y: auto; }
-.wishes-feed-title { text-align: center; color: #c97b7b; font-size: 12px; font-weight: 600; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+/* ===== WISHES LIST ===== */
+.wishes-feed { margin-top: 16px; border-top: 1px dashed #C8D6C0; padding-top: 14px; max-height: 340px; overflow-y: auto; }
+.wishes-feed-title { text-align: center; color: #8E9D84; font-size: 12px; font-weight: 600; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
 .wish-item {
     padding: 10px 12px; margin-bottom: 8px;
-    background: #fff9f9; border: 1px solid #f0d0d0; border-radius: 8px;
+    background: #F2F5EF; border: 1px solid #C8D6C0; border-radius: 8px;
 }
-.wish-item .wi-name { font-weight: 600; color: #7a3e3e; font-size: 12px; }
-.wish-item .wi-from { font-size: 11px; color: #b07070; margin-left: 4px; }
-.wish-item .wi-text { color: #4a2c2c; font-size: 13px; margin-top: 4px; line-height: 1.45; }
-.wish-item .wi-time { font-size: 11px; color: #c0a0a0; margin-top: 4px; }
+.wish-item .wi-name { font-weight: 600; color: #2C3A28; font-size: 12px; }
+.wish-item .wi-from { font-size: 11px; color: #7A8A70; margin-left: 4px; }
+.wish-item .wi-text { color: #2C3A28; font-size: 13px; margin-top: 4px; line-height: 1.45; }
+.wish-item .wi-time { font-size: 11px; color: #9AAA90; margin-top: 4px; }
 
-/* Two-panel layout */
+/* ===== TWO-PANEL LAYOUT ===== */
 .wedding-dual-wrap {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    align-items: start;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;
 }
 .wedding-panel {
-    background: #fff;
-    border: 1.5px solid #e8b4b8;
-    border-radius: 12px;
-    padding: 18px 16px;
+    background: #fff; border: 1.5px solid #C0CDB8; border-radius: 12px; padding: 18px 16px;
 }
 .wedding-panel-title {
-    text-align: center;
-    color: #c97b7b;
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 14px;
-    padding-bottom: 10px;
-    border-bottom: 1px dashed #f0c0c0;
+    text-align: center; color: #8E9D84; font-size: 15px; font-weight: 600;
+    margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px dashed #C8D6C0;
 }
 .wf-submit-btn {
     width: 100%; padding: 9px; border-radius: 8px;
-    background: #c97b7b; color: #fff; border: none;
-    font-size: 13px; font-weight: 600; cursor: pointer;
-    transition: background 0.2s; margin-top: 12px;
+    background: #8E9D84; color: #fff; border: none;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 12px;
 }
-.wf-submit-btn:hover { background: #b86767; }
-.wf-submit-btn:disabled { background: #dba8a8; cursor: not-allowed; }
+.wf-submit-btn:hover { background: #7A8D73; }
+.wf-submit-btn:disabled { background: #C0CDB8; cursor: not-allowed; }
+
+/* ===== INVITATION CARD ===== */
+.inv-card {
+    background: linear-gradient(160deg, #F2F5EF 0%, #EAF0E6 100%);
+    border: 1px solid #C8D6C0; border-radius: 10px;
+    padding: 14px 12px 12px; margin-bottom: 14px;
+    text-align: center; position: relative; overflow: hidden;
+}
+.inv-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 3 Q23 10 20 17 Q17 10 20 3Z' fill='%23C0CDB8' opacity='.35'/%3E%3C/svg%3E") repeat;
+    opacity: .4; pointer-events: none;
+}
+.inv-header {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px;
+    margin-bottom: 10px; font-size: 11px; color: #4A5A40;
+}
+.inv-header-box { line-height: 1.5; }
+.inv-header-box strong { display: block; font-size: 11.5px; color: #2C3A28; }
+.inv-divider-v { width: 1px; background: #C0CDB8; margin: 0 4px; }
+.inv-kính-mời {
+    font-size: 10px; color: #7A8A70; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 4px;
+}
+.inv-intro { font-size: 11px; color: #4A5A40; margin-bottom: 8px; line-height: 1.5; }
+.inv-names { margin-bottom: 10px; }
+.inv-names .inv-groom {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 17px; font-weight: 700; color: #2C3A28; line-height: 1.3;
+}
+.inv-names .inv-bride {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 17px; font-weight: 700; color: #2C3A28; line-height: 1.3;
+}
+.inv-names .inv-amp { color: #8E9D84; font-size: 13px; margin: 2px 0; }
+.inv-event {
+    background: rgba(142,157,132,0.12); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px;
+}
+.inv-event-time { font-size: 11px; color: #4A5A40; margin-bottom: 2px; }
+.inv-event-date {
+    font-size: 24px; font-weight: 800; color: #8E9D84;
+    line-height: 1; letter-spacing: -0.5px;
+}
+.inv-event-date span { font-size: 13px; font-weight: 600; color: #5A7050; margin: 0 2px; }
+.inv-event-note { font-size: 10px; color: #7A8A70; margin-top: 3px; }
+.inv-location { font-size: 11px; color: #4A5A40; line-height: 1.5; }
+.inv-location strong { color: #2C3A28; font-size: 12px; }
+
+/* ===== EVENT SELECTOR ===== */
+.rsvp-event-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.rsvp-event-btn {
+    padding: 7px 14px; border-radius: 20px; border: 1.5px solid #C0CDB8;
+    background: #fff; color: #4A5A40; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+}
+.rsvp-event-btn:hover { border-color: #8E9D84; background: #EEF2EA; }
+.rsvp-event-btn.selected { background: #8E9D84; color: #fff; border-color: #8E9D84; }
+
+/* ===== ATTEND + SIDE BUTTONS ===== */
+.rsvp-attend-btns {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;
+}
+.rsvp-attend-btn {
+    padding: 9px 8px; border-radius: 8px; border: 1.5px solid #C0CDB8;
+    background: #fff; color: #4A5A40; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.rsvp-attend-btn:hover { border-color: #8E9D84; }
+.rsvp-attend-btn.selected-yes { background: #8E9D84; color: #fff; border-color: #8E9D84; }
+.rsvp-attend-btn.selected-no  { background: #8a8a8a; color: #fff; border-color: #8a8a8a; }
+.rsvp-attend-btn.selected-groom { background: #3A5030; color: #fff; border-color: #3A5030; }
+.rsvp-attend-btn.selected-bride { background: #8E9D84; color: #fff; border-color: #8E9D84; }
+
+.rsvp-divider { border: none; border-top: 1px dashed #C8D6C0; margin: 10px 0; }
 
 @media (max-width: 600px) {
     .wedding-dual-wrap { grid-template-columns: 1fr; }
@@ -141,72 +173,88 @@
 
                     <div class="wedding-dual-wrap">
 
-                        <!-- ===== PANEL 1: XÁC NHẬN THAM DỰ ===== -->
+                        <!-- ===== PANEL 1: THIỆP MỜI + XÁC NHẬN ===== -->
                         <div class="wedding-panel">
                             <div class="wedding-panel-title">Xác Nhận Tham Dự</div>
 
+                            <!-- Invitation card -->
+                            <div class="inv-card" id="inv-card">
+                                <div class="inv-header">
+                                    <div class="inv-header-box">
+                                        <strong>Nhà Trai</strong>
+                                        <span id="inv-groom-parents">Đang tải...</span>
+                                    </div>
+                                    <div class="inv-divider-v"></div>
+                                    <div class="inv-header-box">
+                                        <strong>Nhà Gái</strong>
+                                        <span id="inv-bride-parents">Đang tải...</span>
+                                    </div>
+                                </div>
+                                <div class="inv-kính-mời">Trân Trọng Kính Mời</div>
+                                <div class="inv-intro">Tới dự buổi cơm thân mật và chung vui cùng gia đình</div>
+                                <div class="inv-names">
+                                    <div class="inv-groom" id="inv-groom-name">Chú Rể</div>
+                                    <div class="inv-amp">&amp;</div>
+                                    <div class="inv-bride" id="inv-bride-name">Cô Dâu</div>
+                                </div>
+                                <div class="inv-event">
+                                    <div class="inv-event-time" id="inv-time">--</div>
+                                    <div class="inv-event-date">
+                                        <span id="inv-dow"></span>
+                                        <span id="inv-day" style="font-size:32px;color:#8E9D84;"></span>
+                                        <span id="inv-month"></span>
+                                        <span id="inv-year"></span>
+                                    </div>
+                                    <div class="inv-event-note" id="inv-lunar"></div>
+                                </div>
+                                <div class="inv-location">
+                                    <strong id="inv-venue">Địa điểm</strong><br>
+                                    <span id="inv-address">Đang tải...</span>
+                                </div>
+                            </div>
+
+                            <!-- RSVP Form -->
                             <div id="rsvp-form-container">
                                 <form id="rsvp-attend-form" novalidate>
 
-                                    <div class="wf-row2">
-                                        <div class="wf-field">
-                                            <label>Họ và Tên <span style="color:#e05454">*</span></label>
-                                            <input type="text" id="rsvp-name" class="form-control" placeholder="Họ và tên">
-                                        </div>
-                                        <div class="wf-field">
-                                            <label>Số điện thoại</label>
-                                            <input type="text" id="rsvp-phone" class="form-control" placeholder="SĐT">
-                                        </div>
+                                    <!-- Event selection -->
+                                    <div class="wf-field" id="rsvp-event-section" style="display:none;">
+                                        <label>Sự kiện tham dự <span style="color:#e05454">*</span></label>
+                                        <div class="rsvp-event-btns" id="rsvp-event-btns"></div>
                                     </div>
+                                    <input type="hidden" id="rsvp-event" value="">
 
+                                    <hr class="rsvp-divider">
+
+                                    <!-- Side selection -->
                                     <div class="wf-field">
-                                        <label>Tham dự</label>
-                                        <div class="rsvp-radio-row">
-                                            <label><input type="radio" name="attending" value="yes" checked> Sẽ đến</label>
-                                            <label><input type="radio" name="attending" value="no"> Xin lỗi, tôi bận</label>
+                                        <label>Bạn được mời từ <span style="color:#e05454">*</span></label>
+                                        <div class="rsvp-attend-btns">
+                                            <button type="button" class="rsvp-attend-btn" id="btn-groom-side" onclick="selectSide('groom')">Nhà Trai</button>
+                                            <button type="button" class="rsvp-attend-btn" id="btn-bride-side" onclick="selectSide('bride')">Nhà Gái</button>
                                         </div>
                                     </div>
+                                    <input type="hidden" id="rsvp-side" value="">
 
-                                    <div class="wf-row2">
-                                        <div class="wf-field">
-                                            <label>Bên</label>
-                                            <select id="rsvp-side" class="form-control">
-                                                <option value="groom">Nhà trai</option>
-                                                <option value="bride">Nhà gái</option>
-                                            </select>
-                                        </div>
-                                        <div class="wf-field">
-                                            <label>Số người</label>
-                                            <select id="rsvp-guests" class="form-control">
-                                                <option value="1">1 người</option>
-                                                <option value="2">2 người</option>
-                                                <option value="3">3 người</option>
-                                                <option value="4">4 người</option>
-                                                <option value="5">5 người</option>
-                                                <option value="6">6 người</option>
-                                                <option value="7">7 người</option>
-                                                <option value="8">8 người</option>
-                                                <option value="9">9 người</option>
-                                                <option value="10">10 người</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
+                                    <!-- Name -->
                                     <div class="wf-field">
-                                        <label>Sự kiện</label>
-                                        <div class="rsvp-event-pills" id="rsvp-events-container">
-                                            <label><input type="checkbox" name="rsvp_event" value="Lễ Vu Quy"> Lễ Vu Quy</label>
-                                            <label><input type="checkbox" name="rsvp_event" value="Lễ Thành Hôn"> Lễ Thành Hôn</label>
-                                            <label><input type="checkbox" name="rsvp_event" value="Tiệc Cưới"> Tiệc Cưới</label>
-                                        </div>
+                                        <label>Họ và Tên <span style="color:#e05454">*</span></label>
+                                        <input type="text" id="rsvp-name" class="form-control" placeholder="Họ và tên của bạn">
                                     </div>
 
-                                    <button type="submit" id="rsvp-submit-btn" class="wf-submit-btn">Xác nhận tham dự</button>
+                                    <!-- Attend -->
+                                    <input type="hidden" id="rsvp-attending" value="">
+                                    <div class="rsvp-attend-btns">
+                                        <button type="button" class="rsvp-attend-btn" id="btn-yes" onclick="selectAttend('yes')">&#10003; Sẽ đến</button>
+                                        <button type="button" class="rsvp-attend-btn" id="btn-no" onclick="selectAttend('no')">&#10007; Không đến</button>
+                                    </div>
+
+                                    <button type="submit" id="rsvp-submit-btn" class="wf-submit-btn" style="margin-top:10px;">Xác nhận</button>
                                 </form>
                             </div>
 
                             <div id="rsvp-thankyou" class="wf-thankyou" style="display:none;">
-                                <div class="ty-icon">&#10084;&#65039;</div>
+                                <div class="ty-icon" id="rsvp-ty-icon">&#10084;&#65039;</div>
                                 <h4 id="rsvp-ty-title">Cảm ơn bạn!</h4>
                                 <p id="rsvp-ty-msg">Hẹn gặp trong ngày vui!</p>
                             </div>
@@ -264,7 +312,7 @@
                             <div class="wishes-feed">
                                 <div class="wishes-feed-title">Lời chúc gần nhất</div>
                                 <div id="wishes-items-list">
-                                    <p style="text-align:center;color:#c0a0a0;font-size:12px;padding:8px 0;">Đang tải...</p>
+                                    <p style="text-align:center;color:#9AAA90;font-size:12px;padding:8px 0;">Đang tải...</p>
                                 </div>
                             </div>
                         </div>
@@ -272,7 +320,7 @@
                     </div><!-- /wedding-dual-wrap -->
 
                     <div style="text-align:center;margin-top:28px;line-height:0;">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='189' height='26' viewBox='0 0 189 26'%3E%3Cpath fill='none' fill-rule='evenodd' stroke='%23ee8584' stroke-width='1.5px' d='M86.19%2C2.362L96.98%2C13%2C86.19%2C23.634%2C75.4%2C13Z'/%3E%3Cpath fill='none' fill-rule='evenodd' stroke='%23ee8584' stroke-width='1.5px' d='M94.985%2C2.362L105.775%2C13%2C94.985%2C23.634%2C84.2%2C13Z'/%3E%3Cpath fill='none' fill-rule='evenodd' stroke='%23ee8584' stroke-width='1.5px' d='M103.78%2C2.362L114.57%2C13%2C103.78%2C23.634%2C92.991%2C13Z'/%3E%3Cpath fill-rule='evenodd' fill='%23ee8584' d='M120%2C14V13H523v1H120Z'/%3E%3Cpath fill-rule='evenodd' fill='%23ee8584' d='M-331%2C14V13H69v1H-331Z'/%3E%3C%2Fsvg%3E" width="189" height="26" alt="">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='189' height='26' viewBox='0 0 189 26'%3E%3Cpath fill='none' fill-rule='evenodd' stroke='%238eaeba' stroke-width='1.5px' d='M86.19%2C2.362L96.98%2C13%2C86.19%2C23.634%2C75.4%2C13Z'/%3E%3Cpath fill='none' fill-rule='evenodd' stroke='%238eaeba' stroke-width='1.5px' d='M94.985%2C2.362L105.775%2C13%2C94.985%2C23.634%2C84.2%2C13Z'/%3E%3Cpath fill='none' fill-rule='evenodd' stroke='%238eaeba' stroke-width='1.5px' d='M103.78%2C2.362L114.57%2C13%2C103.78%2C23.634%2C92.991%2C13Z'/%3E%3Cpath fill-rule='evenodd' fill='%238eaeba' d='M120%2C14V13H523v1H120Z'/%3E%3Cpath fill-rule='evenodd' fill='%238eaeba' d='M-331%2C14V13H69v1H-331Z'/%3E%3C%2Fsvg%3E" width="189" height="26" alt="">
                     </div>
 
                 </div>
@@ -309,21 +357,28 @@
         var d = new Date(ds);
         return isNaN(d.getTime()) ? ds : d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
     }
+    function formatHHMM(t) {
+        if (!t) return '';
+        var p = t.split(':');
+        return p.length >= 2 ? parseInt(p[0], 10) + ' giờ ' + p[1] : t;
+    }
+    function setText(id, val) {
+        var el = document.getElementById(id);
+        if (el && val !== undefined && val !== null && String(val) !== '') el.textContent = val;
+    }
+    function setHtml(id, html) {
+        var el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+    }
 
-    // --- Toast notification (same style as admin) ---
+    // --- Toast ---
     function showToast(message, type) {
         Swal.fire({
-            text: message,
-            icon: type || 'info',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
+            text: message, icon: type || 'info', toast: true,
+            position: 'top-end', showConfirmButton: false,
             timer: type === 'error' || type === 'warning' ? 4000 : 2500,
-            timerProgressBar: true,
-            width: '350px',
-            padding: '1rem',
-            background: '#fff',
-            backdrop: false
+            timerProgressBar: true, width: '350px', padding: '1rem',
+            background: '#fff', backdrop: false
         });
     }
 
@@ -341,7 +396,6 @@
         if (ta) ta.value = el.dataset.t;
         document.getElementById('ws-suggest-panel').style.display = 'none';
     };
-
     function initSuggest() {
         var btn = document.getElementById('ws-suggest-toggle');
         var panel = document.getElementById('ws-suggest-panel');
@@ -360,17 +414,107 @@
         });
     }
 
-    // --- RSVP events ---
-    function loadRsvpEvents() {
-        if (typeof window.apiCall !== 'function') { setTimeout(loadRsvpEvents, 300); return; }
+    // --- Invitation card ---
+    var _weddingEvents = [];
+
+    function updateCardEvent(ev) {
+        if (!ev) return;
+        if (ev.time) setText('inv-time', formatHHMM(ev.time));
+        if (ev.name || ev.venue) setText('inv-venue', ev.name || ev.venue);
+        if (ev.address) setText('inv-address', ev.address);
+        var lunarEl = document.getElementById('inv-lunar');
+        if (lunarEl) lunarEl.textContent = ev.note || '';
+        var dateStr = ev.date;
+        if (dateStr) {
+            var dt = new Date(dateStr);
+            if (!isNaN(dt.getTime())) {
+                var days = ['CN','T2','T3','T4','T5','T6','T7'];
+                setText('inv-dow', days[dt.getDay()]);
+                var dayEl = document.getElementById('inv-day');
+                if (dayEl) dayEl.textContent = dt.getDate();
+                setText('inv-month', '/' + (dt.getMonth() + 1));
+                setText('inv-year', '/' + dt.getFullYear());
+            }
+        }
+    }
+
+    window.selectEvent = function(idx) {
+        document.querySelectorAll('.rsvp-event-btn').forEach(function(btn, i) {
+            btn.className = 'rsvp-event-btn' + (i === idx ? ' selected' : '');
+        });
+        var ev = _weddingEvents[idx];
+        if (!ev) return;
+        var hidden = document.getElementById('rsvp-event');
+        if (hidden) hidden.value = ev.name || ev.title || '';
+        updateCardEvent(ev);
+    };
+
+    window.selectSide = function(val) {
+        document.getElementById('rsvp-side').value = val;
+        var btnG = document.getElementById('btn-groom-side');
+        var btnB = document.getElementById('btn-bride-side');
+        if (btnG) btnG.className = 'rsvp-attend-btn' + (val === 'groom' ? ' selected-groom' : '');
+        if (btnB) btnB.className = 'rsvp-attend-btn' + (val === 'bride' ? ' selected-bride' : '');
+    };
+
+    window.selectAttend = function(val) {
+        document.getElementById('rsvp-attending').value = val;
+        var btnY = document.getElementById('btn-yes');
+        var btnN = document.getElementById('btn-no');
+        if (btnY) btnY.className = 'rsvp-attend-btn' + (val === 'yes' ? ' selected-yes' : '');
+        if (btnN) btnN.className = 'rsvp-attend-btn' + (val === 'no' ? ' selected-no' : '');
+    };
+
+    function loadInvitationCard() {
+        if (typeof window.apiCall !== 'function') { setTimeout(loadInvitationCard, 300); return; }
         window.apiCall('/data').then(function(r){ return r.json(); }).then(function(result) {
-            if (result && result.data && Array.isArray(result.data.events) && result.data.events.length > 0) {
-                var c = document.getElementById('rsvp-events-container');
-                if (!c) return;
-                c.innerHTML = result.data.events.map(function(ev) {
-                    var n = typeof ev === 'string' ? ev : (ev.name || ev.title || '');
-                    return n ? '<label><input type="checkbox" name="rsvp_event" value="' + esc(n) + '" > ' + esc(n) + '</label>' : '';
+            var d = result && result.data ? result.data : {};
+            var hero = d.hero || {};
+            var couple = d.couple || {};
+            var groomParents = (couple.parents || {}).groom || {};
+            var brideParents = (couple.parents || {}).bride || {};
+
+            _weddingEvents = (d.events || []).filter(function(e){ return e.visible !== false; });
+
+            // Names
+            setText('inv-groom-name', (couple.groom && couple.groom.name) || hero.groomName || 'Chú Rể');
+            setText('inv-bride-name', (couple.bride && couple.bride.name) || hero.brideName || 'Cô Dâu');
+
+            // Parents with line break
+            var gParts = [];
+            if (groomParents.father) gParts.push(groomParents.father);
+            if (groomParents.mother) gParts.push(groomParents.mother);
+            setHtml('inv-groom-parents', gParts.length ? gParts.join('<br>') : 'Gia đình nhà trai');
+
+            var bParts = [];
+            if (brideParents.father) bParts.push(brideParents.father);
+            if (brideParents.mother) bParts.push(brideParents.mother);
+            setHtml('inv-bride-parents', bParts.length ? bParts.join('<br>') : 'Gia đình nhà gái');
+
+            // Default date from hero (when no events)
+            if (hero.weddingDate && _weddingEvents.length === 0) {
+                var dt = new Date(hero.weddingDate);
+                if (!isNaN(dt.getTime())) {
+                    var days = ['CN','T2','T3','T4','T5','T6','T7'];
+                    setText('inv-dow', days[dt.getDay()]);
+                    var dayEl = document.getElementById('inv-day');
+                    if (dayEl) dayEl.textContent = dt.getDate();
+                    setText('inv-month', '/' + (dt.getMonth() + 1));
+                    setText('inv-year', '/' + dt.getFullYear());
+                }
+                if (hero.weddingTime) setText('inv-time', formatHHMM(hero.weddingTime));
+            }
+
+            // Build event selector
+            var eventSection = document.getElementById('rsvp-event-section');
+            var eventBtns = document.getElementById('rsvp-event-btns');
+            if (_weddingEvents.length > 0 && eventSection && eventBtns) {
+                eventSection.style.display = 'block';
+                eventBtns.innerHTML = _weddingEvents.map(function(ev, i) {
+                    return '<button type="button" class="rsvp-event-btn" onclick="selectEvent(' + i + ')">' +
+                           esc(ev.name || ev.title || ('Sự kiện ' + (i + 1))) + '</button>';
                 }).join('');
+                selectEvent(0);
             }
         }).catch(function(){});
     }
@@ -379,51 +523,51 @@
     function initRsvp() {
         var form = document.getElementById('rsvp-attend-form');
         if (!form) return;
-        loadRsvpEvents();
+        loadInvitationCard();
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             e.stopPropagation();
             var name = (document.getElementById('rsvp-name').value || '').trim();
+            var side = (document.getElementById('rsvp-side').value || '').trim();
+            var attending = document.getElementById('rsvp-attending').value;
+            var eventVal = (document.getElementById('rsvp-event').value || '').trim();
+            var eventSection = document.getElementById('rsvp-event-section');
+            var hasEvents = eventSection && eventSection.style.display !== 'none';
+
             if (!name) { showToast('Vui lòng nhập họ và tên!', 'warning'); document.getElementById('rsvp-name').focus(); return; }
-            var radio = document.querySelector('input[name="attending"]:checked');
-            var attending = radio ? radio.value === 'yes' : true;
-            var phone = (document.getElementById('rsvp-phone').value || '').trim();
-            var side = document.getElementById('rsvp-side').value;
-            var guests = parseInt(document.getElementById('rsvp-guests').value) || 1;
-            var events = Array.from(document.querySelectorAll('input[name="rsvp_event"]:checked')).map(function(c){ return c.value; });
-            if (events.length === 0) {
-                showToast('Vui lòng chọn ít nhất một sự kiện tham dự!', 'warning');
-                return;
-            }
-            var eventName = events.join(', ');
+            if (!side) { showToast('Vui lòng chọn Nhà Trai hoặc Nhà Gái!', 'warning'); return; }
+            if (hasEvents && !eventVal) { showToast('Vui lòng chọn sự kiện tham dự!', 'warning'); return; }
+            if (!attending) { showToast('Vui lòng chọn Sẽ đến hoặc Không đến!', 'warning'); return; }
+
             var btn = document.getElementById('rsvp-submit-btn');
             btn.disabled = true; btn.textContent = 'Đang gửi...';
             fetch('/api/rsvp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name, phone: phone, attending: attending, side: side, guest_count: guests, message: '', event_name: eventName })
+                body: JSON.stringify({ name: name, phone: '', attending: attending === 'yes', side: side, guest_count: 1, message: '', event_name: eventVal || 'Tiệc Cưới' })
             })
             .then(function(r){ return r.json(); })
             .then(function(data) {
                 if (data.success) {
-                    try { sessionStorage.setItem('rsvpName', name); } catch(e) {}
+                    try { sessionStorage.setItem('rsvpName', name); } catch(ex) {}
                     document.getElementById('rsvp-form-container').style.display = 'none';
                     var ty = document.getElementById('rsvp-thankyou');
                     ty.style.display = 'block';
-                    document.getElementById('rsvp-ty-title').textContent = attending ? 'Cảm ơn bạn!' : 'Đã nhận được!';
-                    document.getElementById('rsvp-ty-msg').textContent = attending
+                    document.getElementById('rsvp-ty-icon').textContent = attending === 'yes' ? '\u2764\uFE0F' : '\uD83D\uDE4F';
+                    document.getElementById('rsvp-ty-title').textContent = attending === 'yes' ? 'Cảm ơn bạn!' : 'Đã nhận được!';
+                    document.getElementById('rsvp-ty-msg').textContent = attending === 'yes'
                         ? 'Chúng tôi rất vui khi bạn sẽ tham dự!'
                         : 'Cảm ơn bạn đã thông báo. Chúc bạn mọi điều tốt lành!';
                     var wn = document.getElementById('wishes-name');
                     if (wn && !wn.value) wn.value = name;
                 } else {
                     showToast(data.message || 'Có lỗi xảy ra, vui lòng thử lại!', 'error');
-                    btn.disabled = false; btn.textContent = 'Xác nhận tham dự';
+                    btn.disabled = false; btn.textContent = 'Xác nhận';
                 }
             })
             .catch(function() {
                 showToast('Không thể kết nối server, vui lòng thử lại!', 'error');
-                btn.disabled = false; btn.textContent = 'Xác nhận tham dự';
+                btn.disabled = false; btn.textContent = 'Xác nhận';
             });
         });
     }
@@ -437,7 +581,7 @@
             if (!c) return;
             var list = data.data || data.blessings || [];
             if (!data.success || !list.length) {
-                c.innerHTML = '<p style="text-align:center;color:#c0a0a0;font-size:12px;padding:6px 0;">Chưa có lời chúc nào.</p>';
+                c.innerHTML = '<p style="text-align:center;color:#9AAA90;font-size:12px;padding:6px 0;">Chưa có lời chúc nào.</p>';
                 return;
             }
             c.innerHTML = list.map(function(b) {
@@ -448,7 +592,7 @@
         })
         .catch(function() {
             var c = document.getElementById('wishes-items-list');
-            if (c) c.innerHTML = '<p style="text-align:center;color:#c0a0a0;font-size:12px;">Không thể tải.</p>';
+            if (c) c.innerHTML = '<p style="text-align:center;color:#9AAA90;font-size:12px;">Không thể tải.</p>';
         });
     }
 
