@@ -407,15 +407,21 @@
         }
     }
 
-    // Toggle event item UI (called on label click via JS)
+    // Update card with the first checked event in list order (global for inline handlers)
+    window.updateCardByFirstChecked = function() {
+        for (var i = 0; i < _weddingEvents.length; i++) {
+            var cb = document.getElementById('ev-cb-' + i);
+            if (cb && cb.checked) { updateCardEvent(_weddingEvents[i]); return; }
+        }
+    };
+
     window.toggleEventItem = function(idx) {
         var item = document.getElementById('ev-item-' + idx);
         var cb = document.getElementById('ev-cb-' + idx);
         if (!item || !cb) return;
         cb.checked = !cb.checked;
         item.className = 'rsvp-event-item' + (cb.checked ? ' selected' : '');
-        // Update card to show last clicked event
-        if (cb.checked) updateCardEvent(_weddingEvents[idx]);
+        window.updateCardByFirstChecked();
     };
 
     function loadInvitationCard() {
@@ -477,16 +483,12 @@
                     if (ev.venue) detail.push(ev.venue);
                     if (ev.address) detail.push(ev.address);
                     return '<div class="rsvp-event-item" id="ev-item-' + i + '" onclick="toggleEventItem(' + i + ')">' +
-                        '<input type="checkbox" id="ev-cb-' + i + '" name="rsvp_event" value="' + esc(name) + '" onclick="event.stopPropagation();" onchange="(function(cb,item,idx){cb.checked?(item.className=\'rsvp-event-item selected\',updateCardEvent(_weddingEvents[idx])):(item.className=\'rsvp-event-item\')})(this,document.getElementById(\'ev-item-\'+' + i + '),' + i + ')">' +
+                        '<input type="checkbox" id="ev-cb-' + i + '" name="rsvp_event" value="' + esc(name) + '" onclick="event.stopPropagation();" onchange="document.getElementById(\'ev-item-\'+' + i + ').className=\'rsvp-event-item\'+(this.checked?\' selected\':\'\');updateCardByFirstChecked();">' +
                         '<div class="rsvp-event-item-body">' +
                         '<div class="rsvp-event-item-name">' + esc(name) + '</div>' +
                         (detail.length ? '<div class="rsvp-event-item-detail">' + esc(detail.join(' · ')) + '</div>' : '') +
                         '</div></div>';
                 }).join('');
-                // Auto-check + update card for first event
-                var cb0 = document.getElementById('ev-cb-0');
-                var it0 = document.getElementById('ev-item-0');
-                if (cb0 && it0) { cb0.checked = true; it0.className = 'rsvp-event-item selected'; updateCardEvent(_weddingEvents[0]); }
             }
         }).catch(function(){});
     }
